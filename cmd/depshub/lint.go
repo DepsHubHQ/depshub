@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/depshubhq/depshub/internal/linter"
 	"github.com/spf13/cobra"
 )
@@ -31,11 +32,31 @@ var lintCmd = &cobra.Command{
 		}
 
 		if len(mistakes) != 0 {
-			fmt.Printf("Found %d mistakes:\n", len(mistakes))
+			errorsStyle := lipgloss.Color("9")
+			errors := lipgloss.NewStyle().
+				Foreground(errorsStyle).
+				Render(fmt.Sprintf("%d errors found", len(mistakes)))
+
+			fmt.Printf("%s:\n\n", errors)
+
 			for _, mistake := range mistakes {
 				fmt.Printf("- %s - %s \n\n", mistake.Rule.GetName(), mistake.Rule.GetMessage())
-				fmt.Printf("   %s:\n", mistake.Path)
-				fmt.Printf("   %d %s\n\n", mistake.Line, mistake.RawLine)
+
+				pStyle := lipgloss.Color("86")
+				p := lipgloss.NewStyle().
+					Foreground(pStyle).
+					Render(mistake.Path)
+
+				lineNumberStyle := lipgloss.Color("5")
+				lineNumber := lipgloss.NewStyle().
+					Foreground(lineNumberStyle).
+					Render(fmt.Sprintf("%d", mistake.Line))
+
+				rawLineStyle := lipgloss.Color("3")
+				rawLine := lipgloss.NewStyle().Align(lipgloss.Center).Foreground(rawLineStyle).Render(mistake.RawLine)
+
+				fmt.Printf("%s \n", p)
+				fmt.Printf("   %s %s\n\n", lineNumber, rawLine)
 			}
 		}
 	},
