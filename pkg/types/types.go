@@ -9,4 +9,10 @@ type Dependency struct {
 	Name    string
 	Version string
 	Dev     bool
+	Definition
+}
+
+type Definition struct {
+	RawLine string
+	Line    int
 }

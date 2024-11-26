@@ -5,42 +5,45 @@ import (
 	"encoding/json"
 )
 
-// OrderedMap preserves the order of map keys
 type OrderedMap struct {
-	Order  []string
-	Values map[string]string
+	Order    []string
+	Values   map[string]string
+	LineNums map[string]int
+	RawLines map[string]string
 }
 
 func (o *OrderedMap) UnmarshalJSON(data []byte) error {
+	// Initialize maps
 	o.Values = make(map[string]string)
-	// Use a temporary map for decoding
-	var tmp map[string]string
-	if err := json.Unmarshal(data, &tmp); err != nil {
+	o.LineNums = make(map[string]int)
+	o.RawLines = make(map[string]string)
+
+	// Pre-split data into lines for faster lookup
+	lines := bytes.Split(data, []byte{'\n'})
+
+	// Decode values
+	if err := json.Unmarshal(data, &o.Values); err != nil {
 		return err
 	}
 
-	// Decode again to get keys in order
+	// Track order and metadata
 	dec := json.NewDecoder(bytes.NewReader(data))
-	// Read opening brace
-	_, err := dec.Token()
-	if err != nil {
-		return err
-	}
+	dec.Token() // skip opening brace
 
-	// Read key-value pairs in order
 	for dec.More() {
-		key, err := dec.Token()
-		if err != nil {
-			return err
-		}
-		// Skip the value, we already have it in our map
-		var raw json.RawMessage
-		if err := dec.Decode(&raw); err != nil {
-			return err
-		}
+		pos := dec.InputOffset()
+		key, _ := dec.Token()
+		dec.Token() // skip value
+
 		keyStr := key.(string)
 		o.Order = append(o.Order, keyStr)
-		o.Values[keyStr] = tmp[keyStr]
+
+		// Find line number and content
+		lineNum := 1 + bytes.Count(data[:pos], []byte{'\n'})
+		o.LineNums[keyStr] = lineNum
+		o.RawLines[keyStr] = string(bytes.TrimSpace(lines[lineNum-1]))
 	}
+
 	return nil
 }
+

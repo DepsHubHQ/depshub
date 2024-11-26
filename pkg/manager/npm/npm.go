@@ -39,6 +39,10 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 			Name:    name,
 			Version: packageJSON.Dependencies.Values[name],
 			Dev:     false,
+			Definition: types.Definition{
+				RawLine: packageJSON.Dependencies.RawLines[name],
+				Line:    packageJSON.Dependencies.LineNums[name],
+			},
 		})
 	}
 
@@ -48,9 +52,12 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 			Name:    name,
 			Version: packageJSON.DevDependencies.Values[name],
 			Dev:     true,
+			Definition: types.Definition{
+				RawLine: packageJSON.Dependencies.RawLines[name],
+				Line:    packageJSON.Dependencies.LineNums[name],
+			},
 		})
 	}
 
 	return dependencies, nil
 }
-

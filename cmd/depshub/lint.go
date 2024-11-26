@@ -33,8 +33,9 @@ var lintCmd = &cobra.Command{
 		if len(mistakes) != 0 {
 			fmt.Printf("Found %d mistakes:\n", len(mistakes))
 			for _, mistake := range mistakes {
-				fmt.Printf("- %s:\n", mistake.Path)
-				fmt.Printf("   %s - %s \n", mistake.Rule.GetName(), mistake.Rule.GetMessage())
+				fmt.Printf("- %s - %s \n\n", mistake.Rule.GetName(), mistake.Rule.GetMessage())
+				fmt.Printf("   %s:\n", mistake.Path)
+				fmt.Printf("   %d %s\n\n", mistake.Line, mistake.RawLine)
 			}
 		}
 	},
