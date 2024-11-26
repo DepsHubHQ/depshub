@@ -1,7 +1,6 @@
 package manager
 
 import (
-	// "fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -17,7 +16,7 @@ type scanner struct {
 	managers  []Manager
 }
 
-func NewScanner() scanner {
+func New() scanner {
 	return scanner{
 		managers: []Manager{
 			npm.Npm{},
@@ -25,10 +24,10 @@ func NewScanner() scanner {
 	}
 }
 
-func (s scanner) Scan(path string) []types.Manifest {
+func (s scanner) Scan(path string) ([]types.Manifest, error) {
 	var manifests []types.Manifest
 
-	filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
 		if d.Name() == ".gitignore" {
 			return s.loadGitignore(path)
 		}
@@ -38,7 +37,7 @@ func (s scanner) Scan(path string) []types.Manifest {
 			return filepath.SkipDir
 		}
 
-		dependencies, err := s.process(path)
+		dependencies, err := s.dependencies(path)
 
 		if err != nil {
 			return err
@@ -54,10 +53,10 @@ func (s scanner) Scan(path string) []types.Manifest {
 		return nil
 	})
 
-	return manifests
+	return manifests, err
 }
 
-func (s scanner) process(path string) ([]types.Dependency, error) {
+func (s scanner) dependencies(path string) ([]types.Dependency, error) {
 	for _, m := range s.managers {
 		if m.Managed(path) {
 			return m.Dependencies(path)

@@ -8,4 +8,5 @@ type Manifest struct {
 type Dependency struct {
 	Name    string
 	Version string
+	Dev     bool
 }
