@@ -30,11 +30,9 @@ func (r RuleNoAnyTag) GetLevel() Level {
 
 func (r RuleNoAnyTag) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
-		// Check each dependency section
 		for _, deps := range [][]types.Dependency{
 			manifest.Dependencies,
 		} {
-			// Check if there is any "*" version tag
 			for i := 0; i < len(deps)-1; i++ {
 				if deps[i].Version == "*" {
 					mistakes = append(mistakes, Mistake{

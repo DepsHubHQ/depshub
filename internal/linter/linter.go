@@ -16,6 +16,7 @@ func New() Linter {
 		rules: []rules.Rule{
 			rules.NewRuleSorted(),
 			rules.NewRuleNoAnyTag(),
+			rules.NewRuleNoDuplicates(),
 		},
 	}
 }
