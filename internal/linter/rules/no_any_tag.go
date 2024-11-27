@@ -17,7 +17,7 @@ func NewRuleNoAnyTag() RuleNoAnyTag {
 }
 
 func (r RuleNoAnyTag) GetMessage() string {
-	return `Disallow the use of "*" version tag`
+	return `Disallow the use of the "any" version tag`
 }
 
 func (r RuleNoAnyTag) GetName() string {
@@ -34,7 +34,7 @@ func (r RuleNoAnyTag) Check(manifests []types.Manifest) (mistakes []Mistake, err
 			manifest.Dependencies,
 		} {
 			for i := 0; i < len(deps)-1; i++ {
-				if deps[i].Version == "*" {
+				if deps[i].Version == "*" || deps[i].Version == "latest" || deps[i].Version == "" {
 					mistakes = append(mistakes, Mistake{
 						Rule:       r,
 						Path:       manifest.Path,
