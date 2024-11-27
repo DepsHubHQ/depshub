@@ -1,0 +1,66 @@
+name: Release Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (x.y.z)'
+        required: true
+        type: string
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            output: depshub-linux-amd64
+            artifact: linux
+          - os: windows-latest
+            output: depshub-windows-amd64.exe
+            artifact: windows
+          - os: macos-latest
+            output: depshub-darwin-amd64
+            artifact: macos
+
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23.2'
+          
+      - name: Build
+        run: go build -o ${{ matrix.output }} ./cmd/depshub
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.output }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: dist
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/**/*
+          generate_release_notes: true
+          tag_name: v${{ inputs.version }}
+          draft: false
+          prerelease: false
