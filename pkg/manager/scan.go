@@ -43,10 +43,20 @@ func (s scanner) Scan(path string) ([]types.Manifest, error) {
 			return err
 		}
 
+		var lockfile *types.Lockfile
+		lockfilePath, err := s.lockfilePath(path)
+
+		if err == nil {
+			lockfile = &types.Lockfile{
+				Path: lockfilePath,
+			}
+		}
+
 		if len(dependencies) != 0 {
 			manifests = append(manifests, types.Manifest{
 				Path:         path,
 				Dependencies: dependencies,
+				Lockfile:     lockfile,
 			})
 		}
 
@@ -64,6 +74,15 @@ func (s scanner) dependencies(path string) ([]types.Dependency, error) {
 	}
 
 	return nil, nil
+}
+
+func (s scanner) lockfilePath(path string) (string, error) {
+	for _, m := range s.managers {
+		if m.Managed(path) {
+			return m.LockfilePath(path)
+		}
+	}
+	return "", nil
 }
 
 func (s *scanner) loadGitignore(path string) error {

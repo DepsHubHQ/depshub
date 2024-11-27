@@ -92,18 +92,19 @@ var lintCmd = &cobra.Command{
 					name = warnings.Render(fmt.Sprintf("[%s]", mistake.Rule.GetName()))
 				}
 
-				fmt.Printf("\n - %s - %s: \n", name, mistake.Rule.GetMessage())
+				fmt.Printf("\n - %s - %s \n", name, mistake.Rule.GetMessage())
 
-				lineNumberStyle := lipgloss.Color("8")
-				lineNumber := lipgloss.NewStyle().
-					Foreground(lineNumberStyle).
-					Render(fmt.Sprintf("%d", mistake.Line))
+				if mistake.Definition != nil {
+					rawLineStyle := lipgloss.Color("110")
+					rawLine := lipgloss.NewStyle().Align(lipgloss.Center).Foreground(rawLineStyle).Render(mistake.RawLine)
 
-				rawLineStyle := lipgloss.Color("110")
-				rawLine := lipgloss.NewStyle().Align(lipgloss.Center).Foreground(rawLineStyle).Render(mistake.RawLine)
-
-				var style = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("8"))
-				fmt.Println(style.Render(fmt.Sprintf("   %s %s", lineNumber, rawLine)))
+					var style = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("8"))
+					lineNumberStyle := lipgloss.Color("8")
+					lineNumber := lipgloss.NewStyle().
+						Foreground(lineNumberStyle).
+						Render(fmt.Sprintf("%d", mistake.Line))
+					fmt.Println(style.Render(fmt.Sprintf("   %s %s", lineNumber, rawLine)))
+				}
 			}
 		}
 	},
