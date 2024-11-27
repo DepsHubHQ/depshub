@@ -1,7 +1,6 @@
 package rules
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -51,7 +50,6 @@ func (r RuleNoUnstable) Check(manifests []types.Manifest) (mistakes []Mistake, e
 
 				// Split version string into components
 				parts := strings.Split(match, ".")
-				fmt.Println(parts)
 
 				// Parse major version
 				majorVersion, err := strconv.Atoi(parts[0])
