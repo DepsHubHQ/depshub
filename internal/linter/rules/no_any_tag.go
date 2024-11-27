@@ -1,0 +1,43 @@
+package rules
+
+import (
+	"github.com/depshubhq/depshub/pkg/types"
+)
+
+type RuleNoAnyTag struct {
+	name string
+}
+
+func NewRuleNoAnyTag() RuleNoAnyTag {
+	return RuleNoAnyTag{name: "no-any-tag"}
+}
+
+func (r RuleNoAnyTag) GetMessage() string {
+	return `Disallow the use of "*" version tag`
+}
+
+func (r RuleNoAnyTag) GetName() string {
+	return r.name
+}
+
+func (r RuleNoAnyTag) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
+	for _, manifest := range manifests {
+		// Check each dependency section
+		for _, deps := range [][]types.Dependency{
+			manifest.Dependencies,
+		} {
+			// Check if there is any "*" version tag
+			for i := 0; i < len(deps)-1; i++ {
+				if deps[i].Version == "*" {
+					mistakes = append(mistakes, Mistake{
+						Rule:       r,
+						Path:       manifest.Path,
+						Definition: deps[i+1].Definition,
+					})
+				}
+			}
+		}
+	}
+
+	return mistakes, nil
+}
