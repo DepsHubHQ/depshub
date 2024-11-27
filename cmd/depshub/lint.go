@@ -40,7 +40,7 @@ var lintCmd = &cobra.Command{
 			fmt.Printf("%s:\n\n", errors)
 
 			for _, mistake := range mistakes {
-				fmt.Printf("- %s - %s \n\n", mistake.Rule.GetName(), mistake.Rule.GetMessage())
+				fmt.Printf("- Rule: [%s] - %s \n", mistake.Rule.GetName(), mistake.Rule.GetMessage())
 
 				pStyle := lipgloss.Color("86")
 				p := lipgloss.NewStyle().
