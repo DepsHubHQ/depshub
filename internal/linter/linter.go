@@ -18,6 +18,7 @@ func New() Linter {
 			rules.NewRuleNoAnyTag(),
 			rules.NewRuleNoDuplicates(),
 			rules.NewRuleNoUnstable(),
+			rules.NewRuleNoPreRelease(),
 		},
 	}
 }
