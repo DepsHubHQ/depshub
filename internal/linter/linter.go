@@ -20,6 +20,7 @@ func New() Linter {
 			rules.NewRuleNoUnstable(),
 			rules.NewRuleNoPreRelease(),
 			rules.NewRuleLockfile(),
+			rules.NewRuleNoMultipleVersions(),
 		},
 	}
 }
