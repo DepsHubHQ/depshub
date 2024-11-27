@@ -5,6 +5,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/depshubhq/depshub/internal/linter"
+	"github.com/depshubhq/depshub/internal/linter/rules"
 	"github.com/spf13/cobra"
 )
 
@@ -31,33 +32,86 @@ var lintCmd = &cobra.Command{
 			fmt.Printf("Error: %s", err)
 		}
 
-		if len(mistakes) != 0 {
-			errorsStyle := lipgloss.Color("9")
-			errors := lipgloss.NewStyle().
-				Foreground(errorsStyle).
-				Render(fmt.Sprintf("%d errors found", len(mistakes)))
+		errorsCount := 0
+		warningsCount := 0
 
-			fmt.Printf("%s:\n\n", errors)
+		for _, mistake := range mistakes {
+			if mistake.Rule.GetLevel() == rules.LevelError {
+				errorsCount++
+			} else {
+				warningsCount++
+			}
+		}
+
+		errorsStyle := lipgloss.Color("9")
+		errors := lipgloss.NewStyle().
+			Foreground(errorsStyle)
+
+		warningsStyle := lipgloss.Color("11")
+		warnings := lipgloss.NewStyle().
+			Foreground(warningsStyle)
+
+		pluralizedError := pluralize(errorsCount, "error", "errors")
+		pluralizedWarning := pluralize(warningsCount, "warning", "warnings")
+
+		if errorsCount != 0 && warningsCount != 0 {
+			e := errors.Render(fmt.Sprintf("%d %s", errorsCount, pluralizedError))
+			w := warnings.Render(fmt.Sprintf("%d %s", warningsCount, pluralizedWarning))
+
+			fmt.Printf("%s and %s found:\n", e, w)
+		} else if errorsCount != 0 {
+			e := errors.Render(fmt.Sprintf("%d %s found", errorsCount, pluralizedError))
+
+			fmt.Printf("%s:\n", e)
+		} else if warningsCount != 0 {
+			w := warnings.Render(fmt.Sprintf("%d %s found", warningsCount, pluralizedWarning))
+
+			fmt.Printf("%s:\n", w)
+		}
+
+		mistakesMap := make(map[string][]rules.Mistake)
+
+		for _, mistake := range mistakes {
+			mistakesMap[mistake.Path] = append(mistakesMap[mistake.Path], mistake)
+		}
+
+		for path, mistakes := range mistakesMap {
+			pStyle := lipgloss.Color("86")
+			p := lipgloss.NewStyle().
+				Foreground(pStyle).
+				Render(path)
+
+			fmt.Printf("\n %s", p)
 
 			for _, mistake := range mistakes {
-				fmt.Printf("- Rule: [%s] - %s \n", mistake.Rule.GetName(), mistake.Rule.GetMessage())
+				name := fmt.Sprintf("[%s]", mistake.Rule.GetName())
 
-				pStyle := lipgloss.Color("86")
-				p := lipgloss.NewStyle().
-					Foreground(pStyle).
-					Render(mistake.Path)
+				if mistake.Rule.GetLevel() == rules.LevelError {
+					name = errors.Render(fmt.Sprintf("[%s]", mistake.Rule.GetName()))
+				} else {
+					name = warnings.Render(fmt.Sprintf("[%s]", mistake.Rule.GetName()))
+				}
 
-				lineNumberStyle := lipgloss.Color("5")
+				fmt.Printf("\n - %s - %s: \n", name, mistake.Rule.GetMessage())
+
+				lineNumberStyle := lipgloss.Color("8")
 				lineNumber := lipgloss.NewStyle().
 					Foreground(lineNumberStyle).
 					Render(fmt.Sprintf("%d", mistake.Line))
 
-				rawLineStyle := lipgloss.Color("3")
+				rawLineStyle := lipgloss.Color("110")
 				rawLine := lipgloss.NewStyle().Align(lipgloss.Center).Foreground(rawLineStyle).Render(mistake.RawLine)
 
-				fmt.Printf("%s \n", p)
-				fmt.Printf("   %s %s\n\n", lineNumber, rawLine)
+				var style = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("8"))
+				fmt.Println(style.Render(fmt.Sprintf("   %s %s", lineNumber, rawLine)))
 			}
 		}
 	},
+}
+
+func pluralize(n int, singular, plural string) string {
+	if n == 1 {
+		return singular
+	}
+	return plural
 }

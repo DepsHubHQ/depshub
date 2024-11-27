@@ -5,11 +5,15 @@ import (
 )
 
 type RuleSorted struct {
-	name string
+	name  string
+	level Level
 }
 
 func NewRuleSorted() RuleSorted {
-	return RuleSorted{name: "sorted"}
+	return RuleSorted{
+		name:  "sorted",
+		level: LevelError,
+	}
 }
 
 func (r RuleSorted) GetMessage() string {
@@ -18,6 +22,10 @@ func (r RuleSorted) GetMessage() string {
 
 func (r RuleSorted) GetName() string {
 	return r.name
+}
+
+func (r RuleSorted) GetLevel() Level {
+	return r.level
 }
 
 func (r RuleSorted) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {

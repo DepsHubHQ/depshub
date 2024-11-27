@@ -5,11 +5,15 @@ import (
 )
 
 type RuleNoAnyTag struct {
-	name string
+	name  string
+	level Level
 }
 
 func NewRuleNoAnyTag() RuleNoAnyTag {
-	return RuleNoAnyTag{name: "no-any-tag"}
+	return RuleNoAnyTag{
+		name:  "no-any-tag",
+		level: LevelWarning,
+	}
 }
 
 func (r RuleNoAnyTag) GetMessage() string {
@@ -18,6 +22,10 @@ func (r RuleNoAnyTag) GetMessage() string {
 
 func (r RuleNoAnyTag) GetName() string {
 	return r.name
+}
+
+func (r RuleNoAnyTag) GetLevel() Level {
+	return r.level
 }
 
 func (r RuleNoAnyTag) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
