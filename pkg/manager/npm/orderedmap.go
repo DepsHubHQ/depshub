@@ -34,16 +34,18 @@ func (o *OrderedMap) UnmarshalJSON(data []byte) error {
 		pos := dec.InputOffset()
 		key, _ := dec.Token()
 		dec.Token() // skip value
-
 		keyStr := key.(string)
 		o.Order = append(o.Order, keyStr)
 
-		// Find line number and content
+		// Calculate line number relative to the start of this block
 		lineNum := 1 + bytes.Count(data[:pos], []byte{'\n'})
 		o.LineNums[keyStr] = lineNum
-		o.RawLines[keyStr] = string(bytes.TrimSpace(lines[lineNum-1]))
+
+		// Store raw line
+		if lineNum-1 < len(lines) {
+			o.RawLines[keyStr] = string(bytes.TrimSpace(lines[lineNum-1]))
+		}
 	}
 
 	return nil
 }
-
