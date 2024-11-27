@@ -38,7 +38,7 @@ func (r RuleNoAnyTag) Check(manifests []types.Manifest) (mistakes []Mistake, err
 					mistakes = append(mistakes, Mistake{
 						Rule:       r,
 						Path:       manifest.Path,
-						Definition: deps[i+1].Definition,
+						Definition: &deps[i+1].Definition,
 					})
 				}
 			}

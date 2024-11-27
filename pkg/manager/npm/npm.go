@@ -3,6 +3,7 @@ package npm
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -83,4 +84,14 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 	}
 
 	return dependencies, nil
+}
+
+func (Npm) LockfilePath(path string) (string, error) {
+	lockfilePath := filepath.Join(filepath.Dir(path), "package-lock.json")
+
+	if _, err := os.Stat(lockfilePath); os.IsNotExist(err) {
+		return "", fmt.Errorf("lockfile not found")
+	}
+
+	return lockfilePath, nil
 }
