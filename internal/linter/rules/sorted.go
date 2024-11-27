@@ -4,23 +4,23 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-type Rule001Order struct {
+type RuleSorted struct {
 	name string
 }
 
-func NewRule001Order() Rule001Order {
-	return Rule001Order{name: "001_order"}
+func NewRuleSorted() RuleSorted {
+	return RuleSorted{name: "sorted"}
 }
 
-func (r Rule001Order) GetMessage() string {
-	return "All the dependencies should be ordered."
+func (r RuleSorted) GetMessage() string {
+	return "All the dependencies should be ordered alphabetically"
 }
 
-func (r Rule001Order) GetName() string {
+func (r RuleSorted) GetName() string {
 	return r.name
 }
 
-func (r Rule001Order) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
+func (r RuleSorted) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
 		// Check each dependency section
 		for _, deps := range [][]types.Dependency{

@@ -14,7 +14,7 @@ type Linter struct {
 func New() Linter {
 	return Linter{
 		rules: []rules.Rule{
-			rules.NewRule001Order(),
+			rules.NewRuleSorted(),
 		},
 	}
 }
