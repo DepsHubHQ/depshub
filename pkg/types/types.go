@@ -18,6 +18,7 @@ type Dependency struct {
 }
 
 type Definition struct {
+	Path    string
 	RawLine string
 	Line    int
 }

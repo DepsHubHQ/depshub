@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -34,36 +35,30 @@ func (r RuleNoUnstable) GetLevel() Level {
 
 func (r RuleNoUnstable) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
-		for _, deps := range [][]types.Dependency{
-			manifest.Dependencies,
-		} {
-			for i := 0; i < len(deps)-1; i++ {
-				version := deps[i].Version
+		for _, dep := range manifest.Dependencies {
+			// Define regex pattern for x.x.x where x is one or more digits
+			pattern := regexp.MustCompile(`\d+\.\d+\.\d+`)
 
-				// Define regex pattern for x.x.x where x is one or more digits
-				pattern := regexp.MustCompile(`\d+\.\d+\.\d+`)
+			match := pattern.FindString(dep.Version)
+			if match == "" {
+				continue
+			}
 
-				match := pattern.FindString(version)
-				if match == "" {
-					continue
-				}
+			// Split version string into components
+			parts := strings.Split(match, ".")
 
-				// Split version string into components
-				parts := strings.Split(match, ".")
+			// Parse major version
+			majorVersion, err := strconv.Atoi(parts[0])
+			if err != nil {
+				continue
+			}
 
-				// Parse major version
-				majorVersion, err := strconv.Atoi(parts[0])
-				if err != nil {
-					continue
-				}
-
-				if majorVersion < 1 {
-					mistakes = append(mistakes, Mistake{
-						Rule:       r,
-						Path:       manifest.Path,
-						Definition: &deps[i+1].Definition,
-					})
-				}
+			fmt.Println("package, majorVersion", dep.Name, majorVersion)
+			if majorVersion < 1 {
+				mistakes = append(mistakes, Mistake{
+					Rule:        r,
+					Definitions: []types.Definition{dep.Definition},
+				})
 			}
 		}
 	}

@@ -38,14 +38,8 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 	devDepsStart := bytes.Index(file, []byte(`"devDependencies"`))
 
 	// Calculate base line numbers
-	depsLineNum := 1
-	if depsStart >= 0 {
-		depsLineNum += bytes.Count(file[:depsStart], []byte{'\n'})
-	}
-	devDepsLineNum := 1
-	if devDepsStart >= 0 {
-		devDepsLineNum += bytes.Count(file[:devDepsStart], []byte{'\n'})
-	}
+	depsLineNum := bytes.Count(file[:depsStart], []byte{'\n'})
+	devDepsLineNum := bytes.Count(file[:devDepsStart], []byte{'\n'})
 
 	// Adjust line numbers in the maps
 	for k, v := range packageJSON.Dependencies.LineNums {
@@ -64,6 +58,7 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 			Version: packageJSON.Dependencies.Values[name],
 			Dev:     false,
 			Definition: types.Definition{
+				Path:    path,
 				RawLine: packageJSON.Dependencies.RawLines[name],
 				Line:    packageJSON.Dependencies.LineNums[name],
 			},
@@ -77,6 +72,7 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 			Version: packageJSON.DevDependencies.Values[name],
 			Dev:     true,
 			Definition: types.Definition{
+				Path:    path,
 				RawLine: packageJSON.DevDependencies.RawLines[name],
 				Line:    packageJSON.DevDependencies.LineNums[name],
 			},

@@ -42,9 +42,7 @@ func (o *OrderedMap) UnmarshalJSON(data []byte) error {
 		o.LineNums[keyStr] = lineNum
 
 		// Store raw line
-		if lineNum-1 < len(lines) {
-			o.RawLines[keyStr] = string(bytes.TrimSpace(lines[lineNum-1]))
-		}
+		o.RawLines[keyStr] = string(bytes.TrimSpace(lines[lineNum]))
 	}
 
 	return nil
