@@ -94,12 +94,12 @@ var lintCmd = &cobra.Command{
 
 				lineNumber := lipgloss.NewStyle().
 					Foreground(lineNumberStyle).
-					Render(fmt.Sprintf("%d", definition.Line))
+					Render(fmt.Sprintf("%d |", definition.Line))
 
 				if definition.Line == 0 {
-					fmt.Println(style.Render(fmt.Sprintf("   %s", path)))
+					fmt.Println(style.Render(fmt.Sprintf(" %s", path)))
 				} else {
-					fmt.Println(style.Render(fmt.Sprintf("   %s\n   %s %s", path, lineNumber, rawLine)))
+					fmt.Println(style.Render(fmt.Sprintf(" %s\n %s %s", path, lineNumber, rawLine)))
 				}
 			}
 		}

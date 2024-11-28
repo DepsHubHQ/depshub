@@ -18,6 +18,5 @@ type Rule interface {
 
 type Mistake struct {
 	Rule        Rule
-	Path        string
 	Definitions []types.Definition
 }

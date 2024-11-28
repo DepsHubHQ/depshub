@@ -1,7 +1,6 @@
 package rules
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -53,7 +52,6 @@ func (r RuleNoUnstable) Check(manifests []types.Manifest) (mistakes []Mistake, e
 				continue
 			}
 
-			fmt.Println("package, majorVersion", dep.Name, majorVersion)
 			if majorVersion < 1 {
 				mistakes = append(mistakes, Mistake{
 					Rule:        r,
