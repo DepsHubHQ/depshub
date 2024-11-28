@@ -99,7 +99,7 @@ var lintCmd = &cobra.Command{
 				if definition.Line == 0 {
 					fmt.Println(style.Render(fmt.Sprintf(" %s", path)))
 				} else {
-					fmt.Println(style.Render(fmt.Sprintf(" %s\n %s %s", path, lineNumber, rawLine)))
+					fmt.Println(style.Render(fmt.Sprintf(" %s\n\n %s %s", path, lineNumber, rawLine)))
 				}
 			}
 		}
