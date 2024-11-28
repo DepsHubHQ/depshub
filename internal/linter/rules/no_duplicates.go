@@ -30,18 +30,15 @@ func (r RuleNoDuplicates) GetLevel() Level {
 
 func (r RuleNoDuplicates) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
-		for _, deps := range [][]types.Dependency{
-			manifest.Dependencies,
-		} {
-			for i := 0; i < len(deps)-1; i++ {
-				for j := i + 1; j < len(deps); j++ {
-					if deps[i].Name == deps[j].Name {
-						mistakes = append(mistakes, Mistake{
-							Rule:       r,
-							Path:       manifest.Path,
-							Definition: &deps[i+1].Definition,
-						})
-					}
+		deps := manifest.Dependencies
+
+		for i := 0; i < len(deps)-1; i++ {
+			for j := i + 1; j < len(deps); j++ {
+				if deps[i].Name == deps[j].Name {
+					mistakes = append(mistakes, Mistake{
+						Rule:        r,
+						Definitions: []types.Definition{deps[i].Definition},
+					})
 				}
 			}
 		}

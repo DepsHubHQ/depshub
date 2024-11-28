@@ -32,19 +32,16 @@ func (r RuleNoPreRelease) GetLevel() Level {
 
 func (r RuleNoPreRelease) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
-		for _, deps := range [][]types.Dependency{
-			manifest.Dependencies,
-		} {
-			for i := 0; i < len(deps)-1; i++ {
-				version := deps[i].Version
+		for _, dep := range manifest.Dependencies {
+			version := dep.Version
 
-				if strings.Contains(version, "alpha") || strings.Contains(version, "beta") || strings.Contains(version, "rc") {
-					mistakes = append(mistakes, Mistake{
-						Rule:       r,
-						Path:       manifest.Path,
-						Definition: &deps[i+1].Definition,
-					})
-				}
+			if strings.Contains(version, "alpha") || strings.Contains(version, "beta") || strings.Contains(version, "rc") {
+				mistakes = append(mistakes, Mistake{
+					Rule: r,
+					Definitions: []types.Definition{
+						dep.Definition,
+					},
+				})
 			}
 		}
 	}

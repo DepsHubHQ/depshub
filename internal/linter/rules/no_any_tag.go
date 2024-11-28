@@ -30,17 +30,12 @@ func (r RuleNoAnyTag) GetLevel() Level {
 
 func (r RuleNoAnyTag) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
-		for _, deps := range [][]types.Dependency{
-			manifest.Dependencies,
-		} {
-			for i := 0; i < len(deps)-1; i++ {
-				if deps[i].Version == "*" || deps[i].Version == "latest" || deps[i].Version == "" {
-					mistakes = append(mistakes, Mistake{
-						Rule:       r,
-						Path:       manifest.Path,
-						Definition: &deps[i+1].Definition,
-					})
-				}
+		for _, dep := range manifest.Dependencies {
+			if dep.Version == "*" || dep.Version == "latest" || dep.Version == "" {
+				mistakes = append(mistakes, Mistake{
+					Rule:        r,
+					Definitions: []types.Definition{dep.Definition},
+				})
 			}
 		}
 	}

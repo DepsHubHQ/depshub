@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 
 	"github.com/depshubhq/depshub/pkg/types"
 )
@@ -13,8 +14,8 @@ import (
 type Npm struct{}
 
 type PackageJSON struct {
-	Dependencies    OrderedMap `json:"dependencies"`
-	DevDependencies OrderedMap `json:"devDependencies"`
+	Dependencies    map[string]string `json:"dependencies"`
+	DevDependencies map[string]string `json:"devDependencies"`
 }
 
 func (Npm) Managed(path string) bool {
@@ -33,55 +34,43 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 		return nil, err
 	}
 
-	// Find starting positions of dependency blocks
-	depsStart := bytes.Index(file, []byte(`"dependencies"`))
-	devDepsStart := bytes.Index(file, []byte(`"devDependencies"`))
-
-	// Calculate base line numbers
-	depsLineNum := 1
-	if depsStart >= 0 {
-		depsLineNum += bytes.Count(file[:depsStart], []byte{'\n'})
-	}
-	devDepsLineNum := 1
-	if devDepsStart >= 0 {
-		devDepsLineNum += bytes.Count(file[:devDepsStart], []byte{'\n'})
-	}
-
-	// Adjust line numbers in the maps
-	for k, v := range packageJSON.Dependencies.LineNums {
-		packageJSON.Dependencies.LineNums[k] = depsLineNum + v - 1
-	}
-	for k, v := range packageJSON.DevDependencies.LineNums {
-		packageJSON.DevDependencies.LineNums[k] = devDepsLineNum + v - 1
-	}
-
 	var dependencies []types.Dependency
 
-	// Add regular dependencies in order
-	for _, name := range packageJSON.Dependencies.Order {
+	// Add regular dependencies
+	for name, version := range packageJSON.Dependencies {
+		line, rawLine := findLineInfo(file, "dependencies", name)
 		dependencies = append(dependencies, types.Dependency{
 			Name:    name,
-			Version: packageJSON.Dependencies.Values[name],
+			Version: version,
 			Dev:     false,
 			Definition: types.Definition{
-				RawLine: packageJSON.Dependencies.RawLines[name],
-				Line:    packageJSON.Dependencies.LineNums[name],
+				Path:    path,
+				RawLine: rawLine,
+				Line:    line,
 			},
 		})
 	}
 
-	// Add dev dependencies in order
-	for _, name := range packageJSON.DevDependencies.Order {
+	// Add dev dependencies
+	for name, version := range packageJSON.DevDependencies {
+		line, rawLine := findLineInfo(file, "devDependencies", name)
 		dependencies = append(dependencies, types.Dependency{
 			Name:    name,
-			Version: packageJSON.DevDependencies.Values[name],
+			Version: version,
 			Dev:     true,
 			Definition: types.Definition{
-				RawLine: packageJSON.DevDependencies.RawLines[name],
-				Line:    packageJSON.DevDependencies.LineNums[name],
+				Path:    path,
+				RawLine: rawLine,
+				Line:    line,
 			},
 		})
 	}
+
+	// Some of the rules require the original order of dependencies
+	// Sort dependencies by line number
+	sort.Slice(dependencies, func(i, j int) bool {
+		return dependencies[i].Line < dependencies[j].Line
+	})
 
 	return dependencies, nil
 }
@@ -94,4 +83,33 @@ func (Npm) LockfilePath(path string) (string, error) {
 	}
 
 	return lockfilePath, nil
+}
+
+func findLineInfo(data []byte, section string, key string) (line int, rawLine string) {
+	lines := bytes.Split(data, []byte{'\n'})
+	inSection := false
+	quotedKey := `"` + key + `"`
+
+	for i, line := range lines {
+		trimmed := bytes.TrimSpace(line)
+
+		// Check if we're entering the right section
+		if bytes.Contains(trimmed, []byte(`"`+section+`"`)) {
+			inSection = true
+			continue
+		}
+
+		// Check if we're leaving the section
+		if inSection && bytes.Contains(trimmed, []byte("}")) {
+			inSection = false
+			continue
+		}
+
+		// Look for our key while in the correct section
+		if inSection && bytes.Contains(trimmed, []byte(quotedKey)) {
+			return i + 1, string(trimmed)
+		}
+	}
+
+	return 0, ""
 }

@@ -33,7 +33,11 @@ func (r RuleLockfile) Check(manifests []types.Manifest) (mistakes []Mistake, err
 		if manifest.Lockfile == nil {
 			mistakes = append(mistakes, Mistake{
 				Rule: r,
-				Path: manifest.Path,
+				Definitions: []types.Definition{
+					{
+						Path: manifest.Path,
+					},
+				},
 			})
 		}
 	}
