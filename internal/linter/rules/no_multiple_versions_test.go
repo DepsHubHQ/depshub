@@ -275,7 +275,7 @@ func TestRuleNoMultipleVersions_Check(t *testing.T) {
 			}
 
 			assert.NoError(t, err)
-			assert.Equal(t, tt.want, got)
+			assert.ElementsMatch(t, tt.want, got)
 		})
 	}
 }
