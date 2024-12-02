@@ -28,7 +28,9 @@ func (r RuleNoDeprecated) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleNoDeprecated) Check(manifests []types.Manifest, info PackagesInfo) (mistakes []Mistake, err error) {
+func (r RuleNoDeprecated) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
+	mistakes := []Mistake{}
+
 	for _, manifest := range manifests {
 		for _, dep := range manifest.Dependencies {
 			if pkg, ok := info[dep.Name]; ok {
