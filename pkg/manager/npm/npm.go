@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/depshubhq/depshub/pkg/types"
 )
@@ -40,8 +41,9 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 	for name, version := range packageJSON.Dependencies {
 		line, rawLine := findLineInfo(file, "dependencies", name)
 		dependencies = append(dependencies, types.Dependency{
-			Name:    name,
-			Version: version,
+			Name: name,
+			//  TODO We should use the version from the lockfile instead
+			Version: cleanVersion(version),
 			Dev:     false,
 			Definition: types.Definition{
 				Path:    path,
@@ -55,8 +57,9 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 	for name, version := range packageJSON.DevDependencies {
 		line, rawLine := findLineInfo(file, "devDependencies", name)
 		dependencies = append(dependencies, types.Dependency{
-			Name:    name,
-			Version: version,
+			Name: name,
+			//  TODO We should use the version from the lockfile instead
+			Version: cleanVersion(version),
 			Dev:     true,
 			Definition: types.Definition{
 				Path:    path,
@@ -83,6 +86,11 @@ func (Npm) LockfilePath(path string) (string, error) {
 	}
 
 	return lockfilePath, nil
+}
+
+// Returns the version without any prefix or suffix
+func cleanVersion(version string) string {
+	return strings.Trim(version, "^~*><= ")
 }
 
 func findLineInfo(data []byte, section string, key string) (line int, rawLine string) {

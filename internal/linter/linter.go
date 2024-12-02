@@ -24,6 +24,7 @@ func New() Linter {
 			rules.NewRuleNoPreRelease(),
 			rules.NewRuleLockfile(),
 			rules.NewRuleNoMultipleVersions(),
+			rules.NewRuleMaxPackageAge(),
 		},
 	}
 }

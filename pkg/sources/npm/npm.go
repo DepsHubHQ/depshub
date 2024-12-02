@@ -3,7 +3,6 @@ package npm
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,9 +10,6 @@ import (
 
 	"github.com/depshubhq/depshub/pkg/types"
 )
-
-var ErrPackageNotFound = errors.New("package not found")
-var ErrPackageUnpublished = errors.New("package unpublished")
 
 type NpmManager struct{}
 
@@ -49,7 +45,7 @@ func (NpmManager) fetchPackageInfo(ctx context.Context, name string, target *typ
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 404 || resp.StatusCode == 405 {
-		return ErrPackageNotFound
+		return types.ErrPackageNotFound
 	}
 
 	if resp.StatusCode != 200 {

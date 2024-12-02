@@ -9,6 +9,7 @@ const (
 	LevelWarning
 )
 
+// A map of package names to package information.
 type PackagesInfo = map[string]types.Package
 
 type Rule interface {
