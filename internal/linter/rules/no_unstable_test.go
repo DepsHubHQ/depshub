@@ -212,7 +212,7 @@ func TestRuleNoUnstable(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mistakes, err := rule.Check(tt.manifests)
+			mistakes, err := rule.Check(tt.manifests, nil)
 
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -239,4 +239,3 @@ func TestRuleNoUnstable(t *testing.T) {
 		})
 	}
 }
-

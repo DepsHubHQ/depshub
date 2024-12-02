@@ -30,7 +30,7 @@ func (r RuleNoPreRelease) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleNoPreRelease) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
+func (r RuleNoPreRelease) Check(manifests []types.Manifest, info PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
 		for _, dep := range manifest.Dependencies {
 			version := dep.Version

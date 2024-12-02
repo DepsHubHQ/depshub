@@ -9,11 +9,13 @@ const (
 	LevelWarning
 )
 
+type PackagesInfo = map[string]types.Package
+
 type Rule interface {
 	GetName() string
 	GetMessage() string
 	GetLevel() Level
-	Check([]types.Manifest) ([]Mistake, error)
+	Check([]types.Manifest, PackagesInfo) ([]Mistake, error)
 }
 
 type Mistake struct {

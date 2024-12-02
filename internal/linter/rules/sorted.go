@@ -28,7 +28,7 @@ func (r RuleSorted) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleSorted) Check(manifests []types.Manifest) (mistakes []Mistake, err error) {
+func (r RuleSorted) Check(manifests []types.Manifest, info PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
 		deps := manifest.Dependencies
 
