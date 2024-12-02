@@ -23,6 +23,7 @@ func New() Linter {
 			rules.NewRuleNoMultipleVersions(),
 			rules.NewRuleMaxPackageAge(),
 			rules.NewRuleNoDeprecated(),
+			rules.NewRuleAllowedLicenses(),
 		},
 	}
 }
