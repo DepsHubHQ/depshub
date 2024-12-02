@@ -32,7 +32,9 @@ func (r RuleMaxPackageAge) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleMaxPackageAge) Check(manifests []types.Manifest, info PackagesInfo) (mistakes []Mistake, err error) {
+func (r RuleMaxPackageAge) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
+	mistakes := []Mistake{}
+
 	for _, manifest := range manifests {
 		for _, dep := range manifest.Dependencies {
 
