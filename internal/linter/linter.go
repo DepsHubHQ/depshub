@@ -1,13 +1,10 @@
 package linter
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/depshubhq/depshub/internal/linter/rules"
 	"github.com/depshubhq/depshub/pkg/manager"
-	"github.com/depshubhq/depshub/pkg/sources/npm"
-	"github.com/depshubhq/depshub/pkg/types"
 )
 
 type Linter struct {
@@ -38,51 +35,7 @@ func (l Linter) Run(path string) (mistakes []rules.Mistake, err error) {
 
 	uniqueDependencies := scanner.Unique(manifests)
 
-	// Create channels for results and errors
-	type packageResult struct {
-		pkg types.Package
-		err error
-	}
-	resultChan := make(chan packageResult)
-
-	// Launch goroutines for concurrent fetching
-	npmManager := npm.NpmManager{}
-	background := context.Background()
-	activeRequests := 0
-
-	// Use a semaphore to limit concurrent requests
-	const maxConcurrent = 30
-	sem := make(chan struct{}, maxConcurrent)
-
-	for _, name := range uniqueDependencies {
-		activeRequests++
-
-		go func(depName string) {
-			sem <- struct{}{} // Acquire semaphore
-			defer func() {
-				<-sem // Release semaphore
-			}()
-
-			npmPackage, err := npmManager.FetchPackageData(background, depName)
-			resultChan <- packageResult{
-				pkg: npmPackage,
-				err: err,
-			}
-		}(name)
-	}
-
-	// Collect results
-	var packagesData = make(rules.PackagesInfo)
-	for i := 0; i < activeRequests; i++ {
-		result := <-resultChan
-		if result.err != nil {
-			fmt.Printf("Error fetching package data: %s\n", result.err)
-			continue
-		}
-		packagesData[result.pkg.Name] = result.pkg
-	}
-
-	fmt.Printf("Successfully fetched %d packages\n", len(packagesData))
+	packagesData, err := manager.NewFetcher().Fetch(uniqueDependencies)
 
 	// Run all rules
 	for _, rule := range l.rules {
