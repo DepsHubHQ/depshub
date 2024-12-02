@@ -17,6 +17,7 @@ jobs:
     uses: ./.github/workflows/test.yml
 
   build:
+    needs: test
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
