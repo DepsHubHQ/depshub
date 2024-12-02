@@ -34,8 +34,9 @@ type Definition struct {
 }
 
 type PackageVersion struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
+	Name       string `json:"name"`
+	Version    string `json:"version"`
+	Deprecated string `json:"deprecated"`
 }
 
 type Repository struct {
@@ -67,6 +68,50 @@ type Package struct {
 	Keywords      []string
 	Description   string
 	Downloads     []Download
+}
+
+func (pv *PackageVersion) UnmarshalJSON(data []byte) error {
+	// Create an auxiliary struct with Deprecated as json.RawMessage
+	aux := struct {
+		Name       string          `json:"name"`
+		Version    string          `json:"version"`
+		Deprecated json.RawMessage `json:"deprecated"`
+	}{}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	// Copy the standard fields
+	pv.Name = aux.Name
+	pv.Version = aux.Version
+
+	// Handle the Deprecated field based on its type
+	if len(aux.Deprecated) == 0 {
+		pv.Deprecated = ""
+		return nil
+	}
+
+	// Try to unmarshal as boolean first
+	var boolValue bool
+	if err := json.Unmarshal(aux.Deprecated, &boolValue); err == nil {
+		if boolValue {
+			pv.Deprecated = "deprecated"
+		} else {
+			pv.Deprecated = ""
+		}
+		return nil
+	}
+
+	// If not boolean, try to unmarshal as string
+	var stringValue string
+	if err := json.Unmarshal(aux.Deprecated, &stringValue); err == nil {
+		pv.Deprecated = stringValue
+		return nil
+	}
+
+	// If neither boolean nor string, return error
+	return fmt.Errorf("deprecated field must be either boolean or string")
 }
 
 // Custom UnmarshalJSON for PackageData
