@@ -21,6 +21,7 @@ func New() Linter {
 			rules.NewRuleNoPreRelease(),
 			rules.NewRuleLockfile(),
 			rules.NewRuleNoMultipleVersions(),
+			rules.NewRuleMaxPackageAge(),
 		},
 	}
 }
@@ -28,18 +29,20 @@ func New() Linter {
 func (l Linter) Run(path string) (mistakes []rules.Mistake, err error) {
 	scanner := manager.New()
 	manifests, err := scanner.Scan(path)
-
 	if err != nil {
-		fmt.Printf("Error: %s", err)
+		return nil, fmt.Errorf("failed to scan manifests: %w", err)
 	}
 
+	uniqueDependencies := scanner.UniqueDependencies(manifests)
+
+	packagesData, err := manager.NewFetcher().Fetch(uniqueDependencies)
+
+	// Run all rules
 	for _, rule := range l.rules {
-		m, err := rule.Check(manifests)
-
+		m, err := rule.Check(manifests, packagesData)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("rule check failed: %w", err)
 		}
-
 		mistakes = append(mistakes, m...)
 	}
 

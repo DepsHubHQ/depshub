@@ -66,6 +66,22 @@ func (s scanner) Scan(path string) ([]types.Manifest, error) {
 	return manifests, err
 }
 
+func (s scanner) UniqueDependencies(manifests []types.Manifest) (result []string) {
+	uniqueDependencies := make(map[string]bool)
+
+	for _, manifest := range manifests {
+		for _, dep := range manifest.Dependencies {
+			uniqueDependencies[dep.Name] = true
+		}
+	}
+
+	for dep := range uniqueDependencies {
+		result = append(result, dep)
+	}
+
+	return result
+}
+
 func (s scanner) dependencies(path string) ([]types.Dependency, error) {
 	for _, m := range s.managers {
 		if m.Managed(path) {
