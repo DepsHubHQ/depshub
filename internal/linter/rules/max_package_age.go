@@ -38,15 +38,13 @@ func (r RuleMaxPackageAge) Check(manifests []types.Manifest, info PackagesInfo) 
 
 			if pkg, ok := info[dep.Name]; ok {
 				for version, t := range pkg.Time {
-					if version == dep.Version {
-						if t.Before(time.Now().AddDate(0, -MaxPackageAge, 0)) {
-							mistakes = append(mistakes, Mistake{
-								Rule: r,
-								Definitions: []types.Definition{
-									dep.Definition,
-								},
-							})
-						}
+					if version == dep.Version && t.Before(time.Now().AddDate(0, -MaxPackageAge, 0)) {
+						mistakes = append(mistakes, Mistake{
+							Rule: r,
+							Definitions: []types.Definition{
+								dep.Definition,
+							},
+						})
 					}
 				}
 			}
