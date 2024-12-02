@@ -15,6 +15,8 @@ func NewFetcher() fetcher {
 	return fetcher{}
 }
 
+const MaxConcurrent = 30
+
 func (f fetcher) Fetch(uniqueDependencies []string) (rules.PackagesInfo, error) {
 	// Create channels for results and errors
 	type packageResult struct {
@@ -29,8 +31,7 @@ func (f fetcher) Fetch(uniqueDependencies []string) (rules.PackagesInfo, error) 
 	activeRequests := 0
 
 	// Use a semaphore to limit concurrent requests
-	const maxConcurrent = 30
-	sem := make(chan struct{}, maxConcurrent)
+	sem := make(chan struct{}, MaxConcurrent)
 
 	for _, name := range uniqueDependencies {
 		activeRequests++
@@ -51,7 +52,8 @@ func (f fetcher) Fetch(uniqueDependencies []string) (rules.PackagesInfo, error) 
 
 	// Collect results
 	var packagesData = make(rules.PackagesInfo)
-	for i := 0; i < activeRequests; i++ {
+
+	for range activeRequests {
 		result := <-resultChan
 		if result.err != nil {
 			fmt.Printf("Error fetching package data: %s\n", result.err)

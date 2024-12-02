@@ -33,7 +33,7 @@ func (l Linter) Run(path string) (mistakes []rules.Mistake, err error) {
 		return nil, fmt.Errorf("failed to scan manifests: %w", err)
 	}
 
-	uniqueDependencies := scanner.Unique(manifests)
+	uniqueDependencies := scanner.UniqueDependencies(manifests)
 
 	packagesData, err := manager.NewFetcher().Fetch(uniqueDependencies)
 
