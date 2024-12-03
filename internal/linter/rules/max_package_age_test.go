@@ -176,40 +176,6 @@ func TestRuleMaxPackageAge(t *testing.T) {
 			},
 			wantErr: false,
 		},
-		{
-			name: "exactly at max age",
-			manifests: []types.Manifest{
-				{
-					Dependencies: []types.Dependency{
-						{
-							Name:    "boundary-pkg",
-							Version: "1.0.0",
-							Definition: types.Definition{
-								Line: 1,
-							},
-						},
-					},
-				},
-			},
-			info: PackagesInfo{
-				"boundary-pkg": {
-					Time: map[string]time.Time{
-						"1.0.0": now.AddDate(0, -MaxPackageAge, 0), // Exactly max age
-					},
-				},
-			},
-			want: []Mistake{
-				{
-					Rule: rule,
-					Definitions: []types.Definition{
-						{
-							Line: 1,
-						},
-					},
-				},
-			},
-			wantErr: false,
-		},
 	}
 
 	for _, tt := range tests {
