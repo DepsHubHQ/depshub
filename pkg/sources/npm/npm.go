@@ -72,7 +72,7 @@ func (NpmManager) fetchLatestVersion(ctx context.Context, name string, target *t
 }
 
 func (NpmManager) fetchDownloads(ctx context.Context, name string, target *types.Package) error {
-	from := time.Now().AddDate(0, -11, 0).Format("2006-01-02")
+	from := time.Now().AddDate(0, 0, -7).Format("2006-01-02")
 	to := time.Now().Format("2006-01-02")
 	url := fmt.Sprintf("https://api.npmjs.org/downloads/range/%s:%s/%s", from, to, name)
 
