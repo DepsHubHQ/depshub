@@ -19,6 +19,13 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Usage',
+          items: [
+            { label: 'Linter', slug: 'guides/example' },
+            { label: 'Updater', slug: 'getting-started' },
+          ],
+        },
+        {
           label: 'Configuration',
           autogenerate: { directory: 'reference' },
         },
@@ -27,6 +34,7 @@ export default defineConfig({
 					items: [
 						{ label: 'GitHub Actions', slug: 'guides/example' },
             { label: 'GitLab CI', slug: 'guides/example' },
+            { label: 'Bitbucket Pipelines', slug: 'guides/example' },
             { label: 'Jenkins', slug: 'guides/example' },
             { label: 'Azure DevOps', slug: 'guides/example' },
             { label: 'Travis CI', slug: 'guides/example' },
