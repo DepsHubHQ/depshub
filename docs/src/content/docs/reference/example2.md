@@ -1,5 +1,5 @@
 ---
-title: CLI Options
+title: depshub.yml
 description: A reference page in my new Starlight docs site.
 ---
 

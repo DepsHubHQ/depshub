@@ -11,22 +11,43 @@ export default defineConfig({
 				github: 'https://github.com/depshubhq/depshub',
 			},
 			sidebar: [
-        { label: 'Getting started', slug: 'getting-started' },
+        {
+          label: 'Getting started',
+          items: [
+            { label: 'What is DepsHub?', slug: 'guides/example' },
+            { label: 'Installation', slug: 'getting-started' },
+          ],
+        },
+        {
+          label: 'Configuration',
+          autogenerate: { directory: 'reference' },
+        },
 				{
-					label: 'Guides',
+          label: 'Automation',
 					items: [
-						{ label: 'Example Guide', slug: 'guides/example' },
+						{ label: 'GitHub Actions', slug: 'guides/example' },
+            { label: 'GitLab CI', slug: 'guides/example' },
+            { label: 'Jenkins', slug: 'guides/example' },
+            { label: 'Azure DevOps', slug: 'guides/example' },
+            { label: 'Travis CI', slug: 'guides/example' },
 					],
 				},
-				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
-				},
+        {
+          label: 'Misc',
+          items: [
+            { label: 'Technical details', slug: 'guides/example' },
+            { label: 'Contributions', slug: 'guides/example' },
+          ],
+        },
 			],
       customCss: [
         './src/styles/custom.css',
       ],
       pagination: false,
+      expressiveCode: {
+        themes: [],
+        useStarlightDarkModeSwitch: false,
+      },
 		}),
 	],
 });
