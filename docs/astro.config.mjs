@@ -11,10 +11,10 @@ export default defineConfig({
 				github: 'https://github.com/depshubhq/depshub',
 			},
 			sidebar: [
+        { label: 'Getting started', slug: 'getting-started' },
 				{
 					label: 'Guides',
 					items: [
-						// Each item here is one entry in the navigation menu.
 						{ label: 'Example Guide', slug: 'guides/example' },
 					],
 				},
