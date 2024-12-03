@@ -20,9 +20,12 @@
 	--sl-color-black: black;
 }
 
-.right-sidebar-container {
+.content-panel:where(.astro-7nkwcw3z)+.content-panel:where(.astro-7nkwcw3z) {
+  border-top: 0;
 }
 
 .right-sidebar {
   border-left: none;
+  padding-top: 100px;
+  padding-left: 15%;
 }
