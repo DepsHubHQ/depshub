@@ -24,6 +24,7 @@ func New() Linter {
 			rules.NewRuleMaxPackageAge(),
 			rules.NewRuleNoDeprecated(),
 			rules.NewRuleAllowedLicenses(),
+			rules.NewRuleMinWeeklyDownloads(),
 		},
 	}
 }
