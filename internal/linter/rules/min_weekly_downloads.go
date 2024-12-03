@@ -4,7 +4,7 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-const MinWeeklyDownloads = 300
+const MinWeeklyDownloads = 1000
 
 type RuleMinWeeklyDownloads struct {
 	name  string
