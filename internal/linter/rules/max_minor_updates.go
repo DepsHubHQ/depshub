@@ -4,7 +4,7 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-const MaxMinorUpdatesPercent = 60.0
+const MaxMinorUpdatesPercent = 40.0
 
 type RuleMaxMinorUpdates struct {
 	name  string
