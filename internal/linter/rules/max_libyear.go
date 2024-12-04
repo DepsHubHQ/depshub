@@ -33,7 +33,7 @@ func (r RuleMaxLibyear) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleMaxLibyear) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
+func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
 	mistakes := []Mistake{}
 
 	totalLibyear := 0.0

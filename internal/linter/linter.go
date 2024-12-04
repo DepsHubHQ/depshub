@@ -5,6 +5,7 @@ import (
 
 	"github.com/depshubhq/depshub/internal/linter/rules"
 	"github.com/depshubhq/depshub/pkg/manager"
+	"github.com/depshubhq/depshub/pkg/sources"
 )
 
 type Linter struct {
@@ -40,7 +41,7 @@ func (l Linter) Run(path string) (mistakes []rules.Mistake, err error) {
 
 	uniqueDependencies := scanner.UniqueDependencies(manifests)
 
-	packagesData, err := manager.NewFetcher().Fetch(uniqueDependencies)
+	packagesData, err := sources.NewFetcher().Fetch(uniqueDependencies)
 
 	// Run all rules
 	for _, rule := range l.rules {

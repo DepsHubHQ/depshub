@@ -28,7 +28,7 @@ func (r RuleNoMultipleVersions) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleNoMultipleVersions) Check(manifests []types.Manifest, info PackagesInfo) (mistakes []Mistake, err error) {
+func (r RuleNoMultipleVersions) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	type PackageInfo struct {
 		Path    string
 		Version string

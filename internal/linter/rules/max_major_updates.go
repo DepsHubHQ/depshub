@@ -30,7 +30,7 @@ func (r RuleMaxMajorUpdates) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleMaxMajorUpdates) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
+func (r RuleMaxMajorUpdates) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
 	mistakes := []Mistake{}
 	definitions := []types.Definition{}
 	totalDependencies := 0

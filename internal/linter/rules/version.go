@@ -43,4 +43,3 @@ func parseVersion(version string) (major, minor, patch int) {
 
 	return major, minor, patch
 }
-

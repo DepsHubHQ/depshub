@@ -28,7 +28,7 @@ func (r RuleNoDuplicates) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleNoDuplicates) Check(manifests []types.Manifest, info PackagesInfo) (mistakes []Mistake, err error) {
+func (r RuleNoDuplicates) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
 		deps := manifest.Dependencies
 

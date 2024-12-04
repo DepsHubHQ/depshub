@@ -32,7 +32,7 @@ func (r RuleNoUnstable) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleNoUnstable) Check(manifests []types.Manifest, info PackagesInfo) (mistakes []Mistake, err error) {
+func (r RuleNoUnstable) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
 		for _, dep := range manifest.Dependencies {
 			// Define regex pattern for x.x.x where x is one or more digits

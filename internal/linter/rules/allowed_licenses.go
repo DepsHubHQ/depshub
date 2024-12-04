@@ -37,7 +37,7 @@ func (r RuleAllowedLicenses) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleAllowedLicenses) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
+func (r RuleAllowedLicenses) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
 	mistakes := []Mistake{}
 
 	for _, manifest := range manifests {

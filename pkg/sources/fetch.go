@@ -1,10 +1,9 @@
-package manager
+package sources
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/depshubhq/depshub/internal/linter/rules"
 	"github.com/depshubhq/depshub/pkg/sources/npm"
 	"github.com/depshubhq/depshub/pkg/types"
 )
@@ -17,7 +16,7 @@ func NewFetcher() fetcher {
 
 const MaxConcurrent = 30
 
-func (f fetcher) Fetch(uniqueDependencies []string) (rules.PackagesInfo, error) {
+func (f fetcher) Fetch(uniqueDependencies []string) (types.PackagesInfo, error) {
 	// Create channels for results and errors
 	type packageResult struct {
 		pkg types.Package
@@ -26,7 +25,7 @@ func (f fetcher) Fetch(uniqueDependencies []string) (rules.PackagesInfo, error) 
 	resultChan := make(chan packageResult)
 
 	// Launch goroutines for concurrent fetching
-	npmManager := npm.NpmManager{}
+	npmSource := npm.NpmSource{}
 	background := context.Background()
 	activeRequests := 0
 
@@ -42,7 +41,7 @@ func (f fetcher) Fetch(uniqueDependencies []string) (rules.PackagesInfo, error) 
 				<-sem // Release semaphore
 			}()
 
-			npmPackage, err := npmManager.FetchPackageData(background, depName)
+			npmPackage, err := npmSource.FetchPackageData(background, depName)
 			resultChan <- packageResult{
 				pkg: npmPackage,
 				err: err,
@@ -51,7 +50,7 @@ func (f fetcher) Fetch(uniqueDependencies []string) (rules.PackagesInfo, error) 
 	}
 
 	// Collect results
-	var packagesData = make(rules.PackagesInfo)
+	var packagesData = make(types.PackagesInfo)
 
 	for range activeRequests {
 		result := <-resultChan

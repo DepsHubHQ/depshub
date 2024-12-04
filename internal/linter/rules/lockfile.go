@@ -28,7 +28,7 @@ func (r RuleLockfile) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleLockfile) Check(manifests []types.Manifest, info PackagesInfo) (mistakes []Mistake, err error) {
+func (r RuleLockfile) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
 		if manifest.Lockfile == nil {
 			mistakes = append(mistakes, Mistake{
