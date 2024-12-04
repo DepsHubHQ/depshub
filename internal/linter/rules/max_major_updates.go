@@ -4,33 +4,33 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-const MaxMinorUpdatesPercent = 40.0
+const MaxMajorUpdatesPercent = 20.0
 
-type RuleMaxMinorUpdates struct {
+type RuleMaxMajorUpdates struct {
 	name  string
 	level Level
 }
 
-func NewRuleMaxMinorUpdates() RuleMaxMinorUpdates {
-	return RuleMaxMinorUpdates{
-		name:  "max-minor-updates",
+func NewRuleMaxMajorUpdates() RuleMaxMajorUpdates {
+	return RuleMaxMajorUpdates{
+		name:  "max-major-updates",
 		level: LevelError,
 	}
 }
 
-func (r RuleMaxMinorUpdates) GetMessage() string {
-	return "The total number of minor updates is too high"
+func (r RuleMaxMajorUpdates) GetMessage() string {
+	return "The total number of major updates is too high"
 }
 
-func (r RuleMaxMinorUpdates) GetName() string {
+func (r RuleMaxMajorUpdates) GetName() string {
 	return r.name
 }
 
-func (r RuleMaxMinorUpdates) GetLevel() Level {
+func (r RuleMaxMajorUpdates) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleMaxMinorUpdates) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
+func (r RuleMaxMajorUpdates) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
 	mistakes := []Mistake{}
 	definitions := []types.Definition{}
 	totalDependencies := 0
@@ -44,7 +44,7 @@ func (r RuleMaxMinorUpdates) Check(manifests []types.Manifest, info PackagesInfo
 				for v := range pkg.Versions {
 					ma, mi, p := parseVersion(v)
 
-					if mi > minor && ma == major && p == patch {
+					if ma > major && p == patch && mi == minor {
 						definitions = append(definitions, dep.Definition)
 						break
 					}
@@ -57,7 +57,7 @@ func (r RuleMaxMinorUpdates) Check(manifests []types.Manifest, info PackagesInfo
 		return mistakes, nil
 	}
 
-	if float64(len(definitions))/float64(totalDependencies)*100 > MaxMinorUpdatesPercent {
+	if float64(len(definitions))/float64(totalDependencies)*100 > MaxMajorUpdatesPercent {
 		mistakes = append(mistakes, Mistake{
 			Rule:        r,
 			Definitions: definitions,
