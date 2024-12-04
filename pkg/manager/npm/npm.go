@@ -28,6 +28,8 @@ func (Npm) Managed(path string) bool {
 }
 
 func (Npm) Dependencies(path string) ([]types.Dependency, error) {
+	var dependencies []types.Dependency
+
 	file, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -37,8 +39,6 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 	if err := json.Unmarshal(file, &packageJSON); err != nil {
 		return nil, err
 	}
-
-	var dependencies []types.Dependency
 
 	// Add regular dependencies
 	for name, version := range packageJSON.Dependencies {
@@ -93,7 +93,7 @@ func (Npm) LockfilePath(path string) (string, error) {
 
 // Returns the version without any prefix or suffix
 func cleanVersion(version string) string {
-	return strings.Trim(version, "^~*><= ")
+	return strings.Trim(version, "v^~*><= ")
 }
 
 func findLineInfo(data []byte, section string, key string) (line int, rawLine string) {
