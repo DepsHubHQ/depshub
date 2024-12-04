@@ -26,6 +26,7 @@ func New() Linter {
 			rules.NewRuleAllowedLicenses(),
 			rules.NewRuleMinWeeklyDownloads(),
 			rules.NewRuleMaxLibyear(),
+			rules.NewRuleMaxPatchUpdates(),
 		},
 	}
 }
