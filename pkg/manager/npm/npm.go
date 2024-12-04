@@ -118,7 +118,7 @@ func findLineInfo(data []byte, section string, key string) (line int, rawLine st
 
 		// Look for our key while in the correct section
 		if inSection && bytes.Contains(trimmed, []byte(quotedKey)) {
-			return i + 1, string(trimmed)
+			return i, string(trimmed)
 		}
 	}
 
