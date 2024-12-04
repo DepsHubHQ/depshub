@@ -40,9 +40,11 @@ func (Go) Dependencies(path string) ([]types.Dependency, error) {
 		}
 
 		rawLine := []byte{}
+		line := 0
 
 		if require.Syntax != nil {
 			rawLine = file[require.Syntax.Start.Byte:require.Syntax.End.Byte]
+			line = require.Syntax.Start.Line
 		}
 
 		dependencies = append(dependencies, types.Dependency{
@@ -52,7 +54,7 @@ func (Go) Dependencies(path string) ([]types.Dependency, error) {
 			Definition: types.Definition{
 				Path:    path,
 				RawLine: string(rawLine),
-				Line:    require.Syntax.Start.Line,
+				Line:    line,
 			},
 		})
 	}
