@@ -59,7 +59,7 @@ func (Go) Dependencies(path string) ([]types.Dependency, error) {
 		})
 	}
 
-	return nil, nil
+	return dependencies, nil
 }
 
 // Returns the version without any prefix or suffix
