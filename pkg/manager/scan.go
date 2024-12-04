@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	gomanager "github.com/depshubhq/depshub/pkg/manager/go"
 	"github.com/depshubhq/depshub/pkg/manager/npm"
 	"github.com/depshubhq/depshub/pkg/types"
 	ignore "github.com/sabhiram/go-gitignore"
@@ -20,6 +21,7 @@ func New() scanner {
 	return scanner{
 		managers: []Manager{
 			npm.Npm{},
+			gomanager.Go{},
 		},
 	}
 }
@@ -37,7 +39,7 @@ func (s scanner) Scan(path string) ([]types.Manifest, error) {
 			return filepath.SkipDir
 		}
 
-		dependencies, err := s.dependencies(path)
+		dependencies, managerType, err := s.dependencies(path)
 
 		if err != nil {
 			return err
@@ -54,6 +56,7 @@ func (s scanner) Scan(path string) ([]types.Manifest, error) {
 
 		if len(dependencies) != 0 {
 			manifests = append(manifests, types.Manifest{
+				Manager:      managerType,
 				Path:         path,
 				Dependencies: dependencies,
 				Lockfile:     lockfile,
@@ -82,14 +85,19 @@ func (s scanner) UniqueDependencies(manifests []types.Manifest) (result []string
 	return result
 }
 
-func (s scanner) dependencies(path string) ([]types.Dependency, error) {
+func (s scanner) dependencies(path string) ([]types.Dependency, types.ManagerType, error) {
 	for _, m := range s.managers {
 		if m.Managed(path) {
-			return m.Dependencies(path)
+			dependencies, err := m.Dependencies(path)
+			if err != nil {
+				return nil, 0, err
+			}
+
+			return dependencies, m.GetType(), nil
 		}
 	}
 
-	return nil, nil
+	return nil, 0, nil
 }
 
 func (s scanner) lockfilePath(path string) (string, error) {

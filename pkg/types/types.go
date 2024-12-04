@@ -7,10 +7,18 @@ import (
 	"time"
 )
 
+type ManagerType int
+
+const (
+	Npm ManagerType = iota
+	Go
+)
+
 var ErrPackageNotFound = errors.New("package not found")
 var ErrPackageUnpublished = errors.New("package unpublished")
 
 type Manifest struct {
+	Manager      ManagerType
 	Path         string
 	Dependencies []Dependency
 	*Lockfile

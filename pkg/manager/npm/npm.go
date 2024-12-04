@@ -19,6 +19,10 @@ type PackageJSON struct {
 	DevDependencies map[string]string `json:"devDependencies"`
 }
 
+func (Npm) GetType() types.ManagerType {
+	return types.Npm
+}
+
 func (Npm) Managed(path string) bool {
 	fileName := filepath.Base(path)
 	return fileName == "package.json"
