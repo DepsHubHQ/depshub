@@ -87,14 +87,16 @@ func (s scanner) UniqueDependencies(manifests []types.Manifest) (result []string
 
 func (s scanner) dependencies(path string) ([]types.Dependency, types.ManagerType, error) {
 	for _, m := range s.managers {
-		if m.Managed(path) {
-			dependencies, err := m.Dependencies(path)
-			if err != nil {
-				return nil, 0, err
-			}
-
-			return dependencies, m.GetType(), nil
+		if !m.Managed(path) {
+			continue
 		}
+
+		dependencies, err := m.Dependencies(path)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		return dependencies, m.GetType(), nil
 	}
 
 	return nil, 0, nil

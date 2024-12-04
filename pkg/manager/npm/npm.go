@@ -24,8 +24,7 @@ func (Npm) GetType() types.ManagerType {
 }
 
 func (Npm) Managed(path string) bool {
-	fileName := filepath.Base(path)
-	return fileName == "package.json"
+	return filepath.Base(path) == "package.json"
 }
 
 func (Npm) Dependencies(path string) ([]types.Dependency, error) {
