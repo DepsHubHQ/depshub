@@ -22,7 +22,7 @@ It's designed to be used both locally and in CI/CD pipelines, supporting [multip
 
 ## Why DepsHub?
 
-- Automates common dependency management checks (consistency, security, licenses, etc.).
+- Automates a broad range of dependency management checks (consistency, security, licenses, etc.).
 - Reduces the time spent on dependency updates by automating common tasks.
 - Reduces the amount of PRs related to dependencies by updating only when _necessary_.
 - Allows you to enforce your own policies through custom rules.
