@@ -28,7 +28,7 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Configuration',
+          label: 'Reference',
           autogenerate: { directory: 'reference' },
         },
         {
