@@ -1,6 +1,7 @@
 /*@import "@radix-ui/colors/blue.css";*/
 /*@import "@radix-ui/colors/amber.css";*/
 /*@import "@radix-ui/colors/green.css";*/
+@import "@radix-ui/colors/gray.css";
 @import "@radix-ui/colors/lime.css";
 @import "@radix-ui/colors/olive.css";
 /*@import "@radix-ui/colors/orange-dark.css";*/
@@ -10,6 +11,7 @@
 	--sl-color-accent-low: var(--lime-12);
 	--sl-color-accent: var(--lime-9);
 	--sl-color-accent-high: var(--lime-10);
+  --sl-color-text: var(--gray-6);
 	--sl-color-white: #ffffff;
 	--sl-color-gray-1: #eaf0e8;
 	--sl-color-gray-2: #bdc4bb;

@@ -14,37 +14,28 @@ export default defineConfig({
         {
           label: 'Getting started',
           items: [
-            { label: 'What is DepsHub?', slug: 'guides/example' },
-            { label: 'Installation', slug: 'getting-started' },
+            { label: 'What is DepsHub?', slug: 'what-is-depshub' },
+            { label: 'Installation', slug: 'installation' },
           ],
         },
         {
-          label: 'Usage',
+          label: 'Guides',
           items: [
-            { label: 'Linter', slug: 'guides/example' },
-            { label: 'Updater', slug: 'getting-started' },
+            { label: 'Linter', slug: 'guides/linter' },
+            { label: 'Updater', slug: 'guides/updater' },
+            { label: 'CI/CD integrations', slug: 'guides/integrations' },
           ],
         },
         {
           label: 'Configuration',
           autogenerate: { directory: 'reference' },
         },
-				{
-          label: 'Automation',
-					items: [
-						{ label: 'GitHub Actions', slug: 'guides/example' },
-            { label: 'GitLab CI', slug: 'guides/example' },
-            { label: 'Bitbucket Pipelines', slug: 'guides/example' },
-            { label: 'Jenkins', slug: 'guides/example' },
-            { label: 'Azure DevOps', slug: 'guides/example' },
-            { label: 'Travis CI', slug: 'guides/example' },
-					],
-				},
         {
           label: 'Misc',
           items: [
-            { label: 'Technical details', slug: 'guides/example' },
-            { label: 'Contributions', slug: 'guides/example' },
+            { label: 'Supported languages', slug: 'misc/supported' },
+            { label: 'Technical details', slug: 'misc/technical-details' },
+            { label: 'Contributions', slug: 'misc/contributions' },
           ],
         },
 			],
