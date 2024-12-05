@@ -3,6 +3,8 @@ title: What is DepsHub?
 ---
 
 **DepsHub** is a dependency management tool that helps to keep your dependencies consistent, secure, and up-to-date.
+
+It allows you to validate, lint, and update your dependencies, as well as enforce your own policies through custom rules.
 It's designed to be used both locally and in CI/CD pipelines, supporting [multiple](/misc/supported) languages and package managers.
 
 
