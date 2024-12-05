@@ -31,7 +31,8 @@ While there are other tools available for dependency management, one of the main
 
 ## DepsHub vs. Other Tools
 
-Most of the existing dependency management tools focus on a _single_ aspect of the problem - updating packages to the latest versions.
-There are many more aspects to dependency management, such as security, consistency, and automation, which are often overlooked.
+Most of the existing dependency management tools focus on a _single_ aspect of the problem - updating packages to the latest versions due to security vulnerabilities or outdated dependencies.
+
+There are many more points to dependency management, such as consistency, licenses, maintainability, and more.
 
 It works in as a CLI tool, making it easy to [integrate](/guides/integrations) into your existing workflows.
