@@ -24,6 +24,7 @@ export default defineConfig({
             { label: 'Linter', slug: 'guides/linter' },
             { label: 'Updater', slug: 'guides/updater' },
             { label: 'CI/CD integrations', slug: 'guides/integrations' },
+            { label: 'Creating custom rules', slug: 'guides/custom' },
           ],
         },
         {
