@@ -8,26 +8,28 @@ It's designed to be used both locally and in CI/CD pipelines, supporting [multip
 
 ## Features
 
-- [**Linter**](/guides/linter) - checks for common issues in your dependencies.
-- [**Updater**](/guides/updater) - updates your dependencies to the latest versions.
-- [**Configurable**](/reference/configuration-file) - customize the default behavior with a configuration file.
-- [**Custom rules**](/guides/custom) - create custom rules to enforce your own policies.
-- [**CI/CD**](/guides/integrations) - integrates with your CI/CD pipelines.
-- **Security** - checks for vulnerabilities in your dependencies.
-- **Automation** - automates dependency management tasks.
-- **Local** - works locally on your machine.
+- **Comprehensive** - multiple data sources: packages data, licenses, security vulnerabilities and more.
+- **Linter** - checks for 20+ common [issues](/reference/rules) in your dependencies.
+- **Updater** - updates your dependencies to the latest versions when necessary.
+- **Configurable** - customize the default behavior with a [configuration](/reference/configuration-file) file.
+- **Supports custom rules** - create [custom](/guides/custom) rules to enforce your own policies.
+- **CI/CD** - integrates with your [CI/CD](/guides/integrations) pipelines.
 
 
 ## Why DepsHub?
 
-For many developers, managing dependencies can be a tedious and time-consuming task.
-DepsHub aims to simplify this process by providing a set of tools that automate common dependency management tasks.
+- Consistent dependencies across your projects.
+- Reduces the time spent on dependency management by automating common tasks.
+- Reduces the amount of PRs related to dependencies by updating only when _necessary_.
+- Automates common dependency management checks (security, licenses, etc.).
+- Allows you to enforce your own policies through custom rules.
+- Works with multiple languages and package managers.
 
 While there are other tools available for dependency management, one of the main advantages of DepsHub is its simplicity, ease of use and high level of [customization](/reference/configuration-file/).
 
 ## DepsHub vs. Other Tools
 
-Most of the existing dependency management tools focus on a single aspect of the problem - updating packages to the latest versions.
+Most of the existing dependency management tools focus on a _single_ aspect of the problem - updating packages to the latest versions.
 There are many more aspects to dependency management, such as security, consistency, and automation, which are often overlooked.
 
 It works in as a CLI tool, making it easy to [integrate](/guides/integrations) into your existing workflows.
