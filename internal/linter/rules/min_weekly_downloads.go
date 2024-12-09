@@ -1,20 +1,24 @@
 package rules
 
 import (
+	"slices"
+
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
 const MinWeeklyDownloads = 1000
 
 type RuleMinWeeklyDownloads struct {
-	name  string
-	level Level
+	name      string
+	level     Level
+	supported []types.ManagerType
 }
 
 func NewRuleMinWeeklyDownloads() RuleMinWeeklyDownloads {
 	return RuleMinWeeklyDownloads{
-		name:  "min-weekly-downloads",
-		level: LevelError,
+		name:      "min-weekly-downloads",
+		level:     LevelError,
+		supported: []types.ManagerType{types.Npm},
 	}
 }
 
@@ -30,7 +34,11 @@ func (r RuleMinWeeklyDownloads) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
+func (r RuleMinWeeklyDownloads) IsSupported(t types.ManagerType) bool {
+	return slices.Contains(r.supported, t)
+}
+
+func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
 	mistakes := []Mistake{}
 
 	for _, manifest := range manifests {

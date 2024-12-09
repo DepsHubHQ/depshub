@@ -25,7 +25,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 	tests := []struct {
 		name      string
 		manifests []types.Manifest
-		info      PackagesInfo
+		info      types.PackagesInfo
 		want      []Mistake
 		wantErr   bool
 	}{
@@ -45,7 +45,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"pkg1": types.Package{
 					Time: map[string]time.Time{
 						"1.0.0": baseTime.AddDate(0, -6, 0),
@@ -72,7 +72,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"old-pkg": types.Package{
 					Time: map[string]time.Time{
 						"1.0.0": baseTime.AddDate(-31, 0, 0),
@@ -108,7 +108,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"pkg1": types.Package{
 					Time: map[string]time.Time{
 						"1.0.0": baseTime.AddDate(-16, 0, 0),
@@ -145,7 +145,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 					},
 				},
 			},
-			info:    PackagesInfo{},
+			info:    types.PackagesInfo{},
 			want:    []Mistake{},
 			wantErr: false,
 		},
@@ -161,7 +161,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"pkg": types.Package{
 					Time: map[string]time.Time{},
 				},
@@ -172,7 +172,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 		{
 			name:      "empty manifests",
 			manifests: []types.Manifest{},
-			info:      PackagesInfo{},
+			info:      types.PackagesInfo{},
 			want:      []Mistake{},
 			wantErr:   false,
 		},
@@ -209,4 +209,3 @@ func TestRuleMaxLibyear(t *testing.T) {
 		})
 	}
 }
-

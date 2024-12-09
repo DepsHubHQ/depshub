@@ -1,10 +1,10 @@
-package manager
+package sources
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/depshubhq/depshub/internal/linter/rules"
+	"github.com/depshubhq/depshub/pkg/sources/go"
 	"github.com/depshubhq/depshub/pkg/sources/npm"
 	"github.com/depshubhq/depshub/pkg/types"
 )
@@ -17,7 +17,7 @@ func NewFetcher() fetcher {
 
 const MaxConcurrent = 30
 
-func (f fetcher) Fetch(uniqueDependencies []string) (rules.PackagesInfo, error) {
+func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInfo, error) {
 	// Create channels for results and errors
 	type packageResult struct {
 		pkg types.Package
@@ -26,32 +26,42 @@ func (f fetcher) Fetch(uniqueDependencies []string) (rules.PackagesInfo, error) 
 	resultChan := make(chan packageResult)
 
 	// Launch goroutines for concurrent fetching
-	npmManager := npm.NpmManager{}
+	npmSource := npm.NpmSource{}
+	goSource := gosource.GoSource{}
 	background := context.Background()
 	activeRequests := 0
 
 	// Use a semaphore to limit concurrent requests
 	sem := make(chan struct{}, MaxConcurrent)
 
-	for _, name := range uniqueDependencies {
+	for _, dep := range uniqueDependencies {
 		activeRequests++
 
-		go func(depName string) {
+		go func(dep types.Dependency) {
 			sem <- struct{}{} // Acquire semaphore
 			defer func() {
 				<-sem // Release semaphore
 			}()
 
-			npmPackage, err := npmManager.FetchPackageData(background, depName)
+			var packageInfo types.Package
+			var err error
+
+			switch dep.Manager {
+			case types.Npm:
+				packageInfo, err = npmSource.FetchPackageData(background, dep.Name)
+			case types.Go:
+				packageInfo, err = goSource.FetchPackageData(dep.Name, dep.Version)
+			}
+
 			resultChan <- packageResult{
-				pkg: npmPackage,
+				pkg: packageInfo,
 				err: err,
 			}
-		}(name)
+		}(dep)
 	}
 
 	// Collect results
-	var packagesData = make(rules.PackagesInfo)
+	var packagesData = make(types.PackagesInfo)
 
 	for range activeRequests {
 		result := <-resultChan

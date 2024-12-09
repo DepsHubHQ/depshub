@@ -14,14 +14,16 @@ var AllowedLicenses = []string{
 }
 
 type RuleAllowedLicenses struct {
-	name  string
-	level Level
+	name      string
+	level     Level
+	supported []types.ManagerType
 }
 
 func NewRuleAllowedLicenses() RuleAllowedLicenses {
 	return RuleAllowedLicenses{
-		name:  "allowed-licenses",
-		level: LevelError,
+		name:      "allowed-licenses",
+		level:     LevelError,
+		supported: []types.ManagerType{types.Npm, types.Go},
 	}
 }
 
@@ -37,7 +39,11 @@ func (r RuleAllowedLicenses) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleAllowedLicenses) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
+func (r RuleAllowedLicenses) IsSupported(t types.ManagerType) bool {
+	return slices.Contains(r.supported, t)
+}
+
+func (r RuleAllowedLicenses) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
 	mistakes := []Mistake{}
 
 	for _, manifest := range manifests {

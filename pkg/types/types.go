@@ -7,10 +7,18 @@ import (
 	"time"
 )
 
+type ManagerType int
+
+const (
+	Npm ManagerType = iota
+	Go
+)
+
 var ErrPackageNotFound = errors.New("package not found")
 var ErrPackageUnpublished = errors.New("package unpublished")
 
 type Manifest struct {
+	Manager      ManagerType
 	Path         string
 	Dependencies []Dependency
 	*Lockfile
@@ -21,6 +29,7 @@ type Lockfile struct {
 }
 
 type Dependency struct {
+	Manager ManagerType
 	Name    string
 	Version string
 	Dev     bool
@@ -39,12 +48,6 @@ type PackageVersion struct {
 	Deprecated string `json:"deprecated"`
 }
 
-type Repository struct {
-	Type      string `json:"type"`
-	URL       string `json:"url"`
-	Directory string `json:"directory"`
-}
-
 type Maintainer struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
@@ -55,19 +58,15 @@ type Download struct {
 	Downloads int
 }
 
+// A map of package names to package information.
+type PackagesInfo = map[string]Package
+
 type Package struct {
-	Name          string
-	Versions      map[string]PackageVersion
-	LatestVersion PackageVersion
-	Repository    Repository
-	Time          map[string]time.Time `json:"time"`
-	License       string
-	Homepage      string
-	Readme        string
-	Maintainers   []Maintainer
-	Keywords      []string
-	Description   string
-	Downloads     []Download
+	Name      string
+	Versions  map[string]PackageVersion
+	Time      map[string]time.Time `json:"time"`
+	License   string
+	Downloads []Download
 }
 
 func (pv *PackageVersion) UnmarshalJSON(data []byte) error {
@@ -118,9 +117,8 @@ func (pv *PackageVersion) UnmarshalJSON(data []byte) error {
 func (pd *Package) UnmarshalJSON(data []byte) error {
 	type Alias Package // Create an alias to avoid recursion
 	aux := &struct {
-		Repository json.RawMessage            `json:"repository"`
-		Time       map[string]json.RawMessage `json:"time"`
-		License    json.RawMessage            `json:"license"`
+		Time    map[string]json.RawMessage `json:"time"`
+		License json.RawMessage            `json:"license"`
 		*Alias
 	}{
 		Alias: (*Alias)(pd),
@@ -131,10 +129,6 @@ func (pd *Package) UnmarshalJSON(data []byte) error {
 	}
 
 	if err := checkUnpublished(aux.Time); err != nil {
-		return err
-	}
-
-	if err := handleRepository(aux.Repository, pd); err != nil {
 		return err
 	}
 
@@ -150,36 +144,6 @@ func checkUnpublished(timeMap map[string]json.RawMessage) error {
 		return ErrPackageUnpublished
 	}
 	return nil
-}
-
-func handleRepository(repoData json.RawMessage, pd *Package) error {
-	if len(repoData) == 0 {
-		return nil // No repository data
-	}
-
-	var repos []Repository
-	if err := json.Unmarshal(repoData, &repos); err == nil && len(repos) > 0 {
-		pd.Repository = repos[0]
-		return nil
-	}
-
-	var repoObj Repository
-	if err := json.Unmarshal(repoData, &repoObj); err == nil {
-		pd.Repository = repoObj
-		return nil
-	}
-
-	var repoStr string
-	if err := json.Unmarshal(repoData, &repoStr); err == nil {
-		pd.Repository = Repository{
-			Type:      "git",
-			URL:       repoStr,
-			Directory: "",
-		}
-		return nil
-	}
-
-	return fmt.Errorf("invalid repository format")
 }
 
 func handleLicense(licenseData json.RawMessage, pd *Package) error {

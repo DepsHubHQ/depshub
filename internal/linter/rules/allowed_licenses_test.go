@@ -21,7 +21,7 @@ func TestRuleAllowedLicenses(t *testing.T) {
 	testCases := []struct {
 		name      string
 		manifests []types.Manifest
-		info      PackagesInfo
+		info      types.PackagesInfo
 		expected  []Mistake
 	}{
 		{
@@ -40,7 +40,7 @@ func TestRuleAllowedLicenses(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"pkg1": {License: "MIT"},
 				"pkg2": {License: "Apache-2.0"},
 			},
@@ -58,7 +58,7 @@ func TestRuleAllowedLicenses(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"pkg1": {License: ""},
 			},
 			expected: []Mistake{},
@@ -75,7 +75,7 @@ func TestRuleAllowedLicenses(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"pkg1": {License: "GPL-3.0"},
 			},
 			expected: []Mistake{
@@ -109,7 +109,7 @@ func TestRuleAllowedLicenses(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"pkg1": {License: "MIT"},
 				"pkg2": {License: "GPL-3.0"},
 			},
@@ -136,7 +136,7 @@ func TestRuleAllowedLicenses(t *testing.T) {
 					},
 				},
 			},
-			info:     PackagesInfo{},
+			info:     types.PackagesInfo{},
 			expected: []Mistake{},
 		},
 	}
@@ -149,4 +149,3 @@ func TestRuleAllowedLicenses(t *testing.T) {
 		})
 	}
 }
-

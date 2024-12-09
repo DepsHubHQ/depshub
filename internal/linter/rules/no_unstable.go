@@ -2,6 +2,7 @@ package rules
 
 import (
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -9,14 +10,16 @@ import (
 )
 
 type RuleNoUnstable struct {
-	name  string
-	level Level
+	name      string
+	level     Level
+	supported []types.ManagerType
 }
 
 func NewRuleNoUnstable() RuleNoUnstable {
 	return RuleNoUnstable{
-		name:  "no-unstable",
-		level: LevelError,
+		name:      "no-unstable",
+		level:     LevelError,
+		supported: []types.ManagerType{types.Npm, types.Go},
 	}
 }
 
@@ -32,7 +35,11 @@ func (r RuleNoUnstable) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleNoUnstable) Check(manifests []types.Manifest, info PackagesInfo) (mistakes []Mistake, err error) {
+func (r RuleNoUnstable) IsSupported(t types.ManagerType) bool {
+	return slices.Contains(r.supported, t)
+}
+
+func (r RuleNoUnstable) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
 		for _, dep := range manifest.Dependencies {
 			// Define regex pattern for x.x.x where x is one or more digits

@@ -19,12 +19,17 @@ type PackageJSON struct {
 	DevDependencies map[string]string `json:"devDependencies"`
 }
 
+func (Npm) GetType() types.ManagerType {
+	return types.Npm
+}
+
 func (Npm) Managed(path string) bool {
-	fileName := filepath.Base(path)
-	return fileName == "package.json"
+	return filepath.Base(path) == "package.json"
 }
 
 func (Npm) Dependencies(path string) ([]types.Dependency, error) {
+	var dependencies []types.Dependency
+
 	file, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -35,13 +40,12 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 		return nil, err
 	}
 
-	var dependencies []types.Dependency
-
 	// Add regular dependencies
 	for name, version := range packageJSON.Dependencies {
 		line, rawLine := findLineInfo(file, "dependencies", name)
 		dependencies = append(dependencies, types.Dependency{
-			Name: name,
+			Manager: types.Npm,
+			Name:    name,
 			//  TODO We should use the version from the lockfile instead
 			Version: cleanVersion(version),
 			Dev:     false,
@@ -57,7 +61,8 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 	for name, version := range packageJSON.DevDependencies {
 		line, rawLine := findLineInfo(file, "devDependencies", name)
 		dependencies = append(dependencies, types.Dependency{
-			Name: name,
+			Manager: types.Npm,
+			Name:    name,
 			//  TODO We should use the version from the lockfile instead
 			Version: cleanVersion(version),
 			Dev:     true,
@@ -90,7 +95,7 @@ func (Npm) LockfilePath(path string) (string, error) {
 
 // Returns the version without any prefix or suffix
 func cleanVersion(version string) string {
-	return strings.Trim(version, "^~*><= ")
+	return strings.Trim(version, "v^~*><= ")
 }
 
 func findLineInfo(data []byte, section string, key string) (line int, rawLine string) {
@@ -115,7 +120,7 @@ func findLineInfo(data []byte, section string, key string) (line int, rawLine st
 
 		// Look for our key while in the correct section
 		if inSection && bytes.Contains(trimmed, []byte(quotedKey)) {
-			return i + 1, string(trimmed)
+			return i, string(trimmed)
 		}
 	}
 

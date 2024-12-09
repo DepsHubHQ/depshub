@@ -25,7 +25,7 @@ func TestRuleMaxPackageAge(t *testing.T) {
 	tests := []struct {
 		name      string
 		manifests []types.Manifest
-		info      PackagesInfo
+		info      types.PackagesInfo
 		want      []Mistake
 		wantErr   bool
 	}{
@@ -44,7 +44,7 @@ func TestRuleMaxPackageAge(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"old-pkg": {
 					Time: map[string]time.Time{
 						"1.0.0": now.AddDate(0, -(MaxPackageAge + 6), 0), // 6 months older than max age
@@ -78,7 +78,7 @@ func TestRuleMaxPackageAge(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"recent-pkg": {
 					Time: map[string]time.Time{
 						"1.0.0": now.AddDate(0, -(MaxPackageAge - 1), 0), // 1 month newer than max age
@@ -100,7 +100,7 @@ func TestRuleMaxPackageAge(t *testing.T) {
 					},
 				},
 			},
-			info:    PackagesInfo{},
+			info:    types.PackagesInfo{},
 			want:    mistakes,
 			wantErr: false,
 		},
@@ -116,7 +116,7 @@ func TestRuleMaxPackageAge(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"test-pkg": {
 					Time: map[string]time.Time{
 						"1.0.0": now,
@@ -152,7 +152,7 @@ func TestRuleMaxPackageAge(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"old-pkg": {
 					Time: map[string]time.Time{
 						"1.0.0": now.AddDate(0, -(MaxPackageAge + 12), 0), // 12 months older than max age
