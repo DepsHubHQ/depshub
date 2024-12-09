@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"slices"
 	"time"
 
 	"github.com/depshubhq/depshub/pkg/types"
@@ -9,14 +10,16 @@ import (
 const MaxPackageAge = 36
 
 type RuleMaxPackageAge struct {
-	name  string
-	level Level
+	name      string
+	level     Level
+	supported []types.ManagerType
 }
 
 func NewRuleMaxPackageAge() RuleMaxPackageAge {
 	return RuleMaxPackageAge{
-		name:  "max-package-age",
-		level: LevelError,
+		name:      "max-package-age",
+		level:     LevelError,
+		supported: []types.ManagerType{types.Npm, types.Go},
 	}
 }
 
@@ -30,6 +33,10 @@ func (r RuleMaxPackageAge) GetName() string {
 
 func (r RuleMaxPackageAge) GetLevel() Level {
 	return r.level
+}
+
+func (r RuleMaxPackageAge) IsSupported(t types.ManagerType) bool {
+	return slices.Contains(r.supported, t)
 }
 
 func (r RuleMaxPackageAge) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {

@@ -1,18 +1,22 @@
 package rules
 
 import (
+	"slices"
+
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
 type RuleNoDeprecated struct {
-	name  string
-	level Level
+	name      string
+	level     Level
+	supported []types.ManagerType
 }
 
 func NewRuleNoDeprecated() RuleNoDeprecated {
 	return RuleNoDeprecated{
-		name:  "no-deprecated",
-		level: LevelError,
+		name:      "no-deprecated",
+		level:     LevelError,
+		supported: []types.ManagerType{types.Npm, types.Go},
 	}
 }
 
@@ -26,6 +30,10 @@ func (r RuleNoDeprecated) GetName() string {
 
 func (r RuleNoDeprecated) GetLevel() Level {
 	return r.level
+}
+
+func (r RuleNoDeprecated) IsSupported(t types.ManagerType) bool {
+	return slices.Contains(r.supported, t)
 }
 
 func (r RuleNoDeprecated) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {

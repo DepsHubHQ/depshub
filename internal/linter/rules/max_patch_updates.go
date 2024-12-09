@@ -1,20 +1,24 @@
 package rules
 
 import (
+	"slices"
+
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
 const MaxPatchUpdatesPercent = 60.0
 
 type RuleMaxPatchUpdates struct {
-	name  string
-	level Level
+	name      string
+	level     Level
+	supported []types.ManagerType
 }
 
 func NewRuleMaxPatchUpdates() RuleMaxPatchUpdates {
 	return RuleMaxPatchUpdates{
-		name:  "max-patch-updates",
-		level: LevelError,
+		name:      "max-patch-updates",
+		level:     LevelError,
+		supported: []types.ManagerType{types.Npm, types.Go},
 	}
 }
 
@@ -28,6 +32,10 @@ func (r RuleMaxPatchUpdates) GetName() string {
 
 func (r RuleMaxPatchUpdates) GetLevel() Level {
 	return r.level
+}
+
+func (r RuleMaxPatchUpdates) IsSupported(t types.ManagerType) bool {
+	return slices.Contains(r.supported, t)
 }
 
 func (r RuleMaxPatchUpdates) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {

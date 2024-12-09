@@ -14,6 +14,7 @@ type Rule interface {
 	GetMessage() string
 	GetLevel() Level
 	Check([]types.Manifest, types.PackagesInfo) ([]Mistake, error)
+	IsSupported(types.ManagerType) bool
 }
 
 type Mistake struct {

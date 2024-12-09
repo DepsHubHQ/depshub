@@ -1,20 +1,23 @@
 package rules
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
 type RuleNoPreRelease struct {
-	name  string
-	level Level
+	name      string
+	level     Level
+	supported []types.ManagerType
 }
 
 func NewRuleNoPreRelease() RuleNoPreRelease {
 	return RuleNoPreRelease{
-		name:  "no-pre-release",
-		level: LevelError,
+		name:      "no-pre-release",
+		level:     LevelError,
+		supported: []types.ManagerType{types.Npm, types.Go},
 	}
 }
 
@@ -28,6 +31,10 @@ func (r RuleNoPreRelease) GetName() string {
 
 func (r RuleNoPreRelease) GetLevel() Level {
 	return r.level
+}
+
+func (r RuleNoPreRelease) IsSupported(t types.ManagerType) bool {
+	return slices.Contains(r.supported, t)
 }
 
 func (r RuleNoPreRelease) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
