@@ -29,6 +29,7 @@ type Lockfile struct {
 }
 
 type Dependency struct {
+	Manager ManagerType
 	Name    string
 	Version string
 	Dev     bool

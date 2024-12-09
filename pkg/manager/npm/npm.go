@@ -44,7 +44,8 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 	for name, version := range packageJSON.Dependencies {
 		line, rawLine := findLineInfo(file, "dependencies", name)
 		dependencies = append(dependencies, types.Dependency{
-			Name: name,
+			Manager: types.Npm,
+			Name:    name,
 			//  TODO We should use the version from the lockfile instead
 			Version: cleanVersion(version),
 			Dev:     false,
@@ -60,7 +61,8 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 	for name, version := range packageJSON.DevDependencies {
 		line, rawLine := findLineInfo(file, "devDependencies", name)
 		dependencies = append(dependencies, types.Dependency{
-			Name: name,
+			Manager: types.Npm,
+			Name:    name,
 			//  TODO We should use the version from the lockfile instead
 			Version: cleanVersion(version),
 			Dev:     true,

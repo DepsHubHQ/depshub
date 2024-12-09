@@ -71,18 +71,21 @@ func TestNpmDependencies(t *testing.T) {
 
 	// Test for expected dependencies
 	testCases := []struct {
+		manager     types.ManagerType
 		name        string
 		version     string
 		isDev       bool
 		shouldExist bool
 	}{
 		{
+			manager:     types.Npm,
 			name:        "astro",
 			version:     "4.16.10",
 			isDev:       false,
 			shouldExist: true,
 		},
 		{
+			manager:     types.Npm,
 			name:        "typescript",
 			version:     "5.7.2",
 			isDev:       true,
@@ -96,6 +99,7 @@ func TestNpmDependencies(t *testing.T) {
 			if tc.shouldExist {
 				assert.NotNil(t, dep, "Dependency %s should exist", tc.name)
 				if dep != nil {
+					assert.Equal(t, tc.manager, dep.Manager)
 					assert.Equal(t, tc.version, dep.Version)
 					assert.Equal(t, tc.isDev, dep.Dev)
 					assert.Equal(t, testPkgPath, dep.Path)

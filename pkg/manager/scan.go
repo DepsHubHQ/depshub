@@ -69,16 +69,16 @@ func (s scanner) Scan(path string) ([]types.Manifest, error) {
 	return manifests, err
 }
 
-func (s scanner) UniqueDependencies(manifests []types.Manifest) (result []string) {
-	uniqueDependencies := make(map[string]bool)
+func (s scanner) UniqueDependencies(manifests []types.Manifest) (result []types.Dependency) {
+	uniqueDependencies := make(map[string]types.Dependency)
 
 	for _, manifest := range manifests {
 		for _, dep := range manifest.Dependencies {
-			uniqueDependencies[dep.Name] = true
+			uniqueDependencies[dep.Name] = dep
 		}
 	}
 
-	for dep := range uniqueDependencies {
+	for _, dep := range uniqueDependencies {
 		result = append(result, dep)
 	}
 

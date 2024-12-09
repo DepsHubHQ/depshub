@@ -48,6 +48,7 @@ func (Go) Dependencies(path string) ([]types.Dependency, error) {
 		}
 
 		dependencies = append(dependencies, types.Dependency{
+			Manager: types.Go,
 			Name:    require.Mod.Path,
 			Version: cleanVersion(require.Mod.Version),
 			Dev:     false,
@@ -64,7 +65,7 @@ func (Go) Dependencies(path string) ([]types.Dependency, error) {
 
 // Returns the version without any prefix or suffix
 func cleanVersion(version string) string {
-	return strings.Trim(version, "v^~*><= ")
+	return strings.Trim(version, "^~*><= ")
 }
 
 func (Go) LockfilePath(path string) (string, error) {

@@ -20,11 +20,19 @@ func (GoSource) FetchPackageData(name string, version string) (types.Package, er
 
 	v, err := depsdev.NewAPI().GetVersion("go", name, version)
 
+	if err != nil {
+		return target, err
+	}
+
 	target.Name = name
 	target.License = v.Licenses[0]
 	target.Time = map[string]time.Time{version: v.PublishedAt}
 
 	for _, v := range info.Versions {
+		if target.Versions == nil {
+			target.Versions = make(map[string]types.PackageVersion)
+		}
+
 		target.Versions[v.VersionKey.Version] = types.PackageVersion{
 			Name:    v.VersionKey.Name,
 			Version: v.VersionKey.Version,
