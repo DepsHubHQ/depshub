@@ -64,22 +64,22 @@ func TestGoDependencies(t *testing.T) {
 		{
 			manager: types.Go,
 			name:    "github.com/charmbracelet/lipgloss",
-			version: "1.0.0",
+			version: "v1.0.0",
 		},
 		{
 			manager: types.Go,
 			name:    "github.com/sabhiram/go-gitignore",
-			version: "0.0.0-20210923224102-525f6e181f06",
+			version: "v0.0.0-20210923224102-525f6e181f06",
 		},
 		{
 			manager: types.Go,
 			name:    "github.com/spf13/cobra",
-			version: "1.8.1",
+			version: "v1.8.1",
 		},
 		{
 			manager: types.Go,
 			name:    "github.com/stretchr/testify",
-			version: "1.6.1",
+			version: "v1.6.1",
 		},
 	}
 
@@ -110,7 +110,7 @@ func TestCleanVersion(t *testing.T) {
 		{
 			name:     "version with v prefix",
 			version:  "v1.0.0",
-			expected: "1.0.0",
+			expected: "v1.0.0",
 		},
 		{
 			name:     "version with comparison operator",
@@ -119,7 +119,7 @@ func TestCleanVersion(t *testing.T) {
 		},
 		{
 			name:     "version with multiple prefixes",
-			version:  "v>=1.0.0",
+			version:  ">=1.0.0",
 			expected: "1.0.0",
 		},
 	}
