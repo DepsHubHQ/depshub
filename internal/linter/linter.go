@@ -15,19 +15,21 @@ type Linter struct {
 func New() Linter {
 	return Linter{
 		rules: []rules.Rule{
-			rules.NewRuleSorted(),
-			rules.NewRuleNoAnyTag(),
-			rules.NewRuleNoDuplicates(),
-			rules.NewRuleNoUnstable(),
-			rules.NewRuleNoPreRelease(),
-			rules.NewRuleLockfile(),
-			rules.NewRuleNoMultipleVersions(),
-			rules.NewRuleMaxPackageAge(),
-			rules.NewRuleNoDeprecated(),
 			rules.NewRuleAllowedLicenses(),
-			rules.NewRuleMinWeeklyDownloads(),
+			rules.NewRuleLockfile(),
 			rules.NewRuleMaxLibyear(),
+			rules.NewRuleMaxMajorUpdates(),
+			rules.NewRuleMaxMinorUpdates(),
+			rules.NewRuleMaxPackageAge(),
 			rules.NewRuleMaxPatchUpdates(),
+			rules.NewRuleMinWeeklyDownloads(),
+			rules.NewRuleNoAnyTag(),
+			rules.NewRuleNoDeprecated(),
+			rules.NewRuleNoDuplicates(),
+			rules.NewRuleNoMultipleVersions(),
+			rules.NewRuleNoPreRelease(),
+			rules.NewRuleNoUnstable(),
+			rules.NewRuleSorted(),
 		},
 	}
 }
