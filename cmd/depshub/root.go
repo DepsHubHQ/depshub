@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/depshubhq/depshub/internal/linter"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +21,8 @@ and to update them when new versions are available.`,
 
 func Execute() {
 	rootCmd.Version = fmt.Sprintf("%s", version)
+
+	linter.InitConfig()
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
