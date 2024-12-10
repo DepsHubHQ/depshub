@@ -13,20 +13,21 @@ type config struct {
 }
 
 type Rule struct {
-	Name  string `mapstructure:"name"`
-	Value int    `mapstructure:"value"`
-	Level string `mapstructure:"level"`
+	Name     string `mapstructure:"name"`
+	Disabled bool   `mapstructure:"disabled"`
+	Value    int    `mapstructure:"value"`
+	Level    string `mapstructure:"level"`
 }
 
 type ManifestFile struct {
 	Glob     string    `mapstructure:"glob"`
-	Rules    []string  `mapstructure:"rules"`
+	Rules    []Rule    `mapstructure:"rules"`
 	Packages []Package `mapstructure:"packages"`
 }
 
 type Package struct {
-	Name  string   `mapstructure:"name"`
-	Rules []string `mapstructure:"rules"`
+	Name  string `mapstructure:"name"`
+	Rules []Rule `mapstructure:"rules"`
 }
 
 var Config = config{}
@@ -47,5 +48,5 @@ func InitConfig() {
 		panic(err)
 	}
 
-	fmt.Println(Config.Version)
+	fmt.Printf("%v", Config)
 }
