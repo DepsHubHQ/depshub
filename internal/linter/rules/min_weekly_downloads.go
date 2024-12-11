@@ -14,8 +14,8 @@ type RuleMinWeeklyDownloads struct {
 	supported []types.ManagerType
 }
 
-func NewRuleMinWeeklyDownloads() RuleMinWeeklyDownloads {
-	return RuleMinWeeklyDownloads{
+func NewRuleMinWeeklyDownloads() *RuleMinWeeklyDownloads {
+	return &RuleMinWeeklyDownloads{
 		name:      "min-weekly-downloads",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm},
@@ -32,6 +32,10 @@ func (r RuleMinWeeklyDownloads) GetName() string {
 
 func (r RuleMinWeeklyDownloads) GetLevel() Level {
 	return r.level
+}
+
+func (r *RuleMinWeeklyDownloads) SetLevel(level Level) {
+	r.level = level
 }
 
 func (r RuleMinWeeklyDownloads) IsSupported(t types.ManagerType) bool {
@@ -52,7 +56,7 @@ func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info types.Pac
 
 				if weeklyDownloads < MinWeeklyDownloads {
 					mistakes = append(mistakes, Mistake{
-						Rule:        r,
+						Rule:        &r,
 						Definitions: []types.Definition{dep.Definition},
 					})
 				}

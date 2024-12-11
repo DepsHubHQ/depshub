@@ -12,8 +12,8 @@ type RuleNoMultipleVersions struct {
 	supported []types.ManagerType
 }
 
-func NewRuleNoMultipleVersions() RuleNoMultipleVersions {
-	return RuleNoMultipleVersions{
+func NewRuleNoMultipleVersions() *RuleNoMultipleVersions {
+	return &RuleNoMultipleVersions{
 		name:      "no-multiple-versions",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -30,6 +30,10 @@ func (r RuleNoMultipleVersions) GetName() string {
 
 func (r RuleNoMultipleVersions) GetLevel() Level {
 	return r.level
+}
+
+func (r *RuleNoMultipleVersions) SetLevel(level Level) {
+	r.level = level
 }
 
 func (r RuleNoMultipleVersions) IsSupported(t types.ManagerType) bool {
@@ -91,7 +95,7 @@ func (r RuleNoMultipleVersions) Check(manifests []types.Manifest, info types.Pac
 		}
 
 		mistakes = append(mistakes, Mistake{
-			Rule:        r,
+			Rule:        &r,
 			Definitions: definitions,
 		})
 	}

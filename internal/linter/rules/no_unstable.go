@@ -15,8 +15,8 @@ type RuleNoUnstable struct {
 	supported []types.ManagerType
 }
 
-func NewRuleNoUnstable() RuleNoUnstable {
-	return RuleNoUnstable{
+func NewRuleNoUnstable() *RuleNoUnstable {
+	return &RuleNoUnstable{
 		name:      "no-unstable",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -33,6 +33,10 @@ func (r RuleNoUnstable) GetName() string {
 
 func (r RuleNoUnstable) GetLevel() Level {
 	return r.level
+}
+
+func (r *RuleNoUnstable) SetLevel(level Level) {
+	r.level = level
 }
 
 func (r RuleNoUnstable) IsSupported(t types.ManagerType) bool {
@@ -61,7 +65,7 @@ func (r RuleNoUnstable) Check(manifests []types.Manifest, info types.PackagesInf
 
 			if majorVersion < 1 {
 				mistakes = append(mistakes, Mistake{
-					Rule:        r,
+					Rule:        &r,
 					Definitions: []types.Definition{dep.Definition},
 				})
 			}

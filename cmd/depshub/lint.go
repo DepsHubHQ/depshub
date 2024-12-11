@@ -32,6 +32,8 @@ var lintCmd = &cobra.Command{
 			fmt.Printf("Error: %s", err)
 		}
 
+		mistakes = linter.ApplyConfig(mistakes)
+
 		errorsCount := 0
 		warningsCount := 0
 
@@ -70,6 +72,10 @@ var lintCmd = &cobra.Command{
 		}
 
 		for _, mistake := range mistakes {
+			if mistake.Rule.GetLevel() == rules.LevelDisabled {
+				continue
+			}
+
 			name := fmt.Sprintf("[%s]", mistake.Rule.GetName())
 
 			if mistake.Rule.GetLevel() == rules.LevelError {

@@ -12,8 +12,8 @@ type RuleLockfile struct {
 	supported []types.ManagerType
 }
 
-func NewRuleLockfile() RuleLockfile {
-	return RuleLockfile{
+func NewRuleLockfile() *RuleLockfile {
+	return &RuleLockfile{
 		name:      "lockfile",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -32,6 +32,10 @@ func (r RuleLockfile) GetLevel() Level {
 	return r.level
 }
 
+func (r *RuleLockfile) SetLevel(level Level) {
+	r.level = level
+}
+
 func (r RuleLockfile) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
@@ -40,7 +44,7 @@ func (r RuleLockfile) Check(manifests []types.Manifest, info types.PackagesInfo)
 	for _, manifest := range manifests {
 		if manifest.Lockfile == nil {
 			mistakes = append(mistakes, Mistake{
-				Rule: r,
+				Rule: &r,
 				Definitions: []types.Definition{
 					{
 						Path: manifest.Path,

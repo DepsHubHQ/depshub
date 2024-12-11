@@ -14,8 +14,8 @@ type RuleMaxMinorUpdates struct {
 	supported []types.ManagerType
 }
 
-func NewRuleMaxMinorUpdates() RuleMaxMinorUpdates {
-	return RuleMaxMinorUpdates{
+func NewRuleMaxMinorUpdates() *RuleMaxMinorUpdates {
+	return &RuleMaxMinorUpdates{
 		name:      "max-minor-updates",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -32,6 +32,10 @@ func (r RuleMaxMinorUpdates) GetName() string {
 
 func (r RuleMaxMinorUpdates) GetLevel() Level {
 	return r.level
+}
+
+func (r *RuleMaxMinorUpdates) SetLevel(level Level) {
+	r.level = level
 }
 
 func (r RuleMaxMinorUpdates) IsSupported(t types.ManagerType) bool {
@@ -67,7 +71,7 @@ func (r RuleMaxMinorUpdates) Check(manifests []types.Manifest, info types.Packag
 
 	if float64(len(definitions))/float64(totalDependencies)*100 > MaxMinorUpdatesPercent {
 		mistakes = append(mistakes, Mistake{
-			Rule:        r,
+			Rule:        &r,
 			Definitions: definitions,
 		})
 	}

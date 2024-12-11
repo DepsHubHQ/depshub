@@ -16,8 +16,8 @@ type RuleMaxLibyear struct {
 	supported []types.ManagerType
 }
 
-func NewRuleMaxLibyear() RuleMaxLibyear {
-	return RuleMaxLibyear{
+func NewRuleMaxLibyear() *RuleMaxLibyear {
+	return &RuleMaxLibyear{
 		name:      "max-libyear",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -34,6 +34,10 @@ func (r RuleMaxLibyear) GetName() string {
 
 func (r RuleMaxLibyear) GetLevel() Level {
 	return r.level
+}
+
+func (r *RuleMaxLibyear) SetLevel(level Level) {
+	r.level = level
 }
 
 func (r RuleMaxLibyear) IsSupported(t types.ManagerType) bool {
@@ -59,7 +63,7 @@ func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInf
 
 	if totalLibyear > MaxLibyear {
 		mistakes = append(mistakes, Mistake{
-			Rule: r,
+			Rule: &r,
 			Definitions: []types.Definition{{
 				Path: fmt.Sprintf("Allowed libyear: %.2f. Total libyear: %.2f", MaxLibyear, totalLibyear),
 			}},

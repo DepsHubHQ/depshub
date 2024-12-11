@@ -12,8 +12,8 @@ type RuleSorted struct {
 	supported []types.ManagerType
 }
 
-func NewRuleSorted() RuleSorted {
-	return RuleSorted{
+func NewRuleSorted() *RuleSorted {
+	return &RuleSorted{
 		name:      "sorted",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -30,6 +30,10 @@ func (r RuleSorted) GetName() string {
 
 func (r RuleSorted) GetLevel() Level {
 	return r.level
+}
+
+func (r *RuleSorted) SetLevel(level Level) {
+	r.level = level
 }
 
 func (r RuleSorted) IsSupported(t types.ManagerType) bool {
@@ -49,7 +53,7 @@ func (r RuleSorted) Check(manifests []types.Manifest, info types.PackagesInfo) (
 				}
 
 				mistakes = append(mistakes, Mistake{
-					Rule:        r,
+					Rule:        &r,
 					Definitions: []types.Definition{deps[i].Definition},
 				})
 			}

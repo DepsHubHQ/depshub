@@ -12,8 +12,8 @@ type RuleNoDuplicates struct {
 	supported []types.ManagerType
 }
 
-func NewRuleNoDuplicates() RuleNoDuplicates {
-	return RuleNoDuplicates{
+func NewRuleNoDuplicates() *RuleNoDuplicates {
+	return &RuleNoDuplicates{
 		name:      "no-duplicates",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -32,6 +32,10 @@ func (r RuleNoDuplicates) GetLevel() Level {
 	return r.level
 }
 
+func (r *RuleNoDuplicates) SetLevel(level Level) {
+	r.level = level
+}
+
 func (r RuleNoDuplicates) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
@@ -44,7 +48,7 @@ func (r RuleNoDuplicates) Check(manifests []types.Manifest, info types.PackagesI
 			for j := i + 1; j < len(deps); j++ {
 				if deps[i].Name == deps[j].Name {
 					mistakes = append(mistakes, Mistake{
-						Rule:        r,
+						Rule:        &r,
 						Definitions: []types.Definition{deps[i].Definition},
 					})
 				}

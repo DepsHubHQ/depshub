@@ -19,8 +19,8 @@ type RuleAllowedLicenses struct {
 	supported []types.ManagerType
 }
 
-func NewRuleAllowedLicenses() RuleAllowedLicenses {
-	return RuleAllowedLicenses{
+func NewRuleAllowedLicenses() *RuleAllowedLicenses {
+	return &RuleAllowedLicenses{
 		name:      "allowed-licenses",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -43,6 +43,10 @@ func (r RuleAllowedLicenses) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
 
+func (r *RuleAllowedLicenses) SetLevel(level Level) {
+	r.level = level
+}
+
 func (r RuleAllowedLicenses) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
 	mistakes := []Mistake{}
 
@@ -51,7 +55,7 @@ func (r RuleAllowedLicenses) Check(manifests []types.Manifest, info types.Packag
 			if pkg, ok := info[dep.Name]; ok {
 				if !slices.Contains(AllowedLicenses, pkg.License) {
 					mistakes = append(mistakes, Mistake{
-						Rule:        r,
+						Rule:        &r,
 						Definitions: []types.Definition{dep.Definition},
 					})
 				}
