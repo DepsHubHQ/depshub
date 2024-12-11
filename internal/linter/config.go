@@ -1,8 +1,6 @@
 package linter
 
 import (
-	"fmt"
-
 	"github.com/spf13/viper"
 )
 
@@ -32,21 +30,15 @@ type Package struct {
 
 var Config = config{}
 
-func InitConfig() {
+func InitConfig() error {
 	viper.AddConfigPath(".")
-	viper.SetConfigName("depshub.yaml")
+	viper.SetConfigName("depshub")
 	viper.SetConfigType("yaml")
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	err = viper.Unmarshal(&Config)
-
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("%v", Config)
+	return viper.Unmarshal(&Config)
 }
