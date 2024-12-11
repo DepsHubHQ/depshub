@@ -7,12 +7,13 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-const MaxPackageAge = 36
+const DefaultMaxPackageAge = 36
 
 type RuleMaxPackageAge struct {
 	name      string
 	level     Level
 	supported []types.ManagerType
+	value     int
 }
 
 func NewRuleMaxPackageAge() *RuleMaxPackageAge {
@@ -20,6 +21,7 @@ func NewRuleMaxPackageAge() *RuleMaxPackageAge {
 		name:      "max-package-age",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
+		value:     DefaultMaxPackageAge,
 	}
 }
 
@@ -39,6 +41,14 @@ func (r *RuleMaxPackageAge) SetLevel(level Level) {
 	r.level = level
 }
 
+func (r *RuleMaxPackageAge) SetValue(value any) error {
+	if v, ok := value.(int); ok {
+		r.value = v
+		return nil
+	}
+	return ErrInvalidRuleValue
+}
+
 func (r RuleMaxPackageAge) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
@@ -51,7 +61,7 @@ func (r RuleMaxPackageAge) Check(manifests []types.Manifest, info types.Packages
 
 			if pkg, ok := info[dep.Name]; ok {
 				for version, t := range pkg.Time {
-					if version == dep.Version && t.Before(time.Now().AddDate(0, -MaxPackageAge, 0)) {
+					if version == dep.Version && t.Before(time.Now().AddDate(0, -r.value, 0)) {
 						mistakes = append(mistakes, Mistake{
 							Rule: &r,
 							Definitions: []types.Definition{

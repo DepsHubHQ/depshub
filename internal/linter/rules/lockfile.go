@@ -36,6 +36,10 @@ func (r *RuleLockfile) SetLevel(level Level) {
 	r.level = level
 }
 
+func (r *RuleLockfile) SetValue(value any) error {
+	return nil
+}
+
 func (r RuleLockfile) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }

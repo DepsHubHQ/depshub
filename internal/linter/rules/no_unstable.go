@@ -39,6 +39,10 @@ func (r *RuleNoUnstable) SetLevel(level Level) {
 	r.level = level
 }
 
+func (r *RuleNoUnstable) SetValue(value any) error {
+	return nil
+}
+
 func (r RuleNoUnstable) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }

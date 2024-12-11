@@ -6,12 +6,13 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-const MaxPatchUpdatesPercent = 60.0
+const DefaultMaxPatchUpdatesPercent = 60.0
 
 type RuleMaxPatchUpdates struct {
 	name      string
 	level     Level
 	supported []types.ManagerType
+	value     float64
 }
 
 func NewRuleMaxPatchUpdates() *RuleMaxPatchUpdates {
@@ -19,6 +20,7 @@ func NewRuleMaxPatchUpdates() *RuleMaxPatchUpdates {
 		name:      "max-patch-updates",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
+		value:     DefaultMaxPatchUpdatesPercent,
 	}
 }
 
@@ -36,6 +38,14 @@ func (r RuleMaxPatchUpdates) GetLevel() Level {
 
 func (r *RuleMaxPatchUpdates) SetLevel(level Level) {
 	r.level = level
+}
+
+func (r *RuleMaxPatchUpdates) SetValue(value any) error {
+	if v, ok := value.(float64); ok {
+		r.value = v
+		return nil
+	}
+	return ErrInvalidRuleValue
 }
 
 func (r RuleMaxPatchUpdates) IsSupported(t types.ManagerType) bool {
@@ -69,7 +79,7 @@ func (r RuleMaxPatchUpdates) Check(manifests []types.Manifest, info types.Packag
 		return mistakes, nil
 	}
 
-	if float64(len(definitions))/float64(totalDependencies)*100 > MaxPatchUpdatesPercent {
+	if float64(len(definitions))/float64(totalDependencies)*100 > DefaultMaxPatchUpdatesPercent {
 		mistakes = append(mistakes, Mistake{
 			Rule:        &r,
 			Definitions: definitions,

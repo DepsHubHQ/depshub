@@ -36,6 +36,10 @@ func (r *RuleNoAnyTag) SetLevel(level Level) {
 	r.level = level
 }
 
+func (r *RuleNoAnyTag) SetValue(value any) error {
+	return nil
+}
+
 func (r RuleNoAnyTag) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }

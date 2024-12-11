@@ -36,6 +36,10 @@ func (r *RuleSorted) SetLevel(level Level) {
 	r.level = level
 }
 
+func (r *RuleSorted) SetValue(value any) error {
+	return nil
+}
+
 func (r RuleSorted) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }

@@ -1,6 +1,8 @@
 package linter
 
 import (
+	"fmt"
+
 	"github.com/depshubhq/depshub/internal/linter/rules"
 	"github.com/spf13/viper"
 )
@@ -54,12 +56,17 @@ func ApplyConfig(mistakes []rules.Mistake) []rules.Mistake {
 				if rule.Disabled {
 					mistake.Rule.SetLevel(rules.LevelDisabled)
 				}
+
+				err := mistake.Rule.SetValue(rule.Value)
+
+				if err != nil {
+					fmt.Println(err)
+				}
 			}
 		}
 	}
 
 	// Filter out disabled rules
-
 	mistakes = filterDisabledRules(mistakes)
 
 	return mistakes

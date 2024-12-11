@@ -36,6 +36,10 @@ func (r *RuleNoDeprecated) SetLevel(level Level) {
 	r.level = level
 }
 
+func (r *RuleNoDeprecated) SetValue(value any) error {
+	return nil
+}
+
 func (r RuleNoDeprecated) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }

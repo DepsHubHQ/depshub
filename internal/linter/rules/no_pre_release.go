@@ -37,6 +37,10 @@ func (r *RuleNoPreRelease) SetLevel(level Level) {
 	r.level = level
 }
 
+func (r *RuleNoPreRelease) SetValue(value any) error {
+	return nil
+}
+
 func (r RuleNoPreRelease) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }

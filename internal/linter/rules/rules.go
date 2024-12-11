@@ -1,6 +1,10 @@
 package rules
 
-import "github.com/depshubhq/depshub/pkg/types"
+import (
+	"errors"
+
+	"github.com/depshubhq/depshub/pkg/types"
+)
 
 type Level string
 
@@ -17,9 +21,12 @@ type Rule interface {
 	GetName() string
 	IsSupported(types.ManagerType) bool
 	SetLevel(Level)
+	SetValue(any) error
 }
 
 type Mistake struct {
 	Rule        Rule
 	Definitions []types.Definition
 }
+
+var ErrInvalidRuleValue = errors.New("invalid rule value")
