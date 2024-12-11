@@ -60,7 +60,7 @@ func (r RuleAllowedLicenses) Check(manifests []types.Manifest, info types.Packag
 			if pkg, ok := info[dep.Name]; ok {
 				if !slices.Contains(r.value, pkg.License) {
 					mistakes = append(mistakes, Mistake{
-						Rule:        &r,
+						Rule:        NewRuleAllowedLicenses(),
 						Definitions: []types.Definition{dep.Definition},
 					})
 				}

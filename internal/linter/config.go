@@ -3,13 +3,13 @@ package linter
 import (
 	"fmt"
 
+	"github.com/bmatcuk/doublestar/v4"
 	"github.com/depshubhq/depshub/internal/linter/rules"
 	"github.com/spf13/viper"
 )
 
 type ConfigType struct {
 	Version       int            `mapstructure:"version"`
-	Rules         []Rule         `mapstructure:"rules"`
 	ManifestFiles []ManifestFile `mapstructure:"manifest_files"`
 }
 
@@ -48,32 +48,43 @@ func InitConfig() error {
 
 func ApplyConfig(mistakes []rules.Mistake) []rules.Mistake {
 	for _, mistake := range mistakes {
-		// First, apply global rules
-		for _, rule := range Config.Rules {
-			if mistake.Rule.GetName() == rule.Name {
-				mistake.Rule.SetLevel(rule.Level)
+		for _, configManifestFile := range Config.ManifestFiles {
+			matched, err := doublestar.Match(configManifestFile.Glob, mistake.Definitions[0].Path)
 
-				if rule.Disabled {
-					mistake.Rule.SetLevel(rules.LevelDisabled)
-				}
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
 
-				err := mistake.Rule.SetValue(rule.Value)
+			if !matched {
+				continue
+			}
 
-				if err != nil {
-					fmt.Println(err)
+			for _, rule := range configManifestFile.Rules {
+				if mistake.Rule.GetName() == rule.Name {
+					mistake.Rule.SetLevel(rule.Level)
+
+					if rule.Disabled {
+						mistake.Rule.SetLevel(rules.LevelDisabled)
+						continue
+					}
+
+					err := mistake.Rule.SetValue(rule.Value)
+
+					if err != nil {
+						fmt.Println(err)
+					}
 				}
 			}
 		}
 	}
 
-	// Filter out disabled rules
-	mistakes = filterDisabledRules(mistakes)
-
-	return mistakes
+	return filterDisabledRules(mistakes)
 }
 
 func filterDisabledRules(mistakes []rules.Mistake) []rules.Mistake {
 	var filteredMistakes []rules.Mistake
+
 	for _, mistake := range mistakes {
 		if mistake.Rule.GetLevel() != rules.LevelDisabled {
 			filteredMistakes = append(filteredMistakes, mistake)

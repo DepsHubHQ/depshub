@@ -52,7 +52,7 @@ func (r RuleNoPreRelease) Check(manifests []types.Manifest, info types.PackagesI
 
 			if strings.Contains(version, "alpha") || strings.Contains(version, "beta") || strings.Contains(version, "rc") {
 				mistakes = append(mistakes, Mistake{
-					Rule: &r,
+					Rule: NewRuleNoPreRelease(),
 					Definitions: []types.Definition{
 						dep.Definition,
 					},

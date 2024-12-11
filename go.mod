@@ -3,6 +3,7 @@ module github.com/depshubhq/depshub
 go 1.23.3
 
 require (
+	github.com/bmatcuk/doublestar/v4 v4.7.1
 	github.com/charmbracelet/lipgloss v1.0.0
 	github.com/edoardottt/depsdev v0.1.0
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06

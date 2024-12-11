@@ -52,7 +52,7 @@ func (r RuleNoDuplicates) Check(manifests []types.Manifest, info types.PackagesI
 			for j := i + 1; j < len(deps); j++ {
 				if deps[i].Name == deps[j].Name {
 					mistakes = append(mistakes, Mistake{
-						Rule:        &r,
+						Rule:        NewRuleNoDuplicates(),
 						Definitions: []types.Definition{deps[i].Definition},
 					})
 				}

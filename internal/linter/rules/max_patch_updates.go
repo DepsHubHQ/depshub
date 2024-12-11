@@ -81,7 +81,7 @@ func (r RuleMaxPatchUpdates) Check(manifests []types.Manifest, info types.Packag
 
 	if float64(len(definitions))/float64(totalDependencies)*100 > DefaultMaxPatchUpdatesPercent {
 		mistakes = append(mistakes, Mistake{
-			Rule:        &r,
+			Rule:        NewRuleMaxPatchUpdates(),
 			Definitions: definitions,
 		})
 	}

@@ -49,7 +49,7 @@ func (r RuleNoAnyTag) Check(manifests []types.Manifest, info types.PackagesInfo)
 		for _, dep := range manifest.Dependencies {
 			if dep.Version == "*" || dep.Version == "latest" || dep.Version == "" {
 				mistakes = append(mistakes, Mistake{
-					Rule:        &r,
+					Rule:        NewRuleNoAnyTag(),
 					Definitions: []types.Definition{dep.Definition},
 				})
 			}

@@ -73,7 +73,7 @@ func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInf
 
 	if totalLibyear > r.value {
 		mistakes = append(mistakes, Mistake{
-			Rule: &r,
+			Rule: NewRuleMaxLibyear(),
 			Definitions: []types.Definition{{
 				Path: fmt.Sprintf("Allowed libyear: %.2f. Total libyear: %.2f", r.value, totalLibyear),
 			}},

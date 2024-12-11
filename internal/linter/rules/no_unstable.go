@@ -69,7 +69,7 @@ func (r RuleNoUnstable) Check(manifests []types.Manifest, info types.PackagesInf
 
 			if majorVersion < 1 {
 				mistakes = append(mistakes, Mistake{
-					Rule:        &r,
+					Rule:        NewRuleNoUnstable(),
 					Definitions: []types.Definition{dep.Definition},
 				})
 			}

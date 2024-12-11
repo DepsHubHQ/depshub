@@ -53,7 +53,7 @@ func (r RuleNoDeprecated) Check(manifests []types.Manifest, info types.PackagesI
 				for _, version := range pkg.Versions {
 					if version.Version == dep.Version && version.Deprecated != "" {
 						mistakes = append(mistakes, Mistake{
-							Rule: &r,
+							Rule: NewRuleNoDeprecated(),
 							Definitions: []types.Definition{
 								dep.Definition,
 							},

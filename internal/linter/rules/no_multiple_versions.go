@@ -99,7 +99,7 @@ func (r RuleNoMultipleVersions) Check(manifests []types.Manifest, info types.Pac
 		}
 
 		mistakes = append(mistakes, Mistake{
-			Rule:        &r,
+			Rule:        NewRuleNoMultipleVersions(),
 			Definitions: definitions,
 		})
 	}

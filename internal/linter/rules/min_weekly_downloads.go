@@ -66,7 +66,7 @@ func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info types.Pac
 
 				if weeklyDownloads < r.value {
 					mistakes = append(mistakes, Mistake{
-						Rule:        &r,
+						Rule:        NewRuleMinWeeklyDownloads(),
 						Definitions: []types.Definition{dep.Definition},
 					})
 				}

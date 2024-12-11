@@ -57,7 +57,7 @@ func (r RuleSorted) Check(manifests []types.Manifest, info types.PackagesInfo) (
 				}
 
 				mistakes = append(mistakes, Mistake{
-					Rule:        &r,
+					Rule:        NewRuleSorted(),
 					Definitions: []types.Definition{deps[i].Definition},
 				})
 			}

@@ -48,7 +48,7 @@ func (r RuleLockfile) Check(manifests []types.Manifest, info types.PackagesInfo)
 	for _, manifest := range manifests {
 		if manifest.Lockfile == nil {
 			mistakes = append(mistakes, Mistake{
-				Rule: &r,
+				Rule: NewRuleLockfile(),
 				Definitions: []types.Definition{
 					{
 						Path: manifest.Path,
