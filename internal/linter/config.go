@@ -2,6 +2,7 @@ package linter
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/depshubhq/depshub/internal/linter/rules"
@@ -33,14 +34,18 @@ type Package struct {
 
 var Config = ConfigType{}
 
-func InitConfig() error {
-	viper.AddConfigPath(".")
+func InitConfig(filePath string) error {
+	folder := filepath.Dir(filePath)
+
+	viper.AddConfigPath(folder)
 	viper.SetConfigName("depshub")
 	viper.SetConfigType("yaml")
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		return err
+		if filePath != "." {
+			return err
+		}
 	}
 
 	return viper.Unmarshal(&Config)
@@ -51,12 +56,11 @@ func ApplyConfig(mistakes []rules.Mistake) []rules.Mistake {
 		for _, configManifestFile := range Config.ManifestFiles {
 			matched, err := doublestar.Match(configManifestFile.Glob, mistake.Definitions[0].Path)
 
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
+			if err != nil || !matched {
+				if err != nil {
+					fmt.Println(err)
+				}
 
-			if !matched {
 				continue
 			}
 

@@ -19,6 +19,16 @@ var lintCmd = &cobra.Command{
 	Long:  `Run the linter on your project to find issues in your code.`,
 	Args:  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
+		configPath, err := cmd.Flags().GetString("config")
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		if err := linter.InitConfig(configPath); err != nil {
+			fmt.Println(err)
+		}
+
 		var p = "."
 
 		if len(args) > 0 {
