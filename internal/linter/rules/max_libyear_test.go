@@ -202,7 +202,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 				var allowedLibyear, totalLibyear float64
 				_, err := fmt.Sscanf(path, "Allowed libyear: %f. Total libyear: %f", &allowedLibyear, &totalLibyear)
 				assert.NoError(t, err)
-				assert.Greater(t, totalLibyear, MaxLibyear)
+				assert.Greater(t, totalLibyear, DefaultMaxLibyear)
 			} else {
 				assert.Equal(t, tt.want, got)
 			}

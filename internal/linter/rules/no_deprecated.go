@@ -12,8 +12,8 @@ type RuleNoDeprecated struct {
 	supported []types.ManagerType
 }
 
-func NewRuleNoDeprecated() RuleNoDeprecated {
-	return RuleNoDeprecated{
+func NewRuleNoDeprecated() *RuleNoDeprecated {
+	return &RuleNoDeprecated{
 		name:      "no-deprecated",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -32,6 +32,14 @@ func (r RuleNoDeprecated) GetLevel() Level {
 	return r.level
 }
 
+func (r *RuleNoDeprecated) SetLevel(level Level) {
+	r.level = level
+}
+
+func (r *RuleNoDeprecated) SetValue(value any) error {
+	return nil
+}
+
 func (r RuleNoDeprecated) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
@@ -45,7 +53,7 @@ func (r RuleNoDeprecated) Check(manifests []types.Manifest, info types.PackagesI
 				for _, version := range pkg.Versions {
 					if version.Version == dep.Version && version.Deprecated != "" {
 						mistakes = append(mistakes, Mistake{
-							Rule: r,
+							Rule: NewRuleNoDeprecated(),
 							Definitions: []types.Definition{
 								dep.Definition,
 							},

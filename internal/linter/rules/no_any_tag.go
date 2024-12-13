@@ -12,8 +12,8 @@ type RuleNoAnyTag struct {
 	supported []types.ManagerType
 }
 
-func NewRuleNoAnyTag() RuleNoAnyTag {
-	return RuleNoAnyTag{
+func NewRuleNoAnyTag() *RuleNoAnyTag {
+	return &RuleNoAnyTag{
 		name:      "no-any-tag",
 		level:     LevelWarning,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -32,6 +32,14 @@ func (r RuleNoAnyTag) GetLevel() Level {
 	return r.level
 }
 
+func (r *RuleNoAnyTag) SetLevel(level Level) {
+	r.level = level
+}
+
+func (r *RuleNoAnyTag) SetValue(value any) error {
+	return nil
+}
+
 func (r RuleNoAnyTag) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
@@ -41,7 +49,7 @@ func (r RuleNoAnyTag) Check(manifests []types.Manifest, info types.PackagesInfo)
 		for _, dep := range manifest.Dependencies {
 			if dep.Version == "*" || dep.Version == "latest" || dep.Version == "" {
 				mistakes = append(mistakes, Mistake{
-					Rule:        r,
+					Rule:        NewRuleNoAnyTag(),
 					Definitions: []types.Definition{dep.Definition},
 				})
 			}

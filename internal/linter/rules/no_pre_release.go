@@ -13,8 +13,8 @@ type RuleNoPreRelease struct {
 	supported []types.ManagerType
 }
 
-func NewRuleNoPreRelease() RuleNoPreRelease {
-	return RuleNoPreRelease{
+func NewRuleNoPreRelease() *RuleNoPreRelease {
+	return &RuleNoPreRelease{
 		name:      "no-pre-release",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go},
@@ -33,6 +33,14 @@ func (r RuleNoPreRelease) GetLevel() Level {
 	return r.level
 }
 
+func (r *RuleNoPreRelease) SetLevel(level Level) {
+	r.level = level
+}
+
+func (r *RuleNoPreRelease) SetValue(value any) error {
+	return nil
+}
+
 func (r RuleNoPreRelease) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
@@ -44,7 +52,7 @@ func (r RuleNoPreRelease) Check(manifests []types.Manifest, info types.PackagesI
 
 			if strings.Contains(version, "alpha") || strings.Contains(version, "beta") || strings.Contains(version, "rc") {
 				mistakes = append(mistakes, Mistake{
-					Rule: r,
+					Rule: NewRuleNoPreRelease(),
 					Definitions: []types.Definition{
 						dep.Definition,
 					},

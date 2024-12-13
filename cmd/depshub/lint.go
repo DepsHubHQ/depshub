@@ -19,6 +19,19 @@ var lintCmd = &cobra.Command{
 	Long:  `Run the linter on your project to find issues in your code.`,
 	Args:  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
+		configPath, err := cmd.Flags().GetString("config")
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		config, err := linter.NewConfig(configPath)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
 		var p = "."
 
 		if len(args) > 0 {
@@ -30,7 +43,10 @@ var lintCmd = &cobra.Command{
 
 		if err != nil {
 			fmt.Printf("Error: %s", err)
+			return
 		}
+
+		mistakes = config.Apply(mistakes)
 
 		errorsCount := 0
 		warningsCount := 0
@@ -70,6 +86,10 @@ var lintCmd = &cobra.Command{
 		}
 
 		for _, mistake := range mistakes {
+			if mistake.Rule.GetLevel() == rules.LevelDisabled {
+				continue
+			}
+
 			name := fmt.Sprintf("[%s]", mistake.Rule.GetName())
 
 			if mistake.Rule.GetLevel() == rules.LevelError {

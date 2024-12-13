@@ -6,19 +6,21 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-const MinWeeklyDownloads = 1000
+const DefaultMinWeeklyDownloads = 1000
 
 type RuleMinWeeklyDownloads struct {
 	name      string
 	level     Level
 	supported []types.ManagerType
+	value     int
 }
 
-func NewRuleMinWeeklyDownloads() RuleMinWeeklyDownloads {
-	return RuleMinWeeklyDownloads{
+func NewRuleMinWeeklyDownloads() *RuleMinWeeklyDownloads {
+	return &RuleMinWeeklyDownloads{
 		name:      "min-weekly-downloads",
 		level:     LevelError,
 		supported: []types.ManagerType{types.Npm},
+		value:     DefaultMinWeeklyDownloads,
 	}
 }
 
@@ -32,6 +34,18 @@ func (r RuleMinWeeklyDownloads) GetName() string {
 
 func (r RuleMinWeeklyDownloads) GetLevel() Level {
 	return r.level
+}
+
+func (r *RuleMinWeeklyDownloads) SetLevel(level Level) {
+	r.level = level
+}
+
+func (r *RuleMinWeeklyDownloads) SetValue(value any) error {
+	if v, ok := value.(int); ok {
+		r.value = v
+		return nil
+	}
+	return ErrInvalidRuleValue
 }
 
 func (r RuleMinWeeklyDownloads) IsSupported(t types.ManagerType) bool {
@@ -50,9 +64,9 @@ func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info types.Pac
 					weeklyDownloads += download.Downloads
 				}
 
-				if weeklyDownloads < MinWeeklyDownloads {
+				if weeklyDownloads < r.value {
 					mistakes = append(mistakes, Mistake{
-						Rule:        r,
+						Rule:        NewRuleMinWeeklyDownloads(),
 						Definitions: []types.Definition{dep.Definition},
 					})
 				}
