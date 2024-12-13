@@ -27,6 +27,7 @@ var lintCmd = &cobra.Command{
 
 		if err := linter.InitConfig(configPath); err != nil {
 			fmt.Println(err)
+			return
 		}
 
 		var p = "."
