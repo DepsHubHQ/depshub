@@ -1,6 +1,7 @@
 package linter
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
 
@@ -43,7 +44,11 @@ func InitConfig(filePath string) error {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		if filePath != "." {
+		if errors.As(err, &viper.ConfigFileNotFoundError{}) && filePath != "." {
+			return err
+		}
+
+		if errors.As(err, &viper.ConfigParseError{}) {
 			return err
 		}
 	}
