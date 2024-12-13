@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ConfigType struct {
+type ConfigFile struct {
 	Version       int            `mapstructure:"version"`
 	ManifestFiles []ManifestFile `mapstructure:"manifest_files"`
 }
@@ -29,9 +29,12 @@ type ManifestFile struct {
 	Packages []string `mapstructure:"packages"`
 }
 
-var Config = ConfigType{}
+type Config struct {
+	path   string
+	config ConfigFile
+}
 
-func InitConfig(filePath string) error {
+func NewConfig(filePath string) (Config, error) {
 	folder := filepath.Dir(filePath)
 
 	viper.AddConfigPath(folder)
@@ -41,20 +44,28 @@ func InitConfig(filePath string) error {
 
 	if err != nil {
 		if errors.As(err, &viper.ConfigFileNotFoundError{}) && filePath != "." {
-			return err
+			return Config{}, err
 		}
 
 		if errors.As(err, &viper.ConfigParseError{}) {
-			return err
+			return Config{}, err
 		}
 	}
 
-	return viper.Unmarshal(&Config)
+	c := Config{path: filePath}
+
+	err = viper.Unmarshal(&c.config)
+
+	if err != nil {
+		return Config{}, err
+	}
+
+	return c, nil
 }
 
-func ApplyConfig(mistakes []rules.Mistake) []rules.Mistake {
+func (c Config) Apply(mistakes []rules.Mistake) []rules.Mistake {
 	for _, mistake := range mistakes {
-		for _, configManifestFile := range Config.ManifestFiles {
+		for _, configManifestFile := range c.config.ManifestFiles {
 			matched, err := doublestar.Match(configManifestFile.Filter, mistake.Definitions[0].Path)
 
 			if err != nil {
