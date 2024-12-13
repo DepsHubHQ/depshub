@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/depshubhq/depshub/internal/linter/rules"
@@ -23,14 +24,9 @@ type Rule struct {
 }
 
 type ManifestFile struct {
-	Glob     string    `mapstructure:"glob"`
-	Rules    []Rule    `mapstructure:"rules"`
-	Packages []Package `mapstructure:"packages"`
-}
-
-type Package struct {
-	Name  string `mapstructure:"name"`
-	Rules []Rule `mapstructure:"rules"`
+	Filter   string   `mapstructure:"filter"`
+	Rules    []Rule   `mapstructure:"rules"`
+	Packages []string `mapstructure:"packages"`
 }
 
 var Config = ConfigType{}
@@ -59,18 +55,34 @@ func InitConfig(filePath string) error {
 func ApplyConfig(mistakes []rules.Mistake) []rules.Mistake {
 	for _, mistake := range mistakes {
 		for _, configManifestFile := range Config.ManifestFiles {
-			matched, err := doublestar.Match(configManifestFile.Glob, mistake.Definitions[0].Path)
+			matched, err := doublestar.Match(configManifestFile.Filter, mistake.Definitions[0].Path)
 
-			if err != nil || !matched {
-				if err != nil {
-					fmt.Println(err)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+
+			matchByPackageName := false
+			if len(configManifestFile.Packages) > 0 {
+				for _, p := range configManifestFile.Packages {
+					// We should probably include the package information in the mistake struct,
+					// instead of just checking the raw line.
+					if strings.Contains(mistake.Definitions[0].RawLine, p) {
+						matched = true
+						matchByPackageName = true
+						break
+					}
 				}
+			} else {
+				matchByPackageName = true
+			}
 
+			if !matched {
 				continue
 			}
 
 			for _, rule := range configManifestFile.Rules {
-				if mistake.Rule.GetName() == rule.Name {
+				if mistake.Rule.GetName() == rule.Name && matchByPackageName {
 					mistake.Rule.SetLevel(rule.Level)
 
 					if rule.Disabled {
