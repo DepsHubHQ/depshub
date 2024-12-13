@@ -21,7 +21,7 @@ func TestRuleNoDeprecated(t *testing.T) {
 	tests := []struct {
 		name      string
 		manifests []types.Manifest
-		info      PackagesInfo
+		info      types.PackagesInfo
 		want      []Mistake
 		wantErr   bool
 	}{
@@ -42,7 +42,7 @@ func TestRuleNoDeprecated(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"test-pkg": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {
@@ -76,7 +76,7 @@ func TestRuleNoDeprecated(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"test-pkg": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {
@@ -101,7 +101,7 @@ func TestRuleNoDeprecated(t *testing.T) {
 					},
 				},
 			},
-			info:    PackagesInfo{},
+			info:    types.PackagesInfo{},
 			want:    []Mistake{},
 			wantErr: false,
 		},
@@ -117,7 +117,7 @@ func TestRuleNoDeprecated(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"test-pkg": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {
@@ -152,7 +152,7 @@ func TestRuleNoDeprecated(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"pkg1": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {
@@ -196,4 +196,3 @@ func TestRuleNoDeprecated(t *testing.T) {
 		})
 	}
 }
-

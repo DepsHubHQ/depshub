@@ -1,20 +1,26 @@
 package rules
 
 import (
+	"slices"
+
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-const MaxMinorUpdatesPercent = 40.0
+const DefaultMaxMinorUpdatesPercent = 40.0
 
 type RuleMaxMinorUpdates struct {
-	name  string
-	level Level
+	name      string
+	level     Level
+	supported []types.ManagerType
+	value     float64
 }
 
-func NewRuleMaxMinorUpdates() RuleMaxMinorUpdates {
-	return RuleMaxMinorUpdates{
-		name:  "max-minor-updates",
-		level: LevelError,
+func NewRuleMaxMinorUpdates() *RuleMaxMinorUpdates {
+	return &RuleMaxMinorUpdates{
+		name:      "max-minor-updates",
+		level:     LevelError,
+		supported: []types.ManagerType{types.Npm, types.Go},
+		value:     DefaultMaxMinorUpdatesPercent,
 	}
 }
 
@@ -30,7 +36,23 @@ func (r RuleMaxMinorUpdates) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleMaxMinorUpdates) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
+func (r *RuleMaxMinorUpdates) SetLevel(level Level) {
+	r.level = level
+}
+
+func (r *RuleMaxMinorUpdates) SetValue(value any) error {
+	if v, ok := value.(float64); ok {
+		r.value = v
+		return nil
+	}
+	return ErrInvalidRuleValue
+}
+
+func (r RuleMaxMinorUpdates) IsSupported(t types.ManagerType) bool {
+	return slices.Contains(r.supported, t)
+}
+
+func (r RuleMaxMinorUpdates) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
 	mistakes := []Mistake{}
 	definitions := []types.Definition{}
 	totalDependencies := 0
@@ -57,9 +79,9 @@ func (r RuleMaxMinorUpdates) Check(manifests []types.Manifest, info PackagesInfo
 		return mistakes, nil
 	}
 
-	if float64(len(definitions))/float64(totalDependencies)*100 > MaxMinorUpdatesPercent {
+	if float64(len(definitions))/float64(totalDependencies)*100 > r.value {
 		mistakes = append(mistakes, Mistake{
-			Rule:        r,
+			Rule:        NewRuleMaxMinorUpdates(),
 			Definitions: definitions,
 		})
 	}

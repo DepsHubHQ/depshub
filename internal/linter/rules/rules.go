@@ -1,25 +1,32 @@
 package rules
 
-import "github.com/depshubhq/depshub/pkg/types"
+import (
+	"errors"
 
-type Level int
-
-const (
-	LevelError Level = iota
-	LevelWarning
+	"github.com/depshubhq/depshub/pkg/types"
 )
 
-// A map of package names to package information.
-type PackagesInfo = map[string]types.Package
+type Level string
+
+const (
+	LevelError    Level = "error"
+	LevelWarning  Level = "warning"
+	LevelDisabled Level = "disabled"
+)
 
 type Rule interface {
-	GetName() string
-	GetMessage() string
+	Check([]types.Manifest, types.PackagesInfo) ([]Mistake, error)
 	GetLevel() Level
-	Check([]types.Manifest, PackagesInfo) ([]Mistake, error)
+	GetMessage() string
+	GetName() string
+	IsSupported(types.ManagerType) bool
+	SetLevel(Level)
+	SetValue(any) error
 }
 
 type Mistake struct {
 	Rule        Rule
 	Definitions []types.Definition
 }
+
+var ErrInvalidRuleValue = errors.New("invalid rule value")

@@ -20,7 +20,7 @@ func TestRuleMinWeeklyDownloads(t *testing.T) {
 	tests := []struct {
 		name      string
 		manifests []types.Manifest
-		info      PackagesInfo
+		info      types.PackagesInfo
 		want      []Mistake
 		wantErr   bool
 	}{
@@ -40,7 +40,7 @@ func TestRuleMinWeeklyDownloads(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"popular-pkg": types.Package{
 					Downloads: []types.Download{
 						{Downloads: 600},
@@ -67,7 +67,7 @@ func TestRuleMinWeeklyDownloads(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"unpopular-pkg": types.Package{
 					Downloads: []types.Download{
 						{Downloads: 400},
@@ -113,7 +113,7 @@ func TestRuleMinWeeklyDownloads(t *testing.T) {
 					},
 				},
 			},
-			info: PackagesInfo{
+			info: types.PackagesInfo{
 				"pkg1": types.Package{
 					Downloads: []types.Download{
 						{Downloads: 800},
@@ -157,14 +157,14 @@ func TestRuleMinWeeklyDownloads(t *testing.T) {
 					},
 				},
 			},
-			info:    PackagesInfo{},
+			info:    types.PackagesInfo{},
 			want:    []Mistake{},
 			wantErr: false,
 		},
 		{
 			name:      "empty manifests",
 			manifests: []types.Manifest{},
-			info:      PackagesInfo{},
+			info:      types.PackagesInfo{},
 			want:      []Mistake{},
 			wantErr:   false,
 		},
@@ -182,4 +182,3 @@ func TestRuleMinWeeklyDownloads(t *testing.T) {
 		})
 	}
 }
-

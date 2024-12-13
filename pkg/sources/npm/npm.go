@@ -11,16 +11,12 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-type NpmManager struct{}
+type NpmSource struct{}
 
-func (npm NpmManager) FetchPackageData(ctx context.Context, name string) (types.Package, error) {
+func (npm NpmSource) FetchPackageData(ctx context.Context, name string) (types.Package, error) {
 	var target types.Package
 
 	if err := npm.fetchPackageInfo(ctx, name, &target); err != nil {
-		return types.Package{}, err
-	}
-
-	if err := npm.fetchLatestVersion(ctx, name, &target); err != nil {
 		return types.Package{}, err
 	}
 
@@ -31,7 +27,7 @@ func (npm NpmManager) FetchPackageData(ctx context.Context, name string) (types.
 	return target, nil
 }
 
-func (NpmManager) fetchPackageInfo(ctx context.Context, name string, target *types.Package) error {
+func (NpmSource) fetchPackageInfo(ctx context.Context, name string, target *types.Package) error {
 	url := fmt.Sprintf("https://registry.npmjs.org/%s", name)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
@@ -55,23 +51,7 @@ func (NpmManager) fetchPackageInfo(ctx context.Context, name string, target *typ
 	return json.NewDecoder(resp.Body).Decode(target)
 }
 
-func (NpmManager) fetchLatestVersion(ctx context.Context, name string, target *types.Package) error {
-	url := fmt.Sprintf("https://registry.npmjs.org/%s/latest", name)
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return fmt.Errorf("error creating request for %s information from npm registry: %w", name, err)
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return fmt.Errorf("error getting latest %s information from npm registry: %w", name, err)
-	}
-	defer resp.Body.Close()
-
-	return json.NewDecoder(resp.Body).Decode(&target.LatestVersion)
-}
-
-func (NpmManager) fetchDownloads(ctx context.Context, name string, target *types.Package) error {
+func (NpmSource) fetchDownloads(ctx context.Context, name string, target *types.Package) error {
 	from := time.Now().AddDate(0, 0, -7).Format("2006-01-02")
 	to := time.Now().Format("2006-01-02")
 	url := fmt.Sprintf("https://api.npmjs.org/downloads/range/%s:%s/%s", from, to, name)

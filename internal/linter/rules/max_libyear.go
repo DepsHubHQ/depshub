@@ -2,22 +2,27 @@ package rules
 
 import (
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-const MaxLibyear = 25.0
+const DefaultMaxLibyear = 25.0
 
 type RuleMaxLibyear struct {
-	name  string
-	level Level
+	name      string
+	level     Level
+	supported []types.ManagerType
+	value     float64
 }
 
-func NewRuleMaxLibyear() RuleMaxLibyear {
-	return RuleMaxLibyear{
-		name:  "max-libyear",
-		level: LevelError,
+func NewRuleMaxLibyear() *RuleMaxLibyear {
+	return &RuleMaxLibyear{
+		name:      "max-libyear",
+		level:     LevelError,
+		supported: []types.ManagerType{types.Npm, types.Go},
+		value:     DefaultMaxLibyear,
 	}
 }
 
@@ -33,7 +38,23 @@ func (r RuleMaxLibyear) GetLevel() Level {
 	return r.level
 }
 
-func (r RuleMaxLibyear) Check(manifests []types.Manifest, info PackagesInfo) ([]Mistake, error) {
+func (r *RuleMaxLibyear) SetLevel(level Level) {
+	r.level = level
+}
+
+func (r *RuleMaxLibyear) SetValue(value any) error {
+	if v, ok := value.(float64); ok {
+		r.value = v
+		return nil
+	}
+	return ErrInvalidRuleValue
+}
+
+func (r RuleMaxLibyear) IsSupported(t types.ManagerType) bool {
+	return slices.Contains(r.supported, t)
+}
+
+func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
 	mistakes := []Mistake{}
 
 	totalLibyear := 0.0
@@ -50,11 +71,11 @@ func (r RuleMaxLibyear) Check(manifests []types.Manifest, info PackagesInfo) ([]
 		}
 	}
 
-	if totalLibyear > MaxLibyear {
+	if totalLibyear > r.value {
 		mistakes = append(mistakes, Mistake{
-			Rule: r,
+			Rule: NewRuleMaxLibyear(),
 			Definitions: []types.Definition{{
-				Path: fmt.Sprintf("Allowed libyear: %.2f. Total libyear: %.2f", MaxLibyear, totalLibyear),
+				Path: fmt.Sprintf("Allowed libyear: %.2f. Total libyear: %.2f", r.value, totalLibyear),
 			}},
 		})
 	}

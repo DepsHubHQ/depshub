@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	gomanager "github.com/depshubhq/depshub/pkg/manager/go"
 	"github.com/depshubhq/depshub/pkg/manager/npm"
 	"github.com/depshubhq/depshub/pkg/types"
 	ignore "github.com/sabhiram/go-gitignore"
@@ -20,6 +21,7 @@ func New() scanner {
 	return scanner{
 		managers: []Manager{
 			npm.Npm{},
+			gomanager.Go{},
 		},
 	}
 }
@@ -37,7 +39,7 @@ func (s scanner) Scan(path string) ([]types.Manifest, error) {
 			return filepath.SkipDir
 		}
 
-		dependencies, err := s.dependencies(path)
+		dependencies, managerType, err := s.dependencies(path)
 
 		if err != nil {
 			return err
@@ -54,6 +56,7 @@ func (s scanner) Scan(path string) ([]types.Manifest, error) {
 
 		if len(dependencies) != 0 {
 			manifests = append(manifests, types.Manifest{
+				Manager:      managerType,
 				Path:         path,
 				Dependencies: dependencies,
 				Lockfile:     lockfile,
@@ -66,30 +69,37 @@ func (s scanner) Scan(path string) ([]types.Manifest, error) {
 	return manifests, err
 }
 
-func (s scanner) UniqueDependencies(manifests []types.Manifest) (result []string) {
-	uniqueDependencies := make(map[string]bool)
+func (s scanner) UniqueDependencies(manifests []types.Manifest) (result []types.Dependency) {
+	uniqueDependencies := make(map[string]types.Dependency)
 
 	for _, manifest := range manifests {
 		for _, dep := range manifest.Dependencies {
-			uniqueDependencies[dep.Name] = true
+			uniqueDependencies[dep.Name] = dep
 		}
 	}
 
-	for dep := range uniqueDependencies {
+	for _, dep := range uniqueDependencies {
 		result = append(result, dep)
 	}
 
 	return result
 }
 
-func (s scanner) dependencies(path string) ([]types.Dependency, error) {
+func (s scanner) dependencies(path string) ([]types.Dependency, types.ManagerType, error) {
 	for _, m := range s.managers {
-		if m.Managed(path) {
-			return m.Dependencies(path)
+		if !m.Managed(path) {
+			continue
 		}
+
+		dependencies, err := m.Dependencies(path)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		return dependencies, m.GetType(), nil
 	}
 
-	return nil, nil
+	return nil, 0, nil
 }
 
 func (s scanner) lockfilePath(path string) (string, error) {

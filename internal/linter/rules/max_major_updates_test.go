@@ -11,7 +11,7 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 	tests := []struct {
 		name           string
 		manifests      []types.Manifest
-		packagesInfo   PackagesInfo
+		packagesInfo   types.PackagesInfo
 		expectedLength int
 		expectError    bool
 	}{
@@ -22,7 +22,7 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 					Dependencies: []types.Dependency{},
 				},
 			},
-			packagesInfo:   PackagesInfo{},
+			packagesInfo:   types.PackagesInfo{},
 			expectedLength: 0,
 			expectError:    false,
 		},
@@ -41,7 +41,7 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 					},
 				},
 			},
-			packagesInfo: PackagesInfo{
+			packagesInfo: types.PackagesInfo{
 				"test-pkg": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {},
@@ -94,7 +94,7 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 					},
 				},
 			},
-			packagesInfo: PackagesInfo{
+			packagesInfo: types.PackagesInfo{
 				"pkg1": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {},
@@ -168,7 +168,7 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 					},
 				},
 			},
-			packagesInfo: PackagesInfo{
+			packagesInfo: types.PackagesInfo{
 				"pkg1": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {},
@@ -215,7 +215,7 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 					},
 				},
 			},
-			packagesInfo: PackagesInfo{
+			packagesInfo: types.PackagesInfo{
 				"test-pkg": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {},
@@ -241,7 +241,7 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 					},
 				},
 			},
-			packagesInfo: PackagesInfo{
+			packagesInfo: types.PackagesInfo{
 				"test-pkg": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {},
@@ -278,7 +278,7 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 					},
 				},
 			},
-			packagesInfo: PackagesInfo{
+			packagesInfo: types.PackagesInfo{
 				"pkg1": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {},
@@ -309,7 +309,7 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 					},
 				},
 			},
-			packagesInfo:   PackagesInfo{},
+			packagesInfo:   types.PackagesInfo{},
 			expectedLength: 0,
 			expectError:    false,
 		},
@@ -328,7 +328,7 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 					},
 				},
 			},
-			packagesInfo: PackagesInfo{
+			packagesInfo: types.PackagesInfo{
 				"test-pkg": {
 					Versions: map[string]types.PackageVersion{
 						"1.0.0": {},
