@@ -15,6 +15,7 @@ export default defineConfig({
           label: 'Getting started',
           items: [
             { label: 'What is DepsHub?', slug: 'what-is-depshub' },
+            { label: 'Why?', slug: 'why' },
             { label: 'Installation', slug: 'installation' },
           ],
         },
