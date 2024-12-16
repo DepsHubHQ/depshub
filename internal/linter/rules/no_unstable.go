@@ -49,6 +49,9 @@ func (r RuleNoUnstable) IsSupported(t types.ManagerType) bool {
 
 func (r RuleNoUnstable) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
 		for _, dep := range manifest.Dependencies {
 			// Define regex pattern for x.x.x where x is one or more digits
 			pattern := regexp.MustCompile(`\d+\.\d+\.\d+`)
