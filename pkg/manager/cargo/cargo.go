@@ -12,12 +12,34 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
+// DependencyValue represents either a string version or a map of dependency attributes
+type DependencyValue struct {
+	Version string
+	Path    string
+}
+
+// UnmarshalTOML implements the interface for handling both string and table TOML values
+func (d *DependencyValue) UnmarshalTOML(v interface{}) error {
+	switch val := v.(type) {
+	case string:
+		d.Version = val
+	case map[string]interface{}:
+		if version, ok := val["version"].(string); ok {
+			d.Version = version
+		}
+		if path, ok := val["path"].(string); ok {
+			d.Path = path
+		}
+	}
+	return nil
+}
+
 type Cargo struct{}
 
 type CargoTOML struct {
-	Dependencies      map[string]string `toml:"dependencies"`
-	DevDependencies   map[string]string `toml:"dev-dependencies"`
-	BuildDependencies map[string]string `toml:"build-dependencies"`
+	Dependencies      map[string]DependencyValue `toml:"dependencies"`
+	DevDependencies   map[string]DependencyValue `toml:"dev-dependencies"`
+	BuildDependencies map[string]DependencyValue `toml:"build-dependencies"`
 }
 
 func (Cargo) GetType() types.ManagerType {
@@ -48,7 +70,7 @@ func (Cargo) Dependencies(path string) ([]types.Dependency, error) {
 			Manager: types.Cargo,
 			Name:    name,
 			//  TODO We should use the version from the lockfile instead
-			Version: cleanVersion(version),
+			Version: cleanVersion(version.Version),
 			Dev:     false,
 			Definition: types.Definition{
 				Path:    path,
@@ -65,7 +87,7 @@ func (Cargo) Dependencies(path string) ([]types.Dependency, error) {
 			Manager: types.Cargo,
 			Name:    name,
 			//  TODO We should use the version from the lockfile instead
-			Version: cleanVersion(version),
+			Version: cleanVersion(version.Version),
 			Dev:     true,
 			Definition: types.Definition{
 				Path:    path,
@@ -81,7 +103,7 @@ func (Cargo) Dependencies(path string) ([]types.Dependency, error) {
 			Manager: types.Cargo,
 			Name:    name,
 			//  TODO We should use the version from the lockfile instead
-			Version: cleanVersion(version),
+			Version: cleanVersion(version.Version),
 			Dev:     true,
 			Definition: types.Definition{
 				Path:    path,
@@ -122,7 +144,7 @@ func findLineInfo(data []byte, key string) (line int, rawLine string) {
 		trimmed := bytes.TrimSpace(line)
 
 		// Look for our key while in the correct section
-		if bytes.Contains(trimmed, []byte(key)) {
+		if bytes.Contains(trimmed, []byte(key+" =")) {
 			return i, string(trimmed)
 		}
 	}
