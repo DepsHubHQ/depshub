@@ -16,7 +16,7 @@ func NewRuleNoMultipleVersions() *RuleNoMultipleVersions {
 	return &RuleNoMultipleVersions{
 		name:      "no-multiple-versions",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo},
 	}
 }
 
@@ -56,6 +56,10 @@ func (r RuleNoMultipleVersions) Check(manifests []types.Manifest, info types.Pac
 
 	// Collect all dependencies
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
+
 		for _, dep := range manifest.Dependencies {
 			// Check if the dependency version is already in the map
 			if len(dependenciesMap[dep.Name]) != 0 {

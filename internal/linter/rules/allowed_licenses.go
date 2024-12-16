@@ -19,7 +19,7 @@ func NewRuleAllowedLicenses() *RuleAllowedLicenses {
 	return &RuleAllowedLicenses{
 		name:      "allowed-licenses",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo},
 		value:     DefaultAllowedLicenses,
 	}
 }
@@ -56,6 +56,10 @@ func (r RuleAllowedLicenses) Check(manifests []types.Manifest, info types.Packag
 	mistakes := []Mistake{}
 
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
+
 		for _, dep := range manifest.Dependencies {
 			if pkg, ok := info[dep.Name]; ok {
 				if !slices.Contains(r.value, pkg.License) {

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/depshubhq/depshub/pkg/manager/cargo"
 	gomanager "github.com/depshubhq/depshub/pkg/manager/go"
 	"github.com/depshubhq/depshub/pkg/manager/npm"
 	"github.com/depshubhq/depshub/pkg/types"
@@ -22,6 +23,7 @@ func New() scanner {
 		managers: []Manager{
 			npm.Npm{},
 			gomanager.Go{},
+			cargo.Cargo{},
 		},
 	}
 }

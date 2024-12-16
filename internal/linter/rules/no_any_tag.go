@@ -16,7 +16,7 @@ func NewRuleNoAnyTag() *RuleNoAnyTag {
 	return &RuleNoAnyTag{
 		name:      "no-any-tag",
 		level:     LevelWarning,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo},
 	}
 }
 
@@ -46,6 +46,10 @@ func (r RuleNoAnyTag) IsSupported(t types.ManagerType) bool {
 
 func (r RuleNoAnyTag) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
+
 		for _, dep := range manifest.Dependencies {
 			if dep.Version == "*" || dep.Version == "latest" || dep.Version == "" {
 				mistakes = append(mistakes, Mistake{

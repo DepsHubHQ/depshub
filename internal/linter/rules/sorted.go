@@ -16,7 +16,7 @@ func NewRuleSorted() *RuleSorted {
 	return &RuleSorted{
 		name:      "sorted",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Cargo},
 	}
 }
 
@@ -46,6 +46,10 @@ func (r RuleSorted) IsSupported(t types.ManagerType) bool {
 
 func (r RuleSorted) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
+
 		deps := manifest.Dependencies
 
 		// Check if dependencies are ordered

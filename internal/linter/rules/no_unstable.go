@@ -19,7 +19,7 @@ func NewRuleNoUnstable() *RuleNoUnstable {
 	return &RuleNoUnstable{
 		name:      "no-unstable",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Cargo},
 	}
 }
 
@@ -49,9 +49,12 @@ func (r RuleNoUnstable) IsSupported(t types.ManagerType) bool {
 
 func (r RuleNoUnstable) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
 		for _, dep := range manifest.Dependencies {
-			// Define regex pattern for x.x.x where x is one or more digits
-			pattern := regexp.MustCompile(`\d+\.\d+\.\d+`)
+			// Define regex pattern for x.x.x or x.x where x is one or more digits
+			pattern := regexp.MustCompile(`\d+\.\d+(\.\d+)?`)
 
 			match := pattern.FindString(dep.Version)
 			if match == "" {
