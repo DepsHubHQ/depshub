@@ -53,8 +53,8 @@ func (r RuleNoUnstable) Check(manifests []types.Manifest, info types.PackagesInf
 			continue
 		}
 		for _, dep := range manifest.Dependencies {
-			// Define regex pattern for x.x.x where x is one or more digits
-			pattern := regexp.MustCompile(`\d+\.\d+\.\d+`)
+			// Define regex pattern for x.x.x or x.x where x is one or more digits
+			pattern := regexp.MustCompile(`\d+\.\d+(\.\d+)?`)
 
 			match := pattern.FindString(dep.Version)
 			if match == "" {
