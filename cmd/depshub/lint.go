@@ -107,7 +107,7 @@ var lintCmd = &cobra.Command{
 			for _, definition := range mistake.Definitions {
 				path := lipgloss.NewStyle().
 					Foreground(lineNumberStyle).
-					Render(fmt.Sprintf("%s", definition.Path))
+					Render(definition.Path)
 
 				rawLineStyle := lipgloss.Color("110")
 				rawLine := lipgloss.NewStyle().Align(lipgloss.Center).Foreground(rawLineStyle).Render(definition.RawLine)

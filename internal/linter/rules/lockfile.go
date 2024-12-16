@@ -46,6 +46,10 @@ func (r RuleLockfile) IsSupported(t types.ManagerType) bool {
 
 func (r RuleLockfile) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
+
 		if manifest.Lockfile == nil {
 			mistakes = append(mistakes, Mistake{
 				Rule: NewRuleLockfile(),

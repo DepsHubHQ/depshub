@@ -58,6 +58,10 @@ func (r RuleMaxMinorUpdates) Check(manifests []types.Manifest, info types.Packag
 	totalDependencies := 0
 
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
+
 		for _, dep := range manifest.Dependencies {
 			if pkg, ok := info[dep.Name]; ok {
 				totalDependencies++
