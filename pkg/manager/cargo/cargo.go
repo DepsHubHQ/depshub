@@ -47,6 +47,7 @@ func (Cargo) GetType() types.ManagerType {
 }
 
 func (Cargo) Managed(path string) bool {
+	path = strings.ToLower(path)
 	return filepath.Base(path) == "cargo.toml"
 }
 
