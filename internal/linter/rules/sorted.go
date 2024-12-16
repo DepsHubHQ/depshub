@@ -16,7 +16,7 @@ func NewRuleSorted() *RuleSorted {
 	return &RuleSorted{
 		name:      "sorted",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Cargo},
 	}
 }
 

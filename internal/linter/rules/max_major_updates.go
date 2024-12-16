@@ -19,7 +19,7 @@ func NewRuleMaxMajorUpdates() *RuleMaxMajorUpdates {
 	return &RuleMaxMajorUpdates{
 		name:      "max-major-updates",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo},
 		value:     DefaultMaxMajorUpdatesPercent,
 	}
 }

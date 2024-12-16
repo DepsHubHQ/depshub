@@ -16,7 +16,7 @@ func NewRuleNoDeprecated() *RuleNoDeprecated {
 	return &RuleNoDeprecated{
 		name:      "no-deprecated",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo},
 	}
 }
 

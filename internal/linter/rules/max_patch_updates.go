@@ -19,7 +19,7 @@ func NewRuleMaxPatchUpdates() *RuleMaxPatchUpdates {
 	return &RuleMaxPatchUpdates{
 		name:      "max-patch-updates",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo},
 		value:     DefaultMaxPatchUpdatesPercent,
 	}
 }

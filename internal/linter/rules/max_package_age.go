@@ -20,7 +20,7 @@ func NewRuleMaxPackageAge() *RuleMaxPackageAge {
 	return &RuleMaxPackageAge{
 		name:      "max-package-age",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo},
 		value:     DefaultMaxPackageAge,
 	}
 }
