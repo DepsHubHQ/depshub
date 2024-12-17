@@ -13,6 +13,7 @@ const (
 	Npm ManagerType = iota
 	Go
 	Cargo
+	Pip
 )
 
 var ErrPackageNotFound = errors.New("package not found")
