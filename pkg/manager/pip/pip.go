@@ -1,4 +1,4 @@
-package pipmanager
+package pip
 
 import (
 	"bufio"
