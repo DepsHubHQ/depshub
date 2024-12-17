@@ -9,6 +9,7 @@ import (
 	"github.com/depshubhq/depshub/pkg/manager/cargo"
 	gomanager "github.com/depshubhq/depshub/pkg/manager/go"
 	"github.com/depshubhq/depshub/pkg/manager/npm"
+	"github.com/depshubhq/depshub/pkg/manager/pip"
 	"github.com/depshubhq/depshub/pkg/types"
 	ignore "github.com/sabhiram/go-gitignore"
 )
@@ -24,6 +25,7 @@ func New() scanner {
 			npm.Npm{},
 			gomanager.Go{},
 			cargo.Cargo{},
+			pip.Pip{},
 		},
 	}
 }

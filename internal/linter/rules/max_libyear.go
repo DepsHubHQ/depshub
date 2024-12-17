@@ -21,7 +21,7 @@ func NewRuleMaxLibyear() *RuleMaxLibyear {
 	return &RuleMaxLibyear{
 		name:      "max-libyear",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip},
 		value:     DefaultMaxLibyear,
 	}
 }

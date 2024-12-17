@@ -7,7 +7,6 @@ package sources
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
@@ -54,7 +53,6 @@ func NewFileCache(cacheName string) (*FileCache, error) {
 
 // Set adds or updates a cache entry with optional expiration duration
 func (c *FileCache) Set(key string, value any, expiration time.Duration) error {
-	fmt.Println("Setting cache")
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
