@@ -51,6 +51,8 @@ func (s CratesSource) FetchPackageData(ctx context.Context, name string) (types.
 		}
 	}
 	result.License = currentVersion.License
+	result.Versions = make(map[string]types.PackageVersion)
+	result.Time = make(map[string]time.Time)
 
 	for _, version := range target.Versions {
 		deprecated := ""
