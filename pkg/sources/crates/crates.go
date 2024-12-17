@@ -34,8 +34,8 @@ type CratePackage struct {
 }
 
 func (s CratesSource) FetchPackageData(ctx context.Context, name string) (types.Package, error) {
-	var target CratePackage
-	var result types.Package
+	target := CratePackage{}
+	result := types.Package{}
 
 	if err := s.fetchPackageInfo(ctx, name, &target); err != nil {
 		return types.Package{}, err
@@ -71,7 +71,14 @@ func (s CratesSource) FetchPackageData(ctx context.Context, name string) (types.
 			Deprecated: deprecated,
 		}
 
+		if result.Versions == nil {
+			result.Versions = make(map[string]types.PackageVersion)
+		}
 		result.Versions[pv.Version] = pv
+
+		if result.Time == nil {
+			result.Time = make(map[string]time.Time)
+		}
 		result.Time[pv.Version] = version.CreatedAt
 	}
 
