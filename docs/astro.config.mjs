@@ -13,6 +13,11 @@ export default defineConfig({
 			social: {
 				github: 'https://github.com/depshubhq/depshub',
 			},
+      logo: {
+        src: '/public/logo.png',
+        alt: 'DepsHub logo',
+      },
+      favicon: '/public/favicon.ico',
 			sidebar: [
         {
           label: 'Getting started',
@@ -47,9 +52,8 @@ export default defineConfig({
         './src/styles/custom.css',
       ],
       pagination: false,
-      expressiveCode: {
-        themes: [],
-        useStarlightDarkModeSwitch: false,
+      components: {
+        ThemeSelect: './src/components/ThemeSelect.astro',
       },
 		}),
 	],
