@@ -17,7 +17,7 @@ func NewRuleNoPreRelease() *RuleNoPreRelease {
 	return &RuleNoPreRelease{
 		name:      "no-pre-release",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip},
 	}
 }
 
@@ -47,6 +47,10 @@ func (r RuleNoPreRelease) IsSupported(t types.ManagerType) bool {
 
 func (r RuleNoPreRelease) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
+
 		for _, dep := range manifest.Dependencies {
 			version := dep.Version
 

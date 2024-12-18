@@ -16,7 +16,7 @@ func NewRuleNoDuplicates() *RuleNoDuplicates {
 	return &RuleNoDuplicates{
 		name:      "no-duplicates",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip},
 	}
 }
 
@@ -46,6 +46,10 @@ func (r RuleNoDuplicates) IsSupported(t types.ManagerType) bool {
 
 func (r RuleNoDuplicates) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
+
 		deps := manifest.Dependencies
 
 		for i := 0; i < len(deps)-1; i++ {

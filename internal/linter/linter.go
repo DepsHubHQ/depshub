@@ -45,6 +45,10 @@ func (l Linter) Run(path string) (mistakes []rules.Mistake, err error) {
 
 	packagesData, err := sources.NewFetcher().Fetch(uniqueDependencies)
 
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
+
 	// Run all rules
 	for _, rule := range l.rules {
 		m, err := rule.Check(manifests, packagesData)

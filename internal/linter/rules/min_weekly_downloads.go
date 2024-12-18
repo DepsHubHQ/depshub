@@ -19,7 +19,7 @@ func NewRuleMinWeeklyDownloads() *RuleMinWeeklyDownloads {
 	return &RuleMinWeeklyDownloads{
 		name:      "min-weekly-downloads",
 		level:     LevelError,
-		supported: []types.ManagerType{types.Npm},
+		supported: []types.ManagerType{types.Npm, types.Cargo},
 		value:     DefaultMinWeeklyDownloads,
 	}
 }
@@ -56,6 +56,10 @@ func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info types.Pac
 	mistakes := []Mistake{}
 
 	for _, manifest := range manifests {
+		if !r.IsSupported(manifest.Manager) {
+			continue
+		}
+
 		for _, dep := range manifest.Dependencies {
 			if pkg, ok := info[dep.Name]; ok {
 				weeklyDownloads := 0

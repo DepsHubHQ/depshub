@@ -12,6 +12,8 @@ type ManagerType int
 const (
 	Npm ManagerType = iota
 	Go
+	Cargo
+	Pip
 )
 
 var ErrPackageNotFound = errors.New("package not found")
@@ -46,11 +48,6 @@ type PackageVersion struct {
 	Name       string `json:"name"`
 	Version    string `json:"version"`
 	Deprecated string `json:"deprecated"`
-}
-
-type Maintainer struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
 }
 
 type Download struct {
