@@ -21,7 +21,7 @@ export default defineConfig({
         alt: "DepsHub logo",
         replacesTitle: true,
       },
-      favicon: "/public/favicon.ico",
+      favicon: "/favicon.ico",
       sidebar: [
         {
           label: "Getting started",
