@@ -14,8 +14,9 @@ export default defineConfig({
 				github: 'https://github.com/depshubhq/depshub',
 			},
       logo: {
-        src: '/public/logo.png',
+        src: '/public/logo.svg',
         alt: 'DepsHub logo',
+        replacesTitle: true,
       },
       favicon: '/public/favicon.ico',
 			sidebar: [

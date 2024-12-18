@@ -22,6 +22,11 @@
 	--sl-color-black: black;
 }
 
+/*Logo*/
+.astro-m46x6ez3 {
+  width: 120px;
+}
+
 .content-panel:where(.astro-7nkwcw3z)+.content-panel:where(.astro-7nkwcw3z) {
   border-top: 0;
 }
