@@ -10,7 +10,7 @@ DepsHub checks dependencies for multiple languages and package managers:
 - **Rust** - cargo
 - **Go** - go modules
 
-More languages and package managers are coming soon. If you have a specific request, please [open an issue](https://github.com/DepshubHQ/depshub/issues/new)
+> More languages and package managers are coming soon. If you have a specific request, please [open an issue](https://github.com/DepshubHQ/depshub/issues/new)
 
 ## Platform support
 
