@@ -9,6 +9,9 @@ export default defineConfig({
   },
 	integrations: [
 		starlight({
+      editLink: {
+        baseUrl: 'https://github.com/depshubhq/depshub/edit/main/docs/',
+      },
 			title: 'DepsHub',
 			social: {
 				github: 'https://github.com/depshubhq/depshub',
@@ -29,7 +32,7 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Guides',
+          label: 'Usage',
           items: [
             { label: 'Linter', slug: 'guides/linter' },
             { label: 'CI/CD integrations', slug: 'guides/integrations' },
