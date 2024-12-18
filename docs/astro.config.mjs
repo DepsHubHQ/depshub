@@ -4,9 +4,12 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
+  redirects: {
+    '/': '/what-is-depshub',
+  },
 	integrations: [
 		starlight({
-			title: 'DepsHub Docs',
+			title: 'DepsHub',
 			social: {
 				github: 'https://github.com/depshubhq/depshub',
 			},
@@ -23,7 +26,6 @@ export default defineConfig({
           label: 'Guides',
           items: [
             { label: 'Linter', slug: 'guides/linter' },
-            { label: 'Updater', slug: 'guides/updater' },
             { label: 'CI/CD integrations', slug: 'guides/integrations' },
             { label: 'Creating custom rules', slug: 'guides/custom' },
           ],
@@ -35,7 +37,7 @@ export default defineConfig({
         {
           label: 'Misc',
           items: [
-            { label: 'Supported languages', slug: 'misc/supported' },
+            { label: 'Supported package managers', slug: 'misc/supported' },
             { label: 'Technical details', slug: 'misc/technical-details' },
             { label: 'Contributions', slug: 'misc/contributions' },
           ],
