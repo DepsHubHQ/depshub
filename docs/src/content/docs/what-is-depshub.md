@@ -20,4 +20,3 @@ The source code is available on [GitHub](https://github.com/depshubhq/depshub).
 - **Configurable** - customize the default behavior with a [configuration](/reference/configuration-file) file.
 - **Extensible** - create [custom](/guides/custom) rules to enforce your own policies.
 - **CI/CD ready** - integrates with your [CI/CD](/guides/integrations) pipelines.
-

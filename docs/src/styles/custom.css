@@ -8,18 +8,18 @@
 /*@import "@radix-ui/colors/red-dark.css";*/
 
 :root {
-	--sl-color-accent-low: var(--lime-12);
-	--sl-color-accent: var(--lime-9);
-	--sl-color-accent-high: var(--lime-10);
+  --sl-color-accent-low: var(--lime-12);
+  --sl-color-accent: var(--lime-9);
+  --sl-color-accent-high: var(--lime-10);
   --sl-color-text: var(--gray-6);
-	--sl-color-white: #ffffff;
-	--sl-color-gray-1: #eaf0e8;
-	--sl-color-gray-2: #bdc4bb;
-	--sl-color-gray-3: #82907f;
-	--sl-color-gray-4: #4f5c4d;
-	--sl-color-gray-5: #303c2d;
-	--sl-color-gray-6: var(--olive-12);
-	--sl-color-black: black;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #eaf0e8;
+  --sl-color-gray-2: #bdc4bb;
+  --sl-color-gray-3: #82907f;
+  --sl-color-gray-4: #4f5c4d;
+  --sl-color-gray-5: #303c2d;
+  --sl-color-gray-6: var(--olive-12);
+  --sl-color-black: black;
 }
 
 /*Logo*/
@@ -27,7 +27,7 @@
   width: 120px;
 }
 
-.content-panel:where(.astro-7nkwcw3z)+.content-panel:where(.astro-7nkwcw3z) {
+.content-panel:where(.astro-7nkwcw3z) + .content-panel:where(.astro-7nkwcw3z) {
   border-top: 0;
 }
 
