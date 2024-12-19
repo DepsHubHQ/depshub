@@ -19,6 +19,8 @@ func TestNewConfig(t *testing.T) {
 		configPath := filepath.Join(dir, "depshub.yaml")
 		configContent := []byte(`
 version: 1
+ignore:
+    - "test-ignore"
 manifest_files:
   - filter: "*.lock"
     rules:
@@ -38,6 +40,7 @@ manifest_files:
 		assert.Len(t, config.config.ManifestFiles, 1)
 		assert.Equal(t, "*.lock", config.config.ManifestFiles[0].Filter)
 		assert.Equal(t, "test-rule", config.config.ManifestFiles[0].Rules[0].Name)
+		assert.Equal(t, "test-ignore", config.config.Ignore[0])
 	})
 
 	t.Run("config file not found", func(t *testing.T) {
@@ -77,6 +80,36 @@ func (m *mockRule) SetValue(v any) error                  { m.value = v.(int); r
 
 // TestApply tests the Apply method with various scenarios
 func TestApply(t *testing.T) {
+	t.Run("ignore matching paths", func(t *testing.T) {
+		config := Config{
+			config: ConfigFile{
+				Ignore: []string{"vendor/**/*.lock"},
+				ManifestFiles: []ManifestFile{
+					{
+						Filter: "*.lock",
+						Rules: []Rule{
+							{
+								Name:  "test-rule",
+								Level: rules.LevelWarning,
+							},
+						},
+					},
+				},
+			},
+		}
+		rule := &mockRule{name: "test-rule", level: rules.LevelError}
+		mistakes := []rules.Mistake{
+			{
+				Rule: rule,
+				Definitions: []types.Definition{
+					{Path: "vendor/some/path/test.lock", RawLine: "test content"},
+				},
+			},
+		}
+		result := config.Apply(mistakes)
+		assert.Len(t, result, 0) // Ignored paths should be filtered out
+	})
+
 	t.Run("apply rules with matching filter", func(t *testing.T) {
 		config := Config{
 			config: ConfigFile{
