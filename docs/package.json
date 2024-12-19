@@ -7,14 +7,18 @@
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "format:fix": "prettier --write ."
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/starlight": "^0.29.2",
+    "@astrojs/starlight": "0.30.2",
     "@radix-ui/colors": "^3.0.0",
-    "astro": "^4.16.10",
+    "astro": "5.0.9",
     "sharp": "^0.32.5",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "prettier": "3.4.2"
   }
 }
