@@ -13,6 +13,7 @@ import (
 
 type ConfigFile struct {
 	Version       int            `mapstructure:"version"`
+	Ignore        []string       `mapstructure:"ignore"`
 	ManifestFiles []ManifestFile `mapstructure:"manifest_files"`
 }
 
@@ -65,6 +66,29 @@ func NewConfig(filePath string) (Config, error) {
 
 func (c Config) Apply(mistakes []rules.Mistake) []rules.Mistake {
 	for _, mistake := range mistakes {
+		ignored := false
+
+		for _, ignore := range c.config.Ignore {
+			matched, err := doublestar.Match(ignore, mistake.Definitions[0].Path)
+
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+
+			fmt.Println("ignore", ignore, mistake.Definitions[0].Path, matched)
+
+			if matched {
+				ignored = true
+				break
+			}
+		}
+
+		if ignored {
+			mistake.Rule.SetLevel(rules.LevelDisabled)
+			continue
+		}
+
 		for _, configManifestFile := range c.config.ManifestFiles {
 			matched, err := doublestar.Match(configManifestFile.Filter, mistake.Definitions[0].Path)
 
