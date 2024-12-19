@@ -26,6 +26,16 @@ manifest_files:              # The list of manifest files to check
 ### `version`
 Specifies the version of the configuration file. The current version is `1`.
 
+### `ignore`
+Specifies the list of files to ignore. The files specified in this list will be ignored by the tool.
+Use the glob pattern to specify the files to ignore. The default value is `[]`.
+
+```yaml
+version: 1
+ignore:
+  - "**/test-requirements.txt"
+```
+
 ### `manifest_files`
 Specifies the list of manifest files to check.
 
