@@ -1,4 +1,4 @@
-name: frontend-release
+name: docs-release
 
 on:
   push:
