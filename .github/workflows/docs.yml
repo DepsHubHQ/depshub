@@ -21,7 +21,7 @@ jobs:
       - name: Restore node_modules cache
         uses: actions/cache@v4
         with:
-          path: node_modules
+          path: docs/node_modules
           key: ${{ runner.os }}-node_modulesV1-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-node_modulesV1-
@@ -35,10 +35,10 @@ jobs:
       - name: Upload
         uses: google-github-actions/upload-cloud-storage@v1
         with:
-          path: dist
+          path: docs/dist
           destination: app.depshub.com
           parent: false
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
-      - name: 'Invalidate CDN cache'
-        run: 'gcloud compute url-maps invalidate-cdn-cache fe-loadbalancer --path "/*" --async'
+      # - name: 'Invalidate CDN cache'
+      #   run: 'gcloud compute url-maps invalidate-cdn-cache fe-loadbalancer --path "/*" --async'
