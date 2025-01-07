@@ -36,7 +36,7 @@ jobs:
         uses: google-github-actions/upload-cloud-storage@v1
         with:
           path: docs/dist
-          destination: app.depshub.com
+          destination: docs.depshub.com
           parent: false
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
