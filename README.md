@@ -1,3 +1,6 @@
+> [!important]
+> This package is still under active development. Read [Contributions](https://docs.depshub.com/misc/contributions/index.html) on how to improve it.
+
 # DepsHub
 
 [![Tests](https://github.com/DepshubHQ/depshub/actions/workflows/test.yml/badge.svg)](https://github.com/DepshubHQ/depshub/actions/workflows/test.yml)
@@ -14,7 +17,7 @@
 
 Focused on the developer experience and minimizing the noise.
 
-[Documentation](https://depshub.com) | [Installation](https://depshub.com) | [About](https://depshub.com)
+[Documentation](https://docs.depshub.com) | [Installation](https://docs.depshub.com/installation/index.html) | [About](https://docs.depshub.com/why/index.html)
 
 <p align="center">
 ✨ Keep your dependencies tidy.
