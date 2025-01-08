@@ -56,6 +56,7 @@ export default defineConfig({
       pagination: false,
       components: {
         ThemeSelect: "./src/components/ThemeSelect.astro",
+        ThemeProvider: "./src/components/ThemeProvider.astro",
       },
     }),
   ],

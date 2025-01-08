@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/starlight": "0.30.2",
+    "@astrojs/starlight": "0.30.5",
     "@radix-ui/colors": "^3.0.0",
     "astro": "5.0.9",
     "sharp": "^0.32.5",
