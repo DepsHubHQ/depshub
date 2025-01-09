@@ -137,9 +137,14 @@ jobs:
             end
             
             def install
-              mv "depshub-darwin-#{Hardware::CPU.arch}", "depshub"
+              if Hardware::CPU.intel?
+                mv "depshub-darwin-amd64", "depshub"
+              elsif Hardware::CPU.arm?
+                mv "depshub-darwin-arm64", "depshub"
+              end
               bin.install "depshub"
             end
+
           end
           EOF
 
