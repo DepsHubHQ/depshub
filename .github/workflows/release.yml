@@ -237,7 +237,7 @@ jobs:
     needs: [homebrew, deb, rpm, chocolatey]
     runs-on: ubuntu-latest
     steps:
-      - name: Download All Artifacts
+      - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
           path: dist
