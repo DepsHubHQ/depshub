@@ -2,6 +2,7 @@ name: Tests
 on:
   pull_request:
     branches: [ main ]
+    paths: [cmd/**, internal/**, pkg/**, go.sum]
   workflow_call:
 
 jobs:
