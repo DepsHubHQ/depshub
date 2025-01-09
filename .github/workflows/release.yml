@@ -136,6 +136,7 @@ jobs:
       - name: Push Homebrew Formula
         run: |
           git clone https://github.com/DepsHubHQ/homebrew-depshub.git
+          mkdir -p homebrew-depshub/Formula
           cp depshub.rb homebrew-depshub/Formula/
           cd homebrew-depshub
           git config user.name "GitHub Actions Bot"
