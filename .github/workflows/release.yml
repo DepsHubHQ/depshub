@@ -133,89 +133,89 @@ jobs:
           end
           EOF
 
-  deb:
-    needs: release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: linux-amd64
-          path: dist/linux-amd64
-      
-      - name: Create DEB Package
-        run: |
-          mkdir -p deb/DEBIAN
-          mkdir -p deb/usr/local/bin
-          cat > deb/DEBIAN/control << EOF
-          Package: depshub
-          Version: ${{ inputs.version }}
-          Architecture: amd64
-          Maintainer: Andriy Semenets <semanser@gmail.com>
-          Description: DepsHub is a tool to manage your dependencies
-          EOF
-          cp dist/linux-amd64/depshub-linux-amd64 deb/usr/local/bin/depshub
-          dpkg-deb --build deb
-          mv deb.deb depshub_${{ inputs.version }}_amd64.deb
+  # deb:
+  #   needs: release
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: linux-amd64
+  #         path: dist/linux-amd64
+  #
+  #     - name: Create DEB Package
+  #       run: |
+  #         mkdir -p deb/DEBIAN
+  #         mkdir -p deb/usr/local/bin
+  #         cat > deb/DEBIAN/control << EOF
+  #         Package: depshub
+  #         Version: ${{ inputs.version }}
+  #         Architecture: amd64
+  #         Maintainer: Andriy Semenets <semanser@gmail.com>
+  #         Description: DepsHub is a tool to manage your dependencies
+  #         EOF
+  #         cp dist/linux-amd64/depshub-linux-amd64 deb/usr/local/bin/depshub
+  #         dpkg-deb --build deb
+  #         mv deb.deb depshub_${{ inputs.version }}_amd64.deb
 
-  rpm:
-    needs: release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: linux-amd64
-          path: ~/rpmbuild/SOURCES
-      
-      - name: Install RPM Build Dependencies
-        run: sudo apt-get update && sudo apt-get install -y rpm
-      
-      - name: Create RPM Package
-        run: |
-          mkdir -p ~/rpmbuild/{SPECS,BUILD,RPMS,SRPMS}
-          cat > ~/rpmbuild/SPECS/depshub.spec << EOF
-          Name: depshub
-          Version: ${{ inputs.version }}
-          Release: 1
-          Summary: Your depshub tool description
-          License: AGPL-3.0
-          
-          %description
-          DepsHub is a tool to manage your dependencies
-          
-          %install
-          mkdir -p %{buildroot}/usr/local/bin
-          cp %{_sourcedir}/depshub-linux-amd64 %{buildroot}/usr/local/bin/depshub
-          
-          %files
-          /usr/local/bin/depshub
-          EOF
-          rpmbuild -bb ~/rpmbuild/SPECS/depshub.spec
+  # rpm:
+  #   needs: release
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: linux-amd64
+  #         path: ~/rpmbuild/SOURCES
+  #
+  #     - name: Install RPM Build Dependencies
+  #       run: sudo apt-get update && sudo apt-get install -y rpm
+  #
+  #     - name: Create RPM Package
+  #       run: |
+  #         mkdir -p ~/rpmbuild/{SPECS,BUILD,RPMS,SRPMS}
+  #         cat > ~/rpmbuild/SPECS/depshub.spec << EOF
+  #         Name: depshub
+  #         Version: ${{ inputs.version }}
+  #         Release: 1
+  #         Summary: Your depshub tool description
+  #         License: AGPL-3.0
+  #
+  #         %description
+  #         DepsHub is a tool to manage your dependencies
+  #
+  #         %install
+  #         mkdir -p %{buildroot}/usr/local/bin
+  #         cp %{_sourcedir}/depshub-linux-amd64 %{buildroot}/usr/local/bin/depshub
+  #
+  #         %files
+  #         /usr/local/bin/depshub
+  #         EOF
+  #         rpmbuild -bb ~/rpmbuild/SPECS/depshub.spec
 
-  chocolatey:
-    needs: release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: windows-amd64
-          path: dist/windows-amd64
-      
-      - name: Create Chocolatey Package
-        run: |
-          mkdir -p choco
-          cat > choco/depshub.nuspec << EOF
-          <?xml version="1.0" encoding="utf-8"?>
-          <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
-            <metadata>
-              <id>depshub</id>
-              <version>${{ inputs.version }}</version>
-              <title>Depshub</title>
-              <authors>Andriy Semenets</authors>
-              <projectUrl>https://github.com/DepsHubHQ/depshub</projectUrl>
-              <description>DepsHub is a tool to manage your dependencies</description>
-            </metadata>
-          </package>
-          EOF
-          mkdir -p choco/tools
-          cp dist/windows-amd64/depshub-windows-amd64.exe choco/tools/depshub.exe
-          choco pack choco/depshub.nuspec
+  # chocolatey:
+  #   needs: release
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: windows-amd64
+  #         path: dist/windows-amd64
+  #
+  #     - name: Create Chocolatey Package
+  #       run: |
+  #         mkdir -p choco
+  #         cat > choco/depshub.nuspec << EOF
+  #         <?xml version="1.0" encoding="utf-8"?>
+  #         <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  #           <metadata>
+  #             <id>depshub</id>
+  #             <version>${{ inputs.version }}</version>
+  #             <title>Depshub</title>
+  #             <authors>Andriy Semenets</authors>
+  #             <projectUrl>https://github.com/DepsHubHQ/depshub</projectUrl>
+  #             <description>DepsHub is a tool to manage your dependencies</description>
+  #           </metadata>
+  #         </package>
+  #         EOF
+  #         mkdir -p choco/tools
+  #         cp dist/windows-amd64/depshub-windows-amd64.exe choco/tools/depshub.exe
+  #         choco pack choco/depshub.nuspec
