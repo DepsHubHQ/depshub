@@ -133,6 +133,17 @@ jobs:
           end
           EOF
 
+      - name: Push Homebrew Formula
+        run: |
+          git clone https://github.com/DepsHubHQ/homebrew-depshub.git
+          cp depshub.rb homebrew-depshub/Formula/
+          cd homebrew-depshub
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add Formula/depshub.rb
+          git commit -m "update depshub formula to version ${{ inputs.version }}"
+          git push https://x-access-token:${{ secrets.TAP_GITHUB_TOKEN }}@github.com/DepsHubHQ/homebrew-depshub.git main
+
   # deb:
   #   needs: release
   #   runs-on: ubuntu-latest
