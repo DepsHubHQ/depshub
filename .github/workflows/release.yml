@@ -115,20 +115,14 @@ jobs:
 
       - name: Push Homebrew Formula
         run: |
-          git clone https://github.com/DepsHubHQ/homebrew-tap.git
-          cp depshub.rb homebrew-tap/Formula/
-          cd homebrew-tap
+          git clone https://github.com/DepsHubHQ/homebrew-depshub.git
+          cp depshub.rb homebrew-depshub/Formula/
+          cd homebrew-depshub
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
           git add Formula/depshub.rb
           git commit -m "update depshub formula to version ${{ inputs.version }}"
-          git push https://x-access-token:${{ secrets.TAP_GITHUB_TOKEN }}@github.com/DepsHubHQ/homebrew-tap.git main
-
-      - name: Upload Homebrew Formula
-        uses: actions/upload-artifact@v4
-        with:
-          name: homebrew
-          path: depshub.rb
+          git push https://x-access-token:${{ secrets.TAP_GITHUB_TOKEN }}@github.com/DepsHubHQ/homebrew-depshub.git main
 
   deb:
     needs: build
@@ -155,12 +149,6 @@ jobs:
           cp dist/linux-amd64/depshub-linux-amd64 deb/usr/local/bin/depshub
           dpkg-deb --build deb
           mv deb.deb depshub_${{ inputs.version }}_amd64.deb
-
-      - name: Upload DEB Package
-        uses: actions/upload-artifact@v4
-        with:
-          name: deb
-          path: "*.deb"
 
   rpm:
     needs: build
@@ -209,12 +197,6 @@ jobs:
           rpmbuild -bb ~/rpmbuild/SPECS/depshub.spec
           cp ~/rpmbuild/RPMS/x86_64/depshub-${{ inputs.version }}-1.x86_64.rpm ./
 
-      - name: Upload RPM Package
-        uses: actions/upload-artifact@v4
-        with:
-          name: rpm
-          path: "*.rpm"
-
   chocolatey:
     needs: build
     runs-on: ubuntu-latest
@@ -250,12 +232,6 @@ jobs:
           mkdir -p choco/tools
           cp dist/windows-amd64/depshub-windows-amd64.exe choco/tools/depshub.exe
           choco pack choco/depshub.nuspec
-
-      - name: Upload Chocolatey Package
-        uses: actions/upload-artifact@v4
-        with:
-          name: chocolatey
-          path: "*.nupkg"
 
   release:
     needs: [homebrew, deb, rpm, chocolatey]
