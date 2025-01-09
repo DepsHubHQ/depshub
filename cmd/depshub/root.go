@@ -21,8 +21,7 @@ and to update them when new versions are available.`,
 var cfgFile string
 
 func Execute() {
-	rootCmd.Version = fmt.Sprintf("%s", version)
-
+	rootCmd.Version = version
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", ".", "config file path (default is depshub.yaml in the current directory)")
 
 	if err := rootCmd.Execute(); err != nil {

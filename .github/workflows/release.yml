@@ -1,5 +1,4 @@
 name: Release Build
-
 on:
   workflow_dispatch:
     inputs:
@@ -8,30 +7,52 @@ on:
         required: true
         type: string
     branches: [ main ]
-
 permissions:
   contents: write
-
 jobs:
   test:
     uses: ./.github/workflows/test.yml
-
   build:
     needs: test
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
+          # Linux builds
           - os: ubuntu-latest
             output: depshub-linux-amd64
-            artifact: linux
+            artifact: linux-amd64
+            goarch: amd64
+            goos: linux
+          - os: ubuntu-latest
+            output: depshub-linux-arm64
+            artifact: linux-arm64
+            goarch: arm64
+            goos: linux
+          
+          # Windows builds
           - os: windows-latest
             output: depshub-windows-amd64.exe
-            artifact: windows
+            artifact: windows-amd64
+            goarch: amd64
+            goos: windows
+          - os: windows-latest
+            output: depshub-windows-arm64.exe
+            artifact: windows-arm64
+            goarch: arm64
+            goos: windows
+          
+          # macOS builds
           - os: macos-latest
             output: depshub-darwin-amd64
-            artifact: macos
-
+            artifact: macos-amd64
+            goarch: amd64
+            goos: darwin
+          - os: macos-latest
+            output: depshub-darwin-arm64
+            artifact: macos-arm64
+            goarch: arm64
+            goos: darwin
+    
     runs-on: ${{ matrix.os }}
     
     steps:
@@ -43,26 +64,135 @@ jobs:
           go-version: '1.23.2'
           
       - name: Build
-        run: go build -ldflags "-X main.version=${{ inputs.version }}" -o ${{ matrix.output }} ./cmd/depshub
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          go build -ldflags "-X main.version=${{ inputs.version }}" -o ${{ matrix.output }} ./cmd/depshub
+      
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
           path: ${{ matrix.output }}
-
-  release:
+  
+  package:
     needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Create Homebrew Formula
+        run: |
+          cat > depshub.rb << EOF
+          class Depshub < Formula
+            desc "DepsHub is a tool to manage your dependencies"
+            homepage "https://github.com/DepsHubHQ/depshub"
+            version "${{ inputs.version }}"
+            
+            on_macos do
+              on_arm do
+                url "https://github.com/DepsHubHQ/depshub/releases/download/v${{ inputs.version }}/depshub-darwin-arm64"
+                sha256 "#{%x(sha256sum dist/macos-arm64/depshub-darwin-arm64).split.first}"
+              end
+              on_intel do
+                url "https://github.com/DepsHubHQ/depshub/releases/download/v${{ inputs.version }}/depshub-darwin-amd64"
+                sha256 "#{%x(sha256sum dist/macos-amd64/depshub-darwin-amd64).split.first}"
+              end
+            end
+            
+            def install
+              bin.install "depshub"
+            end
+          end
+          EOF
+      
+      - name: Create DEB Package
+        run: |
+          mkdir -p deb/DEBIAN
+          mkdir -p deb/usr/local/bin
+          cat > deb/DEBIAN/control << EOF
+          Package: depshub
+          Version: ${{ inputs.version }}
+          Architecture: amd64
+          Maintainer: Andriy Semenets <semanser@gmail.com>
+          Description: DepsHub is a tool to manage your dependencies
+          EOF
+          cp dist/linux-amd64/depshub-linux-amd64 deb/usr/local/bin/depshub
+          dpkg-deb --build deb
+          mv deb.deb depshub_${{ inputs.version }}_amd64.deb
+      
+      - name: Create RPM Package
+        run: |
+          mkdir -p rpmbuild/{SPECS,SOURCES}
+          cat > rpmbuild/SPECS/depshub.spec << EOF
+          Name: depshub
+          Version: ${{ inputs.version }}
+          Release: 1
+          Summary: Your depshub tool description
+          License: AGPL-3.0
+          
+          %description
+          DepsHub is a tool to manage your dependencies
+          
+          %install
+          mkdir -p %{buildroot}/usr/local/bin
+          cp %{_sourcedir}/depshub-linux-amd64 %{buildroot}/usr/local/bin/depshub
+          
+          %files
+          /usr/local/bin/depshub
+          EOF
+          cp dist/linux-amd64/depshub-linux-amd64 rpmbuild/SOURCES/
+          rpmbuild -bb rpmbuild/SPECS/depshub.spec
+      
+      - name: Create Chocolatey Package
+        run: |
+          mkdir -p choco
+          cat > choco/depshub.nuspec << EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+            <metadata>
+              <id>depshub</id>
+              <version>${{ inputs.version }}</version>
+              <title>Depshub</title>
+              <authors>Andriy Semenets</authors>
+              <projectUrl>https://github.com/DepsHubHQ/depshub</projectUrl>
+              <description>DepsHub is a tool to manage your dependencies</description>
+            </metadata>
+          </package>
+          EOF
+          mkdir -p choco/tools
+          cp dist/windows-amd64/depshub-windows-amd64.exe choco/tools/depshub.exe
+          choco pack choco/depshub.nuspec
+  
+  release:
+    needs: package
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
           path: dist
-
+      
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/**/*
+          files: |
+            dist/**/*
+            *.deb
+            *.rpm
+            *.nupkg
+            depshub.rb
           generate_release_notes: true
           tag_name: v${{ inputs.version }}
           draft: false
