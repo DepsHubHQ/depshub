@@ -12,7 +12,7 @@ permissions:
 jobs:
   test:
     uses: ./.github/workflows/test.yml
-  
+
   build:
     needs: test
     strategy:
@@ -55,7 +55,6 @@ jobs:
             goos: darwin
     
     runs-on: ${{ matrix.os }}
-    
     steps:
       - uses: actions/checkout@v4
       
@@ -77,16 +76,37 @@ jobs:
           name: ${{ matrix.artifact }}
           path: ${{ matrix.output }}
 
-  homebrew:
+  release:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download Artifacts
+      - name: Download All Artifacts
         uses: actions/download-artifact@v4
         with:
           path: dist
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/**/*
+          generate_release_notes: true
+          tag_name: v${{ inputs.version }}
+          draft: false
+          prerelease: false
+
+  homebrew:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-amd64
+          path: dist/macos-amd64
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-arm64
+          path: dist/macos-arm64
       
       - name: Create Homebrew Formula
         run: |
@@ -113,27 +133,14 @@ jobs:
           end
           EOF
 
-      - name: Push Homebrew Formula
-        run: |
-          git clone https://github.com/DepsHubHQ/homebrew-depshub.git
-          cp depshub.rb homebrew-depshub/Formula/
-          cd homebrew-depshub
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
-          git add Formula/depshub.rb
-          git commit -m "update depshub formula to version ${{ inputs.version }}"
-          git push https://x-access-token:${{ secrets.TAP_GITHUB_TOKEN }}@github.com/DepsHubHQ/homebrew-depshub.git main
-
   deb:
-    needs: build
+    needs: release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
-          path: dist
+          name: linux-amd64
+          path: dist/linux-amd64
       
       - name: Create DEB Package
         run: |
@@ -151,23 +158,20 @@ jobs:
           mv deb.deb depshub_${{ inputs.version }}_amd64.deb
 
   rpm:
-    needs: build
+    needs: release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
-          path: dist
+          name: linux-amd64
+          path: ~/rpmbuild/SOURCES
       
       - name: Install RPM Build Dependencies
         run: sudo apt-get update && sudo apt-get install -y rpm
       
       - name: Create RPM Package
         run: |
-          mkdir -p ~/rpmbuild/{SPECS,SOURCES,BUILD,RPMS,SRPMS}
-          cp dist/linux-amd64/depshub-linux-amd64 ~/rpmbuild/SOURCES/
+          mkdir -p ~/rpmbuild/{SPECS,BUILD,RPMS,SRPMS}
           cat > ~/rpmbuild/SPECS/depshub.spec << EOF
           Name: depshub
           Version: ${{ inputs.version }}
@@ -178,40 +182,23 @@ jobs:
           %description
           DepsHub is a tool to manage your dependencies
           
-          %prep
-          # No prep needed for binary
-          
-          %build
-          # No build needed for binary
-          
           %install
           mkdir -p %{buildroot}/usr/local/bin
           cp %{_sourcedir}/depshub-linux-amd64 %{buildroot}/usr/local/bin/depshub
           
           %files
           /usr/local/bin/depshub
-          
-          %clean
-          rm -rf %{buildroot}
           EOF
           rpmbuild -bb ~/rpmbuild/SPECS/depshub.spec
-          cp ~/rpmbuild/RPMS/x86_64/depshub-${{ inputs.version }}-1.x86_64.rpm ./
 
   chocolatey:
-    needs: build
+    needs: release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
-          path: dist
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+          name: windows-amd64
+          path: dist/windows-amd64
       
       - name: Create Chocolatey Package
         run: |
@@ -232,22 +219,3 @@ jobs:
           mkdir -p choco/tools
           cp dist/windows-amd64/depshub-windows-amd64.exe choco/tools/depshub.exe
           choco pack choco/depshub.nuspec
-
-  release:
-    needs: [homebrew, deb, rpm, chocolatey]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: dist
-      
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/**/*
-          generate_release_notes: true
-          tag_name: v${{ inputs.version }}
-          draft: false
-          prerelease: false
