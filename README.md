@@ -1,3 +1,5 @@
+<img src="./.github/demo.png" />
+
 > [!important]
 > This package is still under active development. Read [Contributions](https://docs.depshub.com/misc/contributions/index.html) on how to improve it.
 

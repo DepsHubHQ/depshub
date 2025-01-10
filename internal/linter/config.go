@@ -76,8 +76,6 @@ func (c Config) Apply(mistakes []rules.Mistake) []rules.Mistake {
 				continue
 			}
 
-			fmt.Println("ignore", ignore, mistake.Definitions[0].Path, matched)
-
 			if matched {
 				ignored = true
 				break
