@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/depshubhq/depshub/internal/linter"
@@ -122,6 +123,10 @@ var lintCmd = &cobra.Command{
 					fmt.Println(style.Render(fmt.Sprintf(" %s\n\n %s %s", path, lineNumber, rawLine)))
 				}
 			}
+		}
+
+		if errorsCount > 0 {
+			os.Exit(1)
 		}
 	},
 }
