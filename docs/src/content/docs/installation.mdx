@@ -9,28 +9,8 @@ Here you can find instructions on how to install DepsHub on your system. If you 
 
 ## Linux
 
-### Debian/Ubuntu
-
 ```bash
-cd /tmp
-```
-
-### Fedora
-
-```bash
-
-```
-
-### Arch Linux
-
-```bash
-
-```
-
-### Other Linux distributions
-
-```bash
-
+curl -fsSL https://raw.githubusercontent.com/DepsHubHQ/depshub/refs/heads/main/scripts/install.sh | bash
 ```
 
 ## macOS
@@ -41,28 +21,19 @@ cd /tmp
 brew install DepsHubHQ/depshub/depshub
 ```
 
-### MacPorts
-
-```bash
-
-```
-
 ## Windows
 
-### Chocolatey
-
-```bash
-
-```
-
-### Scoop
-
-```bash
-
-```
+You can download the official Windows binary from the [GitHub releases page](https://github.com/DepshubHQ/depshub/releases)
 
 ## Download the binary
 
 You can find the latest release on the [GitHub releases page](https://github.com/DepshubHQ/depshub/releases)
 
 ## Build from source
+
+In order to build DepsHub from source, you need to have Go installed on your system. You can find instructions on how to install Go on the [official Go website](https://golang.org/doc/install).
+
+Then you can clone the [repository](https://github.com/DepshubHQ/depshub) and build the binary:
+```bash
+go build
+```
