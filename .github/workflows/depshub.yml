@@ -1,0 +1,11 @@
+name: DepsHub
+on:
+  - pull_request
+  - push
+  - workflow_dispatch
+
+jobs:
+  depshub:
+    steps:
+      - uses: actions/checkout@v4
+        uses: DepsHubHQ/github-action@v1
