@@ -1,4 +1,4 @@
-package linter
+package config
 
 import (
 	"errors"
@@ -35,7 +35,7 @@ type Config struct {
 	config ConfigFile
 }
 
-func NewConfig(filePath string) (Config, error) {
+func New(filePath string) (Config, error) {
 	folder := filepath.Dir(filePath)
 
 	viper.AddConfigPath(folder)
@@ -62,6 +62,26 @@ func NewConfig(filePath string) (Config, error) {
 	}
 
 	return c, nil
+}
+
+// Checks if a path is ignored by the config
+func (c Config) Ignored(path string) (bool, error) {
+	ignored := false
+
+	for _, ignore := range c.config.Ignore {
+		matched, err := doublestar.Match(ignore, path)
+
+		if err != nil {
+			return false, err
+		}
+
+		if matched {
+			ignored = true
+			break
+		}
+	}
+
+	return ignored, nil
 }
 
 func (c Config) Apply(mistakes []rules.Mistake) []rules.Mistake {

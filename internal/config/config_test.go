@@ -1,4 +1,4 @@
-package linter
+package config
 
 import (
 	"os"
@@ -34,7 +34,7 @@ manifest_files:
 		require.NoError(t, err)
 
 		// Test loading the config
-		config, err := NewConfig(configPath)
+		config, err := New(configPath)
 		require.NoError(t, err)
 		assert.Equal(t, 1, config.config.Version)
 		assert.Len(t, config.config.ManifestFiles, 1)
@@ -44,7 +44,7 @@ manifest_files:
 	})
 
 	t.Run("config file not found", func(t *testing.T) {
-		_, err := NewConfig("nonexistent/path/depshub.yaml")
+		_, err := New("nonexistent/path/depshub.yaml")
 		assert.Error(t, err)
 	})
 
@@ -55,7 +55,7 @@ manifest_files:
 		err := os.WriteFile(configPath, invalidContent, 0644)
 		require.NoError(t, err)
 
-		_, err = NewConfig(configPath)
+		_, err = New(configPath)
 		assert.Error(t, err)
 	})
 }

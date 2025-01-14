@@ -3,6 +3,7 @@ package linter
 import (
 	"fmt"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/internal/linter/rules"
 	"github.com/depshubhq/depshub/pkg/manager"
 	"github.com/depshubhq/depshub/pkg/sources"
@@ -34,8 +35,15 @@ func New() Linter {
 	}
 }
 
-func (l Linter) Run(path string) (mistakes []rules.Mistake, err error) {
-	scanner := manager.New()
+func (l Linter) Run(path string, configPath string) (mistakes []rules.Mistake, err error) {
+	config, err := config.New(configPath)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	scanner := manager.New(config)
 	manifests, err := scanner.Scan(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to scan manifests: %w", err)

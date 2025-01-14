@@ -26,12 +26,6 @@ var lintCmd = &cobra.Command{
 			fmt.Println(err)
 			return
 		}
-		config, err := linter.NewConfig(configPath)
-
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
 
 		var p = "."
 
@@ -40,14 +34,12 @@ var lintCmd = &cobra.Command{
 		}
 
 		lint := linter.New()
-		mistakes, err := lint.Run(p)
+		mistakes, err := lint.Run(p, configPath)
 
 		if err != nil {
 			fmt.Printf("Error: %s", err)
 			return
 		}
-
-		mistakes = config.Apply(mistakes)
 
 		errorsCount := 0
 		warningsCount := 0
