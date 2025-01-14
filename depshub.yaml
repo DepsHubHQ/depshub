@@ -1,0 +1,8 @@
+version: 1
+ignore:
+  - "**/testdata/**"
+manifest_files:
+  - filter: "**"
+    rules:
+      - name: "allowed-licenses"
+        value: ["", "MIT", "Apache-2.0", "BSD-3-Clause"]
