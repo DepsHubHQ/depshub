@@ -3,6 +3,7 @@ package sources
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/depshubhq/depshub/pkg/sources/crates"
@@ -35,7 +36,6 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 	pypiSource := pypi.PyPISource{}
 
 	background := context.Background()
-	activeRequests := 0
 
 	// Use a semaphore to limit concurrent requests
 	sem := make(chan struct{}, MaxConcurrent)
@@ -45,10 +45,13 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 		return nil, err
 	}
 
+	var wg sync.WaitGroup
 	for _, dep := range uniqueDependencies {
-		activeRequests++
+		wg.Add(1)
 
-		go func(dep types.Dependency) {
+		go func() {
+			defer wg.Done()
+
 			sem <- struct{}{} // Acquire semaphore
 			defer func() {
 				<-sem // Release semaphore
@@ -80,7 +83,7 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 				if err != nil {
 					fmt.Printf("Error fetching package data: %s\n", err)
 				} else {
-					c.Set(key, packageInfo, 24*time.Hour)
+					c.Set(key, packageInfo, 48*time.Hour)
 				}
 			}
 
@@ -88,14 +91,19 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 				pkg: packageInfo,
 				err: err,
 			}
-		}(dep)
+		}()
 	}
+
+	// Start a goroutine to close resultChan after all workers are done
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
 
 	// Collect results
 	var packagesData = make(types.PackagesInfo)
 
-	for range activeRequests {
-		result := <-resultChan
+	for result := range resultChan {
 		if result.err != nil {
 			fmt.Printf("Error fetching package data: %s\n", result.err)
 			continue

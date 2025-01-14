@@ -21,7 +21,7 @@ type CacheItem struct {
 
 type FileCache struct {
 	filename string
-	mutex    sync.RWMutex
+	mutex    sync.Mutex
 	data     map[string]CacheItem
 }
 
@@ -73,8 +73,8 @@ func (c *FileCache) Set(key string, value any, expiration time.Duration) error {
 
 // Get retrieves a value from the cache and unmarshals it into the provided destination
 func (c *FileCache) Get(key string, dest any) (bool, error) {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 
 	item, exists := c.data[key]
 	if !exists {
@@ -84,7 +84,10 @@ func (c *FileCache) Get(key string, dest any) (bool, error) {
 	// Check if item has expired
 	if !item.ExpiresAt.IsZero() && time.Now().After(item.ExpiresAt) {
 		delete(c.data, key)
-		c.save()
+		err := c.save()
+		if err != nil {
+			return false, err
+		}
 		return false, nil
 	}
 
