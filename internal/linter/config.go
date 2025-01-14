@@ -20,7 +20,7 @@ type ConfigFile struct {
 type Rule struct {
 	Name     string      `mapstructure:"name"`
 	Disabled bool        `mapstructure:"disabled"`
-	Value    int         `mapstructure:"value"`
+	Value    any         `mapstructure:"value"`
 	Level    rules.Level `mapstructure:"level"`
 }
 
@@ -116,7 +116,9 @@ func (c Config) Apply(mistakes []rules.Mistake) []rules.Mistake {
 
 			for _, rule := range configManifestFile.Rules {
 				if mistake.Rule.GetName() == rule.Name && matchByPackageName {
-					mistake.Rule.SetLevel(rule.Level)
+					if rule.Level != "" {
+						mistake.Rule.SetLevel(rule.Level)
+					}
 
 					if rule.Disabled {
 						mistake.Rule.SetLevel(rules.LevelDisabled)
