@@ -45,8 +45,16 @@ func (r *RuleAllowedLicenses) SetLevel(level Level) {
 }
 
 func (r *RuleAllowedLicenses) SetValue(value any) error {
-	if v, ok := value.([]string); ok {
-		r.value = v
+	if v, ok := value.([]any); ok {
+		for _, i := range v {
+			val, ok := i.(string)
+			if !ok {
+				return ErrInvalidRuleValue
+			}
+
+			r.value = append(r.value, val)
+		}
+
 		return nil
 	}
 	return ErrInvalidRuleValue
