@@ -45,7 +45,7 @@ func (r RuleNoMultipleVersions) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleNoMultipleVersions) Reset() {
-	r = NewRuleNoMultipleVersions()
+	*r = *NewRuleNoMultipleVersions()
 }
 
 func (r RuleNoMultipleVersions) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) (mistakes []types.Mistake, err error) {

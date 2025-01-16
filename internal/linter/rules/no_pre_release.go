@@ -46,7 +46,7 @@ func (r RuleNoPreRelease) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleNoPreRelease) Reset() {
-	r = NewRuleNoPreRelease()
+	*r = *NewRuleNoPreRelease()
 }
 
 func (r RuleNoPreRelease) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) (mistakes []types.Mistake, err error) {

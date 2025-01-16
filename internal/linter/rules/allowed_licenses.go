@@ -61,7 +61,7 @@ func (r *RuleAllowedLicenses) SetValue(value any) error {
 }
 
 func (r *RuleAllowedLicenses) Reset() {
-	r = NewRuleAllowedLicenses()
+	*r = *NewRuleAllowedLicenses()
 }
 
 func (r RuleAllowedLicenses) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) ([]types.Mistake, error) {

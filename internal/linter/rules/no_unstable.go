@@ -48,7 +48,7 @@ func (r RuleNoUnstable) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleNoUnstable) Reset() {
-	r = NewRuleNoUnstable()
+	*r = *NewRuleNoUnstable()
 }
 
 func (r RuleNoUnstable) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) (mistakes []types.Mistake, err error) {

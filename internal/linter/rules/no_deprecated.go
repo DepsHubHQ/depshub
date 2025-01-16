@@ -45,7 +45,7 @@ func (r RuleNoDeprecated) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleNoDeprecated) Reset() {
-	r = NewRuleNoDeprecated()
+	*r = *NewRuleNoDeprecated()
 }
 
 func (r RuleNoDeprecated) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) ([]types.Mistake, error) {

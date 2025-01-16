@@ -54,7 +54,7 @@ func (r RuleMaxPackageAge) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleMaxPackageAge) Reset() {
-	r = NewRuleMaxPackageAge()
+	*r = *NewRuleMaxPackageAge()
 }
 
 func (r RuleMaxPackageAge) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) ([]types.Mistake, error) {

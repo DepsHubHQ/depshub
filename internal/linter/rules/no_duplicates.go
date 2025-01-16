@@ -45,7 +45,7 @@ func (r RuleNoDuplicates) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleNoDuplicates) Reset() {
-	r = NewRuleNoDuplicates()
+	*r = *NewRuleNoDuplicates()
 }
 
 func (r RuleNoDuplicates) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) (mistakes []types.Mistake, err error) {

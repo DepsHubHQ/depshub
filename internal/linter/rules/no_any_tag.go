@@ -45,7 +45,7 @@ func (r RuleNoAnyTag) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleNoAnyTag) Reset() {
-	r = NewRuleNoAnyTag()
+	*r = *NewRuleNoAnyTag()
 }
 
 func (r RuleNoAnyTag) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) (mistakes []types.Mistake, err error) {

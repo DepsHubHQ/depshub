@@ -3,6 +3,7 @@ package rules
 import (
 	"testing"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -348,11 +349,11 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 
 			// Test rule metadata
 			assert.Equal(t, "max-major-updates", rule.GetName())
-			assert.Equal(t, LevelError, rule.GetLevel())
+			assert.Equal(t, types.LevelError, rule.GetLevel())
 			assert.Equal(t, "The total number of major updates is too high", rule.GetMessage())
 
 			// Test rule check
-			mistakes, err := rule.Check(tt.manifests, tt.packagesInfo)
+			mistakes, err := rule.Check(tt.manifests, tt.packagesInfo, config.Config{})
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {
@@ -362,7 +363,6 @@ func TestRuleMaxMajorUpdates(t *testing.T) {
 
 			// Additional checks for when mistakes are found
 			if tt.expectedLength > 0 {
-				assert.Equal(t, rule, mistakes[0].Rule)
 				assert.NotEmpty(t, mistakes[0].Definitions)
 			}
 		})

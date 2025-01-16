@@ -55,7 +55,7 @@ func (r RuleMaxLibyear) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleMaxLibyear) Reset() {
-	r = NewRuleMaxLibyear()
+	*r = *NewRuleMaxLibyear()
 }
 
 func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) ([]types.Mistake, error) {

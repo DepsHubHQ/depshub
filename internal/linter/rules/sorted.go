@@ -45,7 +45,7 @@ func (r RuleSorted) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleSorted) Reset() {
-	r = NewRuleSorted()
+	*r = *NewRuleSorted()
 }
 
 func (r RuleSorted) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) (mistakes []types.Mistake, err error) {

@@ -53,7 +53,7 @@ func (r RuleMaxPatchUpdates) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleMaxPatchUpdates) Reset() {
-	r = NewRuleMaxPatchUpdates()
+	*r = *NewRuleMaxPatchUpdates()
 }
 
 func (r RuleMaxPatchUpdates) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) ([]types.Mistake, error) {

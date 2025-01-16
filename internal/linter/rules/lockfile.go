@@ -41,7 +41,7 @@ func (r *RuleLockfile) SetValue(value any) error {
 }
 
 func (r *RuleLockfile) Reset() {
-	r = NewRuleLockfile()
+	*r = *NewRuleLockfile()
 }
 
 func (r RuleLockfile) IsSupported(t types.ManagerType) bool {

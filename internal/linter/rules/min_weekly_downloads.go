@@ -53,7 +53,7 @@ func (r RuleMinWeeklyDownloads) IsSupported(t types.ManagerType) bool {
 }
 
 func (r *RuleMinWeeklyDownloads) Reset() {
-	r = NewRuleMinWeeklyDownloads()
+	*r = *NewRuleMinWeeklyDownloads()
 }
 
 func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) ([]types.Mistake, error) {
