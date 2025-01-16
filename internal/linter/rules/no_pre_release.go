@@ -9,14 +9,14 @@ import (
 
 type RuleNoPreRelease struct {
 	name      string
-	level     Level
+	level     types.Level
 	supported []types.ManagerType
 }
 
 func NewRuleNoPreRelease() *RuleNoPreRelease {
 	return &RuleNoPreRelease{
 		name:      "no-pre-release",
-		level:     LevelError,
+		level:     types.LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip},
 	}
 }
@@ -29,11 +29,11 @@ func (r RuleNoPreRelease) GetName() string {
 	return r.name
 }
 
-func (r RuleNoPreRelease) GetLevel() Level {
+func (r RuleNoPreRelease) GetLevel() types.Level {
 	return r.level
 }
 
-func (r *RuleNoPreRelease) SetLevel(level Level) {
+func (r *RuleNoPreRelease) SetLevel(level types.Level) {
 	r.level = level
 }
 
@@ -45,18 +45,28 @@ func (r RuleNoPreRelease) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
 
-func (r RuleNoPreRelease) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
+func (r *RuleNoPreRelease) Reset() {
+	r = NewRuleNoPreRelease()
+}
+
+func (r RuleNoPreRelease) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) (mistakes []types.Mistake, err error) {
 	for _, manifest := range manifests {
 		if !r.IsSupported(manifest.Manager) {
 			continue
 		}
 
 		for _, dep := range manifest.Dependencies {
+			err := c.Apply(manifest.Path, dep.Name, &r)
+
+			if err != nil {
+				return nil, err
+			}
+
 			version := dep.Version
 
 			if strings.Contains(version, "alpha") || strings.Contains(version, "beta") || strings.Contains(version, "rc") {
-				mistakes = append(mistakes, Mistake{
-					Rule: NewRuleNoPreRelease(),
+				mistakes = append(mistakes, types.Mistake{
+					Rule: r,
 					Definitions: []types.Definition{
 						dep.Definition,
 					},

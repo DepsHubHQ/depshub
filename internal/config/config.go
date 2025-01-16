@@ -4,12 +4,16 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"strings"
 
 	"github.com/bmatcuk/doublestar/v4"
-	"github.com/depshubhq/depshub/internal/linter/rules"
+	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/spf13/viper"
 )
+
+type Config struct {
+	path   string
+	config ConfigFile
+}
 
 type ConfigFile struct {
 	Version       int            `mapstructure:"version"`
@@ -21,18 +25,13 @@ type Rule struct {
 	Name     string      `mapstructure:"name"`
 	Disabled bool        `mapstructure:"disabled"`
 	Value    any         `mapstructure:"value"`
-	Level    rules.Level `mapstructure:"level"`
+	Level    types.Level `mapstructure:"level"`
 }
 
 type ManifestFile struct {
 	Filter   string   `mapstructure:"filter"`
 	Rules    []Rule   `mapstructure:"rules"`
 	Packages []string `mapstructure:"packages"`
-}
-
-type Config struct {
-	path   string
-	config ConfigFile
 }
 
 func New(filePath string) (Config, error) {
@@ -84,87 +83,58 @@ func (c Config) Ignored(path string) (bool, error) {
 	return ignored, nil
 }
 
-func (c Config) Apply(mistakes []rules.Mistake) []rules.Mistake {
-	for _, mistake := range mistakes {
-		ignored := false
+func (c Config) Apply(manifestPath string, packageName string, rule types.Rule) error {
+	// Reset the to the default state before applying any settings
+	rule.Reset()
 
-		for _, ignore := range c.config.Ignore {
-			matched, err := doublestar.Match(ignore, mistake.Definitions[0].Path)
-
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
-
-			if matched {
-				ignored = true
-				break
-			}
+	// Iterate through manifest files in config
+	for _, mf := range c.config.ManifestFiles {
+		// Check if manifest path matches the filter
+		matched, err := doublestar.Match(mf.Filter, manifestPath)
+		if err != nil {
+			return fmt.Errorf("invalid filter pattern %q: %w", mf.Filter, err)
 		}
-
-		if ignored {
-			mistake.Rule.SetLevel(rules.LevelDisabled)
+		if !matched {
 			continue
 		}
 
-		for _, configManifestFile := range c.config.ManifestFiles {
-			matched, err := doublestar.Match(configManifestFile.Filter, mistake.Definitions[0].Path)
-
-			if err != nil {
-				fmt.Println(err)
+		// Check if package is in the packages list (if specified)
+		if len(mf.Packages) > 0 {
+			packageMatch := false
+			for _, pkg := range mf.Packages {
+				if pkg == packageName {
+					packageMatch = true
+					break
+				}
+			}
+			if !packageMatch {
 				continue
 			}
+		}
 
-			matchByPackageName := false
-			if len(configManifestFile.Packages) > 0 {
-				for _, p := range configManifestFile.Packages {
-					// We should probably include the package information in the mistake struct,
-					// instead of just checking the raw line.
-					if strings.Contains(mistake.Definitions[0].RawLine, p) {
-						matched = true
-						matchByPackageName = true
-						break
+		// Look for matching rule by name
+		for _, configRule := range mf.Rules {
+			if configRule.Name == rule.GetName() {
+				if configRule.Disabled {
+					rule.SetLevel(types.LevelDisabled)
+				}
+
+				// Apply level if specified
+				if configRule.Level != "" {
+					rule.SetLevel(configRule.Level)
+				}
+
+				// Apply value if specified
+				if configRule.Value != nil {
+					if err := rule.SetValue(configRule.Value); err != nil {
+						return fmt.Errorf("failed to set value for rule %q: %w", rule.GetName(), err)
 					}
 				}
-			} else {
-				matchByPackageName = true
-			}
 
-			if !matched {
-				continue
-			}
-
-			for _, rule := range configManifestFile.Rules {
-				if mistake.Rule.GetName() == rule.Name && matchByPackageName {
-					if rule.Level != "" {
-						mistake.Rule.SetLevel(rule.Level)
-					}
-
-					if rule.Disabled {
-						mistake.Rule.SetLevel(rules.LevelDisabled)
-						continue
-					}
-
-					err := mistake.Rule.SetValue(rule.Value)
-
-					if err != nil {
-						fmt.Println(err)
-					}
-				}
+				break
 			}
 		}
 	}
 
-	return filterDisabledRules(mistakes)
-}
-
-func filterDisabledRules(mistakes []rules.Mistake) []rules.Mistake {
-	var filteredMistakes []rules.Mistake
-
-	for _, mistake := range mistakes {
-		if mistake.Rule.GetLevel() != rules.LevelDisabled {
-			filteredMistakes = append(filteredMistakes, mistake)
-		}
-	}
-	return filteredMistakes
+	return nil
 }

@@ -8,14 +8,14 @@ import (
 
 type RuleNoMultipleVersions struct {
 	name      string
-	level     Level
+	level     types.Level
 	supported []types.ManagerType
 }
 
 func NewRuleNoMultipleVersions() *RuleNoMultipleVersions {
 	return &RuleNoMultipleVersions{
 		name:      "no-multiple-versions",
-		level:     LevelError,
+		level:     types.LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip},
 	}
 }
@@ -28,11 +28,11 @@ func (r RuleNoMultipleVersions) GetName() string {
 	return r.name
 }
 
-func (r RuleNoMultipleVersions) GetLevel() Level {
+func (r RuleNoMultipleVersions) GetLevel() types.Level {
 	return r.level
 }
 
-func (r *RuleNoMultipleVersions) SetLevel(level Level) {
+func (r *RuleNoMultipleVersions) SetLevel(level types.Level) {
 	r.level = level
 }
 
@@ -44,7 +44,11 @@ func (r RuleNoMultipleVersions) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
 
-func (r RuleNoMultipleVersions) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
+func (r *RuleNoMultipleVersions) Reset() {
+	r = NewRuleNoMultipleVersions()
+}
+
+func (r RuleNoMultipleVersions) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) (mistakes []types.Mistake, err error) {
 	type PackageInfo struct {
 		Path    string
 		Version string
@@ -61,6 +65,12 @@ func (r RuleNoMultipleVersions) Check(manifests []types.Manifest, info types.Pac
 		}
 
 		for _, dep := range manifest.Dependencies {
+			err := c.Apply(manifest.Path, dep.Name, &r)
+
+			if err != nil {
+				return nil, err
+			}
+
 			// Check if the dependency version is already in the map
 			if len(dependenciesMap[dep.Name]) != 0 {
 				for _, d := range dependenciesMap[dep.Name] {
@@ -102,8 +112,8 @@ func (r RuleNoMultipleVersions) Check(manifests []types.Manifest, info types.Pac
 			})
 		}
 
-		mistakes = append(mistakes, Mistake{
-			Rule:        NewRuleNoMultipleVersions(),
+		mistakes = append(mistakes, types.Mistake{
+			Rule:        r,
 			Definitions: definitions,
 		})
 	}

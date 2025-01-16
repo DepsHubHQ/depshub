@@ -12,7 +12,7 @@ const DefaultMaxLibyear = 25.0
 
 type RuleMaxLibyear struct {
 	name      string
-	level     Level
+	level     types.Level
 	supported []types.ManagerType
 	value     float64
 }
@@ -20,7 +20,7 @@ type RuleMaxLibyear struct {
 func NewRuleMaxLibyear() *RuleMaxLibyear {
 	return &RuleMaxLibyear{
 		name:      "max-libyear",
-		level:     LevelError,
+		level:     types.LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip},
 		value:     DefaultMaxLibyear,
 	}
@@ -34,11 +34,11 @@ func (r RuleMaxLibyear) GetName() string {
 	return r.name
 }
 
-func (r RuleMaxLibyear) GetLevel() Level {
+func (r RuleMaxLibyear) GetLevel() types.Level {
 	return r.level
 }
 
-func (r *RuleMaxLibyear) SetLevel(level Level) {
+func (r *RuleMaxLibyear) SetLevel(level types.Level) {
 	r.level = level
 }
 
@@ -47,15 +47,19 @@ func (r *RuleMaxLibyear) SetValue(value any) error {
 		r.value = v
 		return nil
 	}
-	return ErrInvalidRuleValue
+	return types.ErrInvalidRuleValue
 }
 
 func (r RuleMaxLibyear) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
 
-func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
-	mistakes := []Mistake{}
+func (r *RuleMaxLibyear) Reset() {
+	r = NewRuleMaxLibyear()
+}
+
+func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) ([]types.Mistake, error) {
+	mistakes := []types.Mistake{}
 
 	totalLibyear := 0.0
 
@@ -65,6 +69,12 @@ func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInf
 		}
 
 		for _, dep := range manifest.Dependencies {
+			err := c.Apply(manifest.Path, dep.Name, &r)
+
+			if err != nil {
+				return nil, err
+			}
+
 			if pkg, ok := info[dep.Name]; ok {
 				if t, ok := pkg.Time[dep.Version]; ok {
 					diff := time.Since(t)
@@ -76,8 +86,8 @@ func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInf
 	}
 
 	if totalLibyear > r.value {
-		mistakes = append(mistakes, Mistake{
-			Rule: NewRuleMaxLibyear(),
+		mistakes = append(mistakes, types.Mistake{
+			Rule: r,
 			Definitions: []types.Definition{{
 				Path: fmt.Sprintf("Allowed libyear: %.2f. Total libyear: %.2f", r.value, totalLibyear),
 			}},

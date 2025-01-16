@@ -6,7 +6,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/depshubhq/depshub/internal/linter"
-	"github.com/depshubhq/depshub/internal/linter/rules"
+	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/spf13/cobra"
 )
 
@@ -45,7 +45,7 @@ var lintCmd = &cobra.Command{
 		warningsCount := 0
 
 		for _, mistake := range mistakes {
-			if mistake.Rule.GetLevel() == rules.LevelError {
+			if mistake.Rule.GetLevel() == types.LevelError {
 				errorsCount++
 			} else {
 				warningsCount++
@@ -79,13 +79,13 @@ var lintCmd = &cobra.Command{
 		}
 
 		for _, mistake := range mistakes {
-			if mistake.Rule.GetLevel() == rules.LevelDisabled {
+			if mistake.Rule.GetLevel() == types.LevelDisabled {
 				continue
 			}
 
 			name := fmt.Sprintf("[%s]", mistake.Rule.GetName())
 
-			if mistake.Rule.GetLevel() == rules.LevelError {
+			if mistake.Rule.GetLevel() == types.LevelError {
 				name = errors.Render(fmt.Sprintf("[%s]", mistake.Rule.GetName()))
 			} else {
 				name = warnings.Render(fmt.Sprintf("[%s]", mistake.Rule.GetName()))

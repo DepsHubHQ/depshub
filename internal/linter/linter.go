@@ -7,15 +7,16 @@ import (
 	"github.com/depshubhq/depshub/internal/linter/rules"
 	"github.com/depshubhq/depshub/pkg/manager"
 	"github.com/depshubhq/depshub/pkg/sources"
+	"github.com/depshubhq/depshub/pkg/types"
 )
 
 type Linter struct {
-	rules []rules.Rule
+	rules []types.Rule
 }
 
 func New() Linter {
 	return Linter{
-		rules: []rules.Rule{
+		rules: []types.Rule{
 			rules.NewRuleAllowedLicenses(),
 			rules.NewRuleLockfile(),
 			rules.NewRuleMaxLibyear(),
@@ -35,12 +36,11 @@ func New() Linter {
 	}
 }
 
-func (l Linter) Run(path string, configPath string) (mistakes []rules.Mistake, err error) {
+func (l Linter) Run(path string, configPath string) (mistakes []types.Mistake, err error) {
 	config, err := config.New(configPath)
 
 	if err != nil {
-		fmt.Println(err)
-		return
+		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
 
 	scanner := manager.New(config)
@@ -59,7 +59,8 @@ func (l Linter) Run(path string, configPath string) (mistakes []rules.Mistake, e
 
 	// Run all rules
 	for _, rule := range l.rules {
-		m, err := rule.Check(manifests, packagesData)
+		m, err := rule.Check(manifests, packagesData, config)
+
 		if err != nil {
 			return nil, fmt.Errorf("rule check failed: %w", err)
 		}
