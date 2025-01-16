@@ -11,6 +11,11 @@ manifest_files:
     rules:
       - name: "no-unstable"
         disabled: true
+  - filter: "**/docs/package.json"
+    packages: ["@radix-ui/colors"]
+    rules:
+      - name: "max-package-age"
+        disabled: true
   - filter: "**/go.mod"
     packages:
       - "github.com/edoardottt/depsdev"
