@@ -47,7 +47,7 @@ var lintCmd = &cobra.Command{
 		for _, mistake := range mistakes {
 			if mistake.Rule.GetLevel() == types.LevelError {
 				errorsCount++
-			} else {
+			} else if mistake.Rule.GetLevel() == types.LevelWarning {
 				warningsCount++
 			}
 		}
