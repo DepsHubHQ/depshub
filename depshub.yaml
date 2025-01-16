@@ -6,3 +6,16 @@ manifest_files:
     rules:
       - name: "allowed-licenses"
         value: ["", "MIT", "Apache-2.0", "BSD-3-Clause"]
+  - filter: "**/docs/package.json"
+    packages: ["@astrojs/check", "@astrojs/starlight", "sharp"]
+    rules:
+      - name: "no-unstable"
+        disabled: true
+  - filter: "**/go.mod"
+    packages:
+      - "github.com/edoardottt/depsdev"
+      - "github.com/sabhiram/go-gitignore"
+      - "golang.org/x/mod"
+    rules:
+      - name: "no-unstable"
+        disabled: true
