@@ -6,8 +6,9 @@
 # DepsHub
 
 [![Tests](https://github.com/DepshubHQ/depshub/actions/workflows/test.yml/badge.svg)](https://github.com/DepshubHQ/depshub/actions/workflows/test.yml)
+[![DepsHub](https://github.com/DepsHubHQ/depshub/actions/workflows/depshub.yml/badge.svg?branch=main)](https://github.com/DepsHubHQ/depshub/actions/workflows/depshub.yml)
 [![GitHub tag](https://img.shields.io/github/tag/depshubhq/depshub?include_prereleases=&sort=semver&color=blue)](https://github.com/depshubhq/depshub/)
-[![License](https://img.shields.io/badge/License-AGPL-green)](#license)
+[![License](https://img.shields.io/badge/License-AGPL3-green)](#license)
 
 > - How do we keep everything up to date while spending the least time possible?
 > - Do we still use this library?
