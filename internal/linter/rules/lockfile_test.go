@@ -3,6 +3,7 @@ package rules
 import (
 	"testing"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +12,7 @@ func TestNewRuleLockfile(t *testing.T) {
 	rule := NewRuleLockfile()
 
 	assert.Equal(t, "lockfile", rule.GetName())
-	assert.Equal(t, LevelError, rule.GetLevel())
+	assert.Equal(t, types.LevelError, rule.GetLevel())
 	assert.Equal(t, "The lockfile should be always present", rule.GetMessage())
 }
 
@@ -19,7 +20,7 @@ func TestRuleLockfile_Check(t *testing.T) {
 	tests := []struct {
 		name      string
 		manifests []types.Manifest
-		want      []Mistake
+		want      []types.Mistake
 		wantErr   bool
 	}{
 		{
@@ -49,9 +50,9 @@ func TestRuleLockfile_Check(t *testing.T) {
 					Lockfile: nil,
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleLockfile(),
+					Rule: *NewRuleLockfile(),
 					Definitions: []types.Definition{
 						{
 							Path: "path/to/manifest",
@@ -79,9 +80,9 @@ func TestRuleLockfile_Check(t *testing.T) {
 					Lockfile: nil,
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleLockfile(),
+					Rule: *NewRuleLockfile(),
 					Definitions: []types.Definition{
 						{
 							Path: "path/to/manifest1",
@@ -89,7 +90,7 @@ func TestRuleLockfile_Check(t *testing.T) {
 					},
 				},
 				{
-					Rule: NewRuleLockfile(),
+					Rule: *NewRuleLockfile(),
 					Definitions: []types.Definition{
 						{
 							Path: "path/to/manifest3",
@@ -104,7 +105,7 @@ func TestRuleLockfile_Check(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rule := NewRuleLockfile()
-			got, err := rule.Check(tt.manifests, nil)
+			got, err := rule.Check(tt.manifests, nil, config.Config{})
 
 			if tt.wantErr {
 				assert.Error(t, err)

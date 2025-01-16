@@ -8,14 +8,14 @@ import (
 
 type RuleNoDuplicates struct {
 	name      string
-	level     Level
+	level     types.Level
 	supported []types.ManagerType
 }
 
 func NewRuleNoDuplicates() *RuleNoDuplicates {
 	return &RuleNoDuplicates{
 		name:      "no-duplicates",
-		level:     LevelError,
+		level:     types.LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip},
 	}
 }
@@ -28,11 +28,11 @@ func (r RuleNoDuplicates) GetName() string {
 	return r.name
 }
 
-func (r RuleNoDuplicates) GetLevel() Level {
+func (r RuleNoDuplicates) GetLevel() types.Level {
 	return r.level
 }
 
-func (r *RuleNoDuplicates) SetLevel(level Level) {
+func (r *RuleNoDuplicates) SetLevel(level types.Level) {
 	r.level = level
 }
 
@@ -44,7 +44,11 @@ func (r RuleNoDuplicates) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
 
-func (r RuleNoDuplicates) Check(manifests []types.Manifest, info types.PackagesInfo) (mistakes []Mistake, err error) {
+func (r *RuleNoDuplicates) Reset() {
+	*r = *NewRuleNoDuplicates()
+}
+
+func (r RuleNoDuplicates) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) (mistakes []types.Mistake, err error) {
 	for _, manifest := range manifests {
 		if !r.IsSupported(manifest.Manager) {
 			continue
@@ -54,9 +58,15 @@ func (r RuleNoDuplicates) Check(manifests []types.Manifest, info types.PackagesI
 
 		for i := 0; i < len(deps)-1; i++ {
 			for j := i + 1; j < len(deps); j++ {
+				err := c.Apply(manifest.Path, deps[j].Name, &r)
+
+				if err != nil {
+					return nil, err
+				}
+
 				if deps[i].Name == deps[j].Name {
-					mistakes = append(mistakes, Mistake{
-						Rule:        NewRuleNoDuplicates(),
+					mistakes = append(mistakes, types.Mistake{
+						Rule:        r,
 						Definitions: []types.Definition{deps[i].Definition},
 					})
 				}

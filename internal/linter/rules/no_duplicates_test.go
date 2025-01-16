@@ -3,6 +3,7 @@ package rules
 import (
 	"testing"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +12,7 @@ func TestNewRuleNoDuplicates(t *testing.T) {
 	rule := NewRuleNoDuplicates()
 
 	assert.Equal(t, "no-duplicates", rule.GetName())
-	assert.Equal(t, LevelError, rule.GetLevel())
+	assert.Equal(t, types.LevelError, rule.GetLevel())
 	assert.Equal(t, "Disallow the same package to be listed multiple times", rule.GetMessage())
 }
 
@@ -19,7 +20,7 @@ func TestRuleNoDuplicates_Check(t *testing.T) {
 	tests := []struct {
 		name      string
 		manifests []types.Manifest
-		want      []Mistake
+		want      []types.Mistake
 		wantErr   bool
 	}{
 		{
@@ -71,9 +72,9 @@ func TestRuleNoDuplicates_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoDuplicates(),
+					Rule: *NewRuleNoDuplicates(),
 					Definitions: []types.Definition{
 						{Path: "path/pkg1"},
 					},
@@ -105,15 +106,15 @@ func TestRuleNoDuplicates_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoDuplicates(),
+					Rule: *NewRuleNoDuplicates(),
 					Definitions: []types.Definition{
 						{Path: "path/pkg1"},
 					},
 				},
 				{
-					Rule: NewRuleNoDuplicates(),
+					Rule: *NewRuleNoDuplicates(),
 					Definitions: []types.Definition{
 						{Path: "path/pkg2"},
 					},
@@ -149,15 +150,15 @@ func TestRuleNoDuplicates_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoDuplicates(),
+					Rule: *NewRuleNoDuplicates(),
 					Definitions: []types.Definition{
 						{Path: "path1/pkg1"},
 					},
 				},
 				{
-					Rule: NewRuleNoDuplicates(),
+					Rule: *NewRuleNoDuplicates(),
 					Definitions: []types.Definition{
 						{Path: "path2/pkg2"},
 					},
@@ -195,7 +196,7 @@ func TestRuleNoDuplicates_Check(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rule := NewRuleNoDuplicates()
-			got, err := rule.Check(tt.manifests, nil)
+			got, err := rule.Check(tt.manifests, nil, config.Config{})
 
 			if tt.wantErr {
 				assert.Error(t, err)

@@ -10,7 +10,7 @@ const DefaultMaxMajorUpdatesPercent = 20.0
 
 type RuleMaxMajorUpdates struct {
 	name      string
-	level     Level
+	level     types.Level
 	supported []types.ManagerType
 	value     float64
 }
@@ -18,7 +18,7 @@ type RuleMaxMajorUpdates struct {
 func NewRuleMaxMajorUpdates() *RuleMaxMajorUpdates {
 	return &RuleMaxMajorUpdates{
 		name:      "max-major-updates",
-		level:     LevelError,
+		level:     types.LevelError,
 		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip},
 		value:     DefaultMaxMajorUpdatesPercent,
 	}
@@ -32,11 +32,11 @@ func (r RuleMaxMajorUpdates) GetName() string {
 	return r.name
 }
 
-func (r RuleMaxMajorUpdates) GetLevel() Level {
+func (r RuleMaxMajorUpdates) GetLevel() types.Level {
 	return r.level
 }
 
-func (r *RuleMaxMajorUpdates) SetLevel(level Level) {
+func (r *RuleMaxMajorUpdates) SetLevel(level types.Level) {
 	r.level = level
 }
 
@@ -45,15 +45,19 @@ func (r *RuleMaxMajorUpdates) SetValue(value any) error {
 		r.value = v
 		return nil
 	}
-	return ErrInvalidRuleValue
+	return types.ErrInvalidRuleValue
 }
 
 func (r RuleMaxMajorUpdates) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
 
-func (r RuleMaxMajorUpdates) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
-	mistakes := []Mistake{}
+func (r *RuleMaxMajorUpdates) Reset() {
+	*r = *NewRuleMaxMajorUpdates()
+}
+
+func (r RuleMaxMajorUpdates) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) ([]types.Mistake, error) {
+	mistakes := []types.Mistake{}
 	definitions := []types.Definition{}
 	totalDependencies := 0
 
@@ -64,6 +68,12 @@ func (r RuleMaxMajorUpdates) Check(manifests []types.Manifest, info types.Packag
 
 		for _, dep := range manifest.Dependencies {
 			if pkg, ok := info[dep.Name]; ok {
+				err := c.Apply(manifest.Path, dep.Name, &r)
+
+				if err != nil {
+					return nil, err
+				}
+
 				totalDependencies++
 				major, minor, patch := parseVersion(dep.Version)
 
@@ -84,8 +94,8 @@ func (r RuleMaxMajorUpdates) Check(manifests []types.Manifest, info types.Packag
 	}
 
 	if float64(len(definitions))/float64(totalDependencies)*100 > r.value {
-		mistakes = append(mistakes, Mistake{
-			Rule:        NewRuleMaxMajorUpdates(),
+		mistakes = append(mistakes, types.Mistake{
+			Rule:        r,
 			Definitions: definitions,
 		})
 	}

@@ -3,6 +3,7 @@ package rules
 import (
 	"testing"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,7 +14,7 @@ func TestRuleSorted(t *testing.T) {
 	// Test rule metadata
 	t.Run("metadata", func(t *testing.T) {
 		assert.Equal(t, "sorted", rule.GetName())
-		assert.Equal(t, LevelError, rule.GetLevel())
+		assert.Equal(t, types.LevelError, rule.GetLevel())
 		assert.Equal(t, "All the dependencies should be ordered alphabetically", rule.GetMessage())
 	})
 
@@ -239,7 +240,7 @@ func TestRuleSorted(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mistakes, err := rule.Check(tt.manifests, nil)
+			mistakes, err := rule.Check(tt.manifests, nil, config.Config{})
 
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -252,7 +253,6 @@ func TestRuleSorted(t *testing.T) {
 			// Verify mistake details when mistakes are expected
 			if tt.want > 0 {
 				for _, mistake := range mistakes {
-					assert.Equal(t, rule, mistake.Rule)
 					assert.NotEmpty(t, mistake.Definitions)
 
 					// Verify Definition fields

@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -14,19 +15,19 @@ func TestRuleMaxPackageAge(t *testing.T) {
 	// Test rule metadata
 	t.Run("metadata", func(t *testing.T) {
 		assert.Equal(t, "max-package-age", rule.GetName())
-		assert.Equal(t, LevelError, rule.GetLevel())
+		assert.Equal(t, types.LevelError, rule.GetLevel())
 		assert.Equal(t, "Disallow the use of any package that is older than a certain age (in months).", rule.GetMessage())
 	})
 
 	now := time.Now()
-	mistakes := make([]Mistake, 0)
+	mistakes := make([]types.Mistake, 0)
 
 	// Test scenarios
 	tests := []struct {
 		name      string
 		manifests []types.Manifest
 		info      types.PackagesInfo
-		want      []Mistake
+		want      []types.Mistake
 		wantErr   bool
 	}{
 		{
@@ -51,9 +52,9 @@ func TestRuleMaxPackageAge(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: rule,
+					Rule: *rule,
 					Definitions: []types.Definition{
 						{
 							Line: 1,
@@ -164,9 +165,9 @@ func TestRuleMaxPackageAge(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: rule,
+					Rule: *rule,
 					Definitions: []types.Definition{
 						{
 							Line: 1,
@@ -180,7 +181,7 @@ func TestRuleMaxPackageAge(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := rule.Check(tt.manifests, tt.info)
+			got, err := rule.Check(tt.manifests, tt.info, config.Config{})
 			if tt.wantErr {
 				assert.Error(t, err)
 				return

@@ -10,7 +10,7 @@ const DefaultMinWeeklyDownloads = 1000
 
 type RuleMinWeeklyDownloads struct {
 	name      string
-	level     Level
+	level     types.Level
 	supported []types.ManagerType
 	value     int
 }
@@ -18,7 +18,7 @@ type RuleMinWeeklyDownloads struct {
 func NewRuleMinWeeklyDownloads() *RuleMinWeeklyDownloads {
 	return &RuleMinWeeklyDownloads{
 		name:      "min-weekly-downloads",
-		level:     LevelError,
+		level:     types.LevelError,
 		supported: []types.ManagerType{types.Npm, types.Cargo},
 		value:     DefaultMinWeeklyDownloads,
 	}
@@ -32,11 +32,11 @@ func (r RuleMinWeeklyDownloads) GetName() string {
 	return r.name
 }
 
-func (r RuleMinWeeklyDownloads) GetLevel() Level {
+func (r RuleMinWeeklyDownloads) GetLevel() types.Level {
 	return r.level
 }
 
-func (r *RuleMinWeeklyDownloads) SetLevel(level Level) {
+func (r *RuleMinWeeklyDownloads) SetLevel(level types.Level) {
 	r.level = level
 }
 
@@ -45,15 +45,19 @@ func (r *RuleMinWeeklyDownloads) SetValue(value any) error {
 		r.value = v
 		return nil
 	}
-	return ErrInvalidRuleValue
+	return types.ErrInvalidRuleValue
 }
 
 func (r RuleMinWeeklyDownloads) IsSupported(t types.ManagerType) bool {
 	return slices.Contains(r.supported, t)
 }
 
-func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info types.PackagesInfo) ([]Mistake, error) {
-	mistakes := []Mistake{}
+func (r *RuleMinWeeklyDownloads) Reset() {
+	*r = *NewRuleMinWeeklyDownloads()
+}
+
+func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info types.PackagesInfo, c types.Config) ([]types.Mistake, error) {
+	mistakes := []types.Mistake{}
 
 	for _, manifest := range manifests {
 		if !r.IsSupported(manifest.Manager) {
@@ -62,6 +66,12 @@ func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info types.Pac
 
 		for _, dep := range manifest.Dependencies {
 			if pkg, ok := info[dep.Name]; ok {
+				err := c.Apply(manifest.Path, dep.Name, &r)
+
+				if err != nil {
+					return nil, err
+				}
+
 				weeklyDownloads := 0
 
 				for _, download := range pkg.Downloads {
@@ -69,8 +79,8 @@ func (r RuleMinWeeklyDownloads) Check(manifests []types.Manifest, info types.Pac
 				}
 
 				if weeklyDownloads < r.value {
-					mistakes = append(mistakes, Mistake{
-						Rule:        NewRuleMinWeeklyDownloads(),
+					mistakes = append(mistakes, types.Mistake{
+						Rule:        r,
 						Definitions: []types.Definition{dep.Definition},
 					})
 				}

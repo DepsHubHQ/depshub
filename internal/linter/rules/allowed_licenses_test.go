@@ -3,6 +3,7 @@ package rules
 import (
 	"testing"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,7 +14,7 @@ func TestRuleAllowedLicenses(t *testing.T) {
 	// Test rule metadata
 	t.Run("metadata", func(t *testing.T) {
 		assert.Equal(t, "allowed-licenses", rule.GetName())
-		assert.Equal(t, LevelError, rule.GetLevel())
+		assert.Equal(t, types.LevelError, rule.GetLevel())
 		assert.Equal(t, "The license of the package is not allowed.", rule.GetMessage())
 	})
 
@@ -22,7 +23,7 @@ func TestRuleAllowedLicenses(t *testing.T) {
 		name      string
 		manifests []types.Manifest
 		info      types.PackagesInfo
-		expected  []Mistake
+		expected  []types.Mistake
 	}{
 		{
 			name: "all licenses allowed",
@@ -44,7 +45,7 @@ func TestRuleAllowedLicenses(t *testing.T) {
 				"pkg1": {License: "MIT"},
 				"pkg2": {License: "Apache-2.0"},
 			},
-			expected: []Mistake{},
+			expected: []types.Mistake{},
 		},
 		{
 			name: "empty license allowed",
@@ -61,7 +62,7 @@ func TestRuleAllowedLicenses(t *testing.T) {
 			info: types.PackagesInfo{
 				"pkg1": {License: ""},
 			},
-			expected: []Mistake{},
+			expected: []types.Mistake{},
 		},
 		{
 			name: "disallowed license",
@@ -78,9 +79,9 @@ func TestRuleAllowedLicenses(t *testing.T) {
 			info: types.PackagesInfo{
 				"pkg1": {License: "GPL-3.0"},
 			},
-			expected: []Mistake{
+			expected: []types.Mistake{
 				{
-					Rule: rule,
+					Rule: *rule,
 					Definitions: []types.Definition{{
 						Path:    "",
 						Line:    0,
@@ -113,9 +114,9 @@ func TestRuleAllowedLicenses(t *testing.T) {
 				"pkg1": {License: "MIT"},
 				"pkg2": {License: "GPL-3.0"},
 			},
-			expected: []Mistake{
+			expected: []types.Mistake{
 				{
-					Rule: rule,
+					Rule: *rule,
 					Definitions: []types.Definition{{
 						Path:    "",
 						Line:    0,
@@ -137,13 +138,13 @@ func TestRuleAllowedLicenses(t *testing.T) {
 				},
 			},
 			info:     types.PackagesInfo{},
-			expected: []Mistake{},
+			expected: []types.Mistake{},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			mistakes, err := rule.Check(tc.manifests, tc.info)
+			mistakes, err := rule.Check(tc.manifests, tc.info, config.Config{})
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, mistakes)
 		})
