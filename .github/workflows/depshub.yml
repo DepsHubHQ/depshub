@@ -1,10 +1,12 @@
-name: DepsHub
+name: depshub
 on:
   - push
 
 jobs:
-  depshub:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: DepsHubHQ/github-action@v1
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run depshub
+        uses: DepsHubHQ/github-action@v1
