@@ -117,6 +117,11 @@ var lintCmd = &cobra.Command{
 			}
 		}
 
+		style := lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
+		if errorsCount == 0 && warningsCount == 0 {
+			fmt.Println(style.Render("No issues found"))
+		}
+
 		if errorsCount > 0 {
 			os.Exit(1)
 		}

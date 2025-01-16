@@ -49,6 +49,12 @@ func (l Linter) Run(path string, configPath string) (mistakes []types.Mistake, e
 		return nil, fmt.Errorf("failed to scan manifests: %w", err)
 	}
 
+	fmt.Printf("Scanning %d manifest files. \n", len(manifests))
+
+	for _, manifest := range manifests {
+		fmt.Printf("  - %s \n", manifest.Path)
+	}
+
 	uniqueDependencies := scanner.UniqueDependencies(manifests)
 
 	packagesData, err := sources.NewFetcher().Fetch(uniqueDependencies)
