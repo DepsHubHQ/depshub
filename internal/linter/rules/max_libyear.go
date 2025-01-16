@@ -62,6 +62,7 @@ func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInf
 	mistakes := []types.Mistake{}
 
 	totalLibyear := 0.0
+	topPackageContributors := make(map[string]float64)
 
 	for _, manifest := range manifests {
 		if !r.IsSupported(manifest.Manager) {
@@ -77,19 +78,32 @@ func (r RuleMaxLibyear) Check(manifests []types.Manifest, info types.PackagesInf
 
 			if pkg, ok := info[dep.Name]; ok {
 				if t, ok := pkg.Time[dep.Version]; ok {
+					if t.IsZero() {
+						continue
+					}
+
 					diff := time.Since(t)
 					diffHours := diff.Abs().Hours()
 					totalLibyear += diffHours / (365 * 24)
+
+					topPackageContributors[dep.Name] += diffHours / (365 * 24)
 				}
 			}
 		}
 	}
 
 	if totalLibyear > r.value {
+		message := fmt.Sprintf("The total libyear of all dependencies is too high.\n Allowed libyear: %.2f. Total libyear: %.2f", r.value, totalLibyear)
+
+		message += "\n\nTop outdated packages:"
+		for pkg, libyear := range topPackageContributors {
+			message += fmt.Sprintf("\n%s: %.2f", pkg, libyear)
+		}
+
 		mistakes = append(mistakes, types.Mistake{
 			Rule: r,
 			Definitions: []types.Definition{{
-				Path: fmt.Sprintf("Allowed libyear: %.2f. Total libyear: %.2f", r.value, totalLibyear),
+				Path: message,
 			}},
 		})
 	}
