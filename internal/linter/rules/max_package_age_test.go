@@ -156,12 +156,12 @@ func TestRuleMaxPackageAge(t *testing.T) {
 			info: types.PackagesInfo{
 				"old-pkg": {
 					Time: map[string]time.Time{
-						"1.0.0": now.AddDate(0, -(DefaultMaxPackageAge + 12), 0), // 12 months older than max age
+						"1.0.0": now.AddDate(0, -(DefaultMaxPackageAge + 1), 0), // 1 months older than max age
 					},
 				},
 				"new-pkg": {
 					Time: map[string]time.Time{
-						"1.0.0": now.AddDate(0, -12, 0), // Only 12 months old
+						"1.0.0": now.AddDate(0, -(DefaultMaxPackageAge - 1), 0), // 1 month newer than max age
 					},
 				},
 			},

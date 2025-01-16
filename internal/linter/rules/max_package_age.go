@@ -7,7 +7,7 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-const DefaultMaxPackageAge = 36
+const DefaultMaxPackageAge = 12
 
 type RuleMaxPackageAge struct {
 	name      string
@@ -75,7 +75,7 @@ func (r RuleMaxPackageAge) Check(manifests []types.Manifest, info types.Packages
 				}
 
 				for version, t := range pkg.Time {
-					if version == dep.Version && t.Before(time.Now().AddDate(0, -r.value, 0)) {
+					if version == dep.Version && !t.IsZero() && t.Before(time.Now().AddDate(0, -r.value, 0)) {
 						mistakes = append(mistakes, types.Mistake{
 							Rule: r,
 							Definitions: []types.Definition{

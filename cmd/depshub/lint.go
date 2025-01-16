@@ -47,7 +47,7 @@ var lintCmd = &cobra.Command{
 		for _, mistake := range mistakes {
 			if mistake.Rule.GetLevel() == types.LevelError {
 				errorsCount++
-			} else {
+			} else if mistake.Rule.GetLevel() == types.LevelWarning {
 				warningsCount++
 			}
 		}
@@ -115,6 +115,11 @@ var lintCmd = &cobra.Command{
 					fmt.Println(style.Render(fmt.Sprintf(" %s\n\n %s %s", path, lineNumber, rawLine)))
 				}
 			}
+		}
+
+		style := lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
+		if errorsCount == 0 && warningsCount == 0 {
+			fmt.Println(style.Render("No issues found"))
 		}
 
 		if errorsCount > 0 {

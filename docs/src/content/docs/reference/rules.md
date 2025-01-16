@@ -48,7 +48,7 @@ Set the maximum allowed package age for the manifest file in months.
 
 | Type            | Default Value |
 | --------------- | ------------- |
-| Number (Months) | `36`          |
+| Number (Months) | `12`          |
 
 ### max-patch-updates
 
