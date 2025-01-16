@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/manager/cargo"
 	gomanager "github.com/depshubhq/depshub/pkg/manager/go"
 	"github.com/depshubhq/depshub/pkg/manager/npm"
@@ -16,11 +17,13 @@ import (
 
 type scanner struct {
 	gitignore *ignore.GitIgnore
+	config    config.Config
 	managers  []Manager
 }
 
-func New() scanner {
+func New(config config.Config) scanner {
 	return scanner{
+		config: config,
 		managers: []Manager{
 			npm.Npm{},
 			gomanager.Go{},
@@ -34,12 +37,27 @@ func (s scanner) Scan(path string) ([]types.Manifest, error) {
 	var manifests []types.Manifest
 
 	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
 		if d.Name() == ".gitignore" {
 			return s.loadGitignore(path)
 		}
 
 		// Skip files matched by .gitignore
 		if s.gitignore != nil && s.gitignore.MatchesPath(path) {
+			return filepath.SkipDir
+		}
+
+		// Check if the path is ignored by the config
+		ignored, err := s.config.Ignored(path)
+
+		if err != nil {
+			return err
+		}
+
+		if ignored {
 			return filepath.SkipDir
 		}
 

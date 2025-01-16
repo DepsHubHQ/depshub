@@ -3,6 +3,7 @@ package rules
 import (
 	"testing"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +12,7 @@ func TestNewRuleNoMultipleVersions(t *testing.T) {
 	rule := NewRuleNoMultipleVersions()
 
 	assert.Equal(t, "no-multiple-versions", rule.GetName())
-	assert.Equal(t, LevelError, rule.GetLevel())
+	assert.Equal(t, types.LevelError, rule.GetLevel())
 	assert.Equal(t, "Disallow the use of multiple versions of the same package", rule.GetMessage())
 }
 
@@ -19,7 +20,7 @@ func TestRuleNoMultipleVersions_Check(t *testing.T) {
 	tests := []struct {
 		name      string
 		manifests []types.Manifest
-		want      []Mistake
+		want      []types.Mistake
 		wantErr   bool
 	}{
 		{
@@ -81,9 +82,9 @@ func TestRuleNoMultipleVersions_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoMultipleVersions(),
+					Rule: *NewRuleNoMultipleVersions(),
 					Definitions: []types.Definition{
 						{
 							Path:    "manifest1",
@@ -130,9 +131,9 @@ func TestRuleNoMultipleVersions_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoMultipleVersions(),
+					Rule: *NewRuleNoMultipleVersions(),
 					Definitions: []types.Definition{
 						{
 							Path:    "manifest1",
@@ -195,9 +196,9 @@ func TestRuleNoMultipleVersions_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoMultipleVersions(),
+					Rule: *NewRuleNoMultipleVersions(),
 					Definitions: []types.Definition{
 						{
 							Path:    "manifest1",
@@ -212,7 +213,7 @@ func TestRuleNoMultipleVersions_Check(t *testing.T) {
 					},
 				},
 				{
-					Rule: NewRuleNoMultipleVersions(),
+					Rule: *NewRuleNoMultipleVersions(),
 					Definitions: []types.Definition{
 						{
 							Path:    "manifest1",
@@ -267,7 +268,7 @@ func TestRuleNoMultipleVersions_Check(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rule := NewRuleNoMultipleVersions()
-			got, err := rule.Check(tt.manifests, nil)
+			got, err := rule.Check(tt.manifests, nil, config.Config{})
 
 			if tt.wantErr {
 				assert.Error(t, err)

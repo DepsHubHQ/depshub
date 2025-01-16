@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,7 +16,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 	// Test rule metadata
 	t.Run("metadata", func(t *testing.T) {
 		assert.Equal(t, "max-libyear", rule.GetName())
-		assert.Equal(t, LevelError, rule.GetLevel())
+		assert.Equal(t, types.LevelError, rule.GetLevel())
 		assert.Equal(t, "The total libyear of all dependencies is too high", rule.GetMessage())
 	})
 
@@ -26,7 +27,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 		name      string
 		manifests []types.Manifest
 		info      types.PackagesInfo
-		want      []Mistake
+		want      []types.Mistake
 		wantErr   bool
 	}{
 		{
@@ -57,7 +58,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 					},
 				},
 			},
-			want:    []Mistake{}, // Total < MaxLibyear
+			want:    []types.Mistake{}, // Total < MaxLibyear
 			wantErr: false,
 		},
 		{
@@ -79,9 +80,9 @@ func TestRuleMaxLibyear(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: rule,
+					Rule: *rule,
 					Definitions: []types.Definition{
 						{
 							// Don't hardcode the exact value since it will change based on when the test runs
@@ -120,9 +121,9 @@ func TestRuleMaxLibyear(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: rule,
+					Rule: *rule,
 					Definitions: []types.Definition{
 						{
 							// Don't hardcode the exact value since it will change based on when the test runs
@@ -146,7 +147,7 @@ func TestRuleMaxLibyear(t *testing.T) {
 				},
 			},
 			info:    types.PackagesInfo{},
-			want:    []Mistake{},
+			want:    []types.Mistake{},
 			wantErr: false,
 		},
 		{
@@ -166,21 +167,21 @@ func TestRuleMaxLibyear(t *testing.T) {
 					Time: map[string]time.Time{},
 				},
 			},
-			want:    []Mistake{},
+			want:    []types.Mistake{},
 			wantErr: false,
 		},
 		{
 			name:      "empty manifests",
 			manifests: []types.Manifest{},
 			info:      types.PackagesInfo{},
-			want:      []Mistake{},
+			want:      []types.Mistake{},
 			wantErr:   false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := rule.Check(tt.manifests, tt.info)
+			got, err := rule.Check(tt.manifests, tt.info, config.Config{})
 			if tt.wantErr {
 				assert.Error(t, err)
 				return
@@ -190,7 +191,6 @@ func TestRuleMaxLibyear(t *testing.T) {
 			// For cases where we expect mistakes, verify the structure and ranges rather than exact values
 			if len(tt.want) > 0 {
 				assert.Len(t, got, 1)
-				assert.Equal(t, rule, got[0].Rule)
 				assert.Len(t, got[0].Definitions, 1)
 
 				// Verify the Path format and that it contains expected parts

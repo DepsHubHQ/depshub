@@ -3,6 +3,7 @@ package rules
 import (
 	"testing"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +12,7 @@ func TestNewRuleNoPreRelease(t *testing.T) {
 	rule := NewRuleNoPreRelease()
 
 	assert.Equal(t, "no-pre-release", rule.GetName())
-	assert.Equal(t, LevelError, rule.GetLevel())
+	assert.Equal(t, types.LevelError, rule.GetLevel())
 	assert.Equal(t, `Disallow the use of "alpha", "beta", "rc", etc. version tags`, rule.GetMessage())
 }
 
@@ -19,7 +20,7 @@ func TestRuleNoPreRelease_Check(t *testing.T) {
 	tests := []struct {
 		name      string
 		manifests []types.Manifest
-		want      []Mistake
+		want      []types.Mistake
 		wantErr   bool
 	}{
 		{
@@ -59,9 +60,9 @@ func TestRuleNoPreRelease_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoPreRelease(),
+					Rule: *NewRuleNoPreRelease(),
 					Definitions: []types.Definition{
 						{Path: "pkg1"},
 					},
@@ -81,9 +82,9 @@ func TestRuleNoPreRelease_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoPreRelease(),
+					Rule: *NewRuleNoPreRelease(),
 					Definitions: []types.Definition{
 						{Path: "pkg1"},
 					},
@@ -103,9 +104,9 @@ func TestRuleNoPreRelease_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoPreRelease(),
+					Rule: *NewRuleNoPreRelease(),
 					Definitions: []types.Definition{
 						{Path: "pkg1"},
 					},
@@ -145,21 +146,21 @@ func TestRuleNoPreRelease_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoPreRelease(),
+					Rule: *NewRuleNoPreRelease(),
 					Definitions: []types.Definition{
 						{Path: "pkg1"},
 					},
 				},
 				{
-					Rule: NewRuleNoPreRelease(),
+					Rule: *NewRuleNoPreRelease(),
 					Definitions: []types.Definition{
 						{Path: "pkg3"},
 					},
 				},
 				{
-					Rule: NewRuleNoPreRelease(),
+					Rule: *NewRuleNoPreRelease(),
 					Definitions: []types.Definition{
 						{Path: "pkg4"},
 					},
@@ -195,7 +196,7 @@ func TestRuleNoPreRelease_Check(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rule := NewRuleNoPreRelease()
-			got, err := rule.Check(tt.manifests, nil)
+			got, err := rule.Check(tt.manifests, nil, config.Config{})
 
 			if tt.wantErr {
 				assert.Error(t, err)

@@ -3,6 +3,7 @@ package rules
 import (
 	"testing"
 
+	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +12,7 @@ func TestNewRuleNoAnyTag(t *testing.T) {
 	rule := NewRuleNoAnyTag()
 
 	assert.Equal(t, "no-any-tag", rule.GetName())
-	assert.Equal(t, LevelWarning, rule.GetLevel())
+	assert.Equal(t, types.LevelWarning, rule.GetLevel())
 	assert.Equal(t, `Disallow the use of the "any" version tag`, rule.GetMessage())
 }
 
@@ -19,7 +20,7 @@ func TestRuleNoAnyTag_Check(t *testing.T) {
 	tests := []struct {
 		name      string
 		manifests []types.Manifest
-		want      []Mistake
+		want      []types.Mistake
 		wantErr   bool
 	}{
 		{
@@ -59,9 +60,9 @@ func TestRuleNoAnyTag_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoAnyTag(),
+					Rule: *NewRuleNoAnyTag(),
 					Definitions: []types.Definition{
 						{Path: "dep1"},
 					},
@@ -81,9 +82,9 @@ func TestRuleNoAnyTag_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoAnyTag(),
+					Rule: *NewRuleNoAnyTag(),
 					Definitions: []types.Definition{
 						{Path: "dep1"},
 					},
@@ -103,9 +104,9 @@ func TestRuleNoAnyTag_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoAnyTag(),
+					Rule: *NewRuleNoAnyTag(),
 					Definitions: []types.Definition{
 						{Path: "dep1"},
 					},
@@ -145,21 +146,21 @@ func TestRuleNoAnyTag_Check(t *testing.T) {
 					},
 				},
 			},
-			want: []Mistake{
+			want: []types.Mistake{
 				{
-					Rule: NewRuleNoAnyTag(),
+					Rule: *NewRuleNoAnyTag(),
 					Definitions: []types.Definition{
 						{Path: "dep1"},
 					},
 				},
 				{
-					Rule: NewRuleNoAnyTag(),
+					Rule: *NewRuleNoAnyTag(),
 					Definitions: []types.Definition{
 						{Path: "dep3"},
 					},
 				},
 				{
-					Rule: NewRuleNoAnyTag(),
+					Rule: *NewRuleNoAnyTag(),
 					Definitions: []types.Definition{
 						{Path: "dep4"},
 					},
@@ -172,7 +173,7 @@ func TestRuleNoAnyTag_Check(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rule := NewRuleNoAnyTag()
-			got, err := rule.Check(tt.manifests, nil)
+			got, err := rule.Check(tt.manifests, nil, config.Config{})
 
 			if tt.wantErr {
 				assert.Error(t, err)

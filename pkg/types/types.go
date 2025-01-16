@@ -26,6 +26,41 @@ type Manifest struct {
 	*Lockfile
 }
 
+type Level string
+
+const (
+	LevelError    Level = "error"
+	LevelWarning  Level = "warning"
+	LevelDisabled Level = "disabled"
+)
+
+type Rule interface {
+	RuleGetter
+	RuleSetter
+}
+
+type RuleGetter interface {
+	Check([]Manifest, PackagesInfo, Config) ([]Mistake, error)
+	GetLevel() Level
+	GetMessage() string
+	GetName() string
+	IsSupported(ManagerType) bool
+}
+
+type RuleSetter interface {
+	Reset()
+	GetName() string
+	SetLevel(Level)
+	SetValue(any) error
+}
+
+type Mistake struct {
+	Rule        RuleGetter
+	Definitions []Definition
+}
+
+var ErrInvalidRuleValue = errors.New("invalid rule value")
+
 type Lockfile struct {
 	Path string
 }
