@@ -15,7 +15,7 @@
     "@astrojs/starlight": "0.30.5",
     "@radix-ui/colors": "^3.0.0",
     "astro": "5.0.9",
-    "sharp": "^0.32.5",
+    "sharp": "^0.33.5",
     "typescript": "^5.7.2"
   },
   "devDependencies": {
