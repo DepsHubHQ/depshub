@@ -83,14 +83,28 @@ func (Npm) Dependencies(path string) ([]types.Dependency, error) {
 	return dependencies, nil
 }
 
+// LockfilePath checks for the existence of npm and yarn lockfiles and returns the path of the found lockfile.
 func (Npm) LockfilePath(path string) (string, error) {
-	lockfilePath := filepath.Join(filepath.Dir(path), "package-lock.json")
+	npmLockfilePath := filepath.Join(filepath.Dir(path), "package-lock.json")
+	yarnLockfilePath := filepath.Join(filepath.Dir(path), "yarn.lock")
 
-	if _, err := os.Stat(lockfilePath); os.IsNotExist(err) {
-		return "", fmt.Errorf("lockfile not found")
+	// Check for npm lockfile
+	if _, err := os.Stat(npmLockfilePath); err == nil {
+		return npmLockfilePath, nil // Return npm lockfile path if it exists
+	} else if !os.IsNotExist(err) {
+		return "", fmt.Errorf("error checking npm lockfile: %v", err)
 	}
 
-	return lockfilePath, nil
+	// TODO This is a temporary fix to support yarn lockfiles
+	// Check for yarn lockfile
+	if _, err := os.Stat(yarnLockfilePath); err == nil {
+		return yarnLockfilePath, nil // Return yarn lockfile path if it exists
+	} else if !os.IsNotExist(err) {
+		return "", fmt.Errorf("error checking yarn lockfile: %v", err)
+	}
+
+	// If neither lockfile exists
+	return "", fmt.Errorf("no lockfile found (neither %s nor %s)", npmLockfilePath, yarnLockfilePath)
 }
 
 // Returns the version without any prefix or suffix
