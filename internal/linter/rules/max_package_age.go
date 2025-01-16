@@ -7,7 +7,7 @@ import (
 	"github.com/depshubhq/depshub/pkg/types"
 )
 
-const DefaultMaxPackageAge = 36
+const DefaultMaxPackageAge = 12
 
 type RuleMaxPackageAge struct {
 	name      string
