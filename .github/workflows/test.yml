@@ -1,7 +1,6 @@
-name: Tests
+name: test
 on:
-  pull_request:
-    branches: [ main ]
+  push:
     paths: [cmd/**, internal/**, pkg/**, go.sum]
   workflow_call:
 
