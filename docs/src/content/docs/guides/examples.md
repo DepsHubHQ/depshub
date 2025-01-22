@@ -4,10 +4,22 @@ title: Examples
 
 ## Basic usage
 
-After you have [installed](/installation) DepsHub you can run it with the following command:
+After you have [installed](/installation) DepsHub you can run it with the `depshub lint .` command:
 
 ```bash
-depshub lint .
+> depshub lint .
+
+Scanning 2 manifest files.
+  - /Users/semanser/Programming/cli/docs/package.json
+  - /Users/semanser/Programming/cli/go.mod
+Found 1 error:
+
+ - [allowed-licenses] - The license of the package is not allowed.
+╭───────────────────────────────────────╮
+│ /Users/semanser/Programming/cli/go.mod│
+│                                       │
+│ 13 | golang.org/x/mod v0.22.0         │
+╰───────────────────────────────────────╯
 ```
 
 This will run DepsHub on the current directory and all its subdirectories. It respects the `.gitignore` file and will not lint files that are ignored by Git.
