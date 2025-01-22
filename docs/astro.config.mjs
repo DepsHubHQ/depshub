@@ -34,9 +34,9 @@ export default defineConfig({
         {
           label: "Usage",
           items: [
-            { label: "Linter", slug: "guides/linter" },
+            { label: "Examples", slug: "guides/examples" },
             { label: "CI/CD integrations", slug: "guides/integrations" },
-            { label: "Creating custom rules", slug: "guides/custom" },
+            //{ label: "Creating custom rules", slug: "guides/custom" },
           ],
         },
         {
