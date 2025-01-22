@@ -2,10 +2,6 @@
 title: CI/CD Integrations
 ---
 
-## Azure DevOps
-
-## CircleCI
-
 ## GitHub Actions
 
 You can find the official DepsHub GitHub Action in this repository: [depshub-action](https://github.com/DepsHubHQ/github-action).
@@ -36,12 +32,8 @@ jobs:
           config: "./depshub-config.yml" # optional
 ```
 
-More options can be found in the repository's README.
+More options can be found in the repository's [README](https://github.com/DepsHubHQ/github-action).
 
-## GitLab CI/CD
+## Other
 
-## Jenkins
-
-## TeamCity
-
-## Travis CI
+DepsHub is available as a CLI tool. You can install it on your CI/CD system as described in the [installation](/installation) guide.
