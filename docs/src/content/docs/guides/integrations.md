@@ -7,6 +7,7 @@ title: CI/CD Integrations
 ## CircleCI
 
 ## GitHub Actions
+
 You can find the official DepsHub GitHub Action in this repository: [depshub-action](https://github.com/DepsHubHQ/github-action).
 
 Example:
@@ -31,8 +32,8 @@ jobs:
       - name: Run DepsHub
         uses: DepsHubHQ/depshub-action@v1
         with:
-          path: './src'                    # optional
-          config: './depshub-config.yml'   # optional
+          path: "./src" # optional
+          config: "./depshub-config.yml" # optional
 ```
 
 More options can be found in the repository's README.
