@@ -9,6 +9,7 @@ DepsHub checks dependencies for multiple languages and package managers:
 - **Python** - pip
 - **Rust** - cargo
 - **Go** - go modules
+- **Elixir** - mix/hex
 
 > More languages and package managers are coming soon. If you have a specific request, please [open an issue](https://github.com/DepshubHQ/depshub/issues/new)
 
