@@ -2,11 +2,12 @@ package hex
 
 import (
 	"fmt"
-	"github.com/depshubhq/depshub/pkg/types"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/depshubhq/depshub/pkg/types"
 )
 
 type Hex struct{}
