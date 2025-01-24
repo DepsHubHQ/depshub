@@ -44,6 +44,9 @@ func (s HexSource) FetchPackageData(ctx context.Context, name string) (types.Pac
 
 	// Convert HexPackage to the generic types.Package
 	result.Name = target.Name
+	result.Versions = make(map[string]types.PackageVersion)
+	result.Time = make(map[string]time.Time)
+
 	if len(target.Metadata.Licenses) > 0 {
 		result.License = target.Metadata.Licenses[0]
 	}
@@ -52,7 +55,6 @@ func (s HexSource) FetchPackageData(ctx context.Context, name string) (types.Pac
 		{Day: time.Now().Format("2006-01-02"), Downloads: target.Downloads.Week},
 	}
 
-	result.Versions = make(map[string]types.PackageVersion)
 	for _, version := range target.Releases {
 		result.Versions[version.Version] = types.PackageVersion{
 			Name:    target.Name,
