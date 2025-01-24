@@ -16,7 +16,7 @@ func NewRuleNoAnyTag() *RuleNoAnyTag {
 	return &RuleNoAnyTag{
 		name:      "no-any-tag",
 		level:     types.LevelWarning,
-		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip, types.Hex},
 	}
 }
 
