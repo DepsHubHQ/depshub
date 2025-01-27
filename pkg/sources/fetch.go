@@ -78,7 +78,7 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 					packageInfo, err = goSource.FetchPackageData(dep.Name, dep.Version)
 				case types.Cargo:
 					packageInfo, err = cratesSource.FetchPackageData(background, dep.Name)
-				case types.Pip:
+				case types.Pip, types.Pyproject:
 					packageInfo, err = pypiSource.FetchPackageData(background, dep.Name)
 				case types.Hex:
 					packageInfo, err = hexSource.FetchPackageData(background, dep.Name)
