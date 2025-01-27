@@ -14,6 +14,7 @@ const (
 	Go
 	Cargo
 	Pip
+	Hex
 )
 
 var ErrPackageNotFound = errors.New("package not found")

@@ -12,6 +12,7 @@ DepsHub uses the following data sources to provide insights:
 - [registry.npmjs.org](https://registry.npmjs.org)
 - [crates.io](https://crates.io)
 - [deps.dev](https://deps.dev)
+- [hex.pm](https://hex.pm)
 
 ## Cache
 

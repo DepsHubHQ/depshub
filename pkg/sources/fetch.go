@@ -8,6 +8,7 @@ import (
 
 	"github.com/depshubhq/depshub/pkg/sources/crates"
 	"github.com/depshubhq/depshub/pkg/sources/go"
+	"github.com/depshubhq/depshub/pkg/sources/hex"
 	"github.com/depshubhq/depshub/pkg/sources/npm"
 	"github.com/depshubhq/depshub/pkg/sources/pypi"
 	"github.com/depshubhq/depshub/pkg/types"
@@ -34,6 +35,7 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 	goSource := gosource.GoSource{}
 	cratesSource := crates.CratesSource{}
 	pypiSource := pypi.PyPISource{}
+	hexSource := hex.HexSource{}
 
 	background := context.Background()
 
@@ -78,6 +80,8 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 					packageInfo, err = cratesSource.FetchPackageData(background, dep.Name)
 				case types.Pip:
 					packageInfo, err = pypiSource.FetchPackageData(background, dep.Name)
+				case types.Hex:
+					packageInfo, err = hexSource.FetchPackageData(background, dep.Name)
 				}
 
 				if err != nil {

@@ -2,6 +2,7 @@ package manager
 
 import (
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -9,6 +10,7 @@ import (
 	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/manager/cargo"
 	gomanager "github.com/depshubhq/depshub/pkg/manager/go"
+	"github.com/depshubhq/depshub/pkg/manager/hex"
 	"github.com/depshubhq/depshub/pkg/manager/npm"
 	"github.com/depshubhq/depshub/pkg/manager/pip"
 	"github.com/depshubhq/depshub/pkg/types"
@@ -29,23 +31,29 @@ func New(config config.Config) scanner {
 			gomanager.Go{},
 			cargo.Cargo{},
 			pip.Pip{},
+			hex.Hex{},
 		},
 	}
 }
 
-func (s scanner) Scan(path string) ([]types.Manifest, error) {
+func (s scanner) Scan(pathToScan string) ([]types.Manifest, error) {
 	var manifests []types.Manifest
 
-	err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+	log.Println("Scanning path:", pathToScan)
+
+	// Check if there is a .gitignore file in the root directory
+	gitignorePath := filepath.Join(pathToScan, ".gitignore")
+	if _, err := os.Stat(gitignorePath); err == nil {
+		s.loadGitignore(gitignorePath)
+	}
+
+	err := filepath.WalkDir(pathToScan, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if d.Name() == ".gitignore" {
-			return s.loadGitignore(path)
-		}
-
 		// Skip files matched by .gitignore
+		// log.Println(s.gitignore)
 		if s.gitignore != nil && s.gitignore.MatchesPath(path) {
 			return filepath.SkipDir
 		}
@@ -76,6 +84,7 @@ func (s scanner) Scan(path string) ([]types.Manifest, error) {
 			}
 		}
 
+		// log.Println("Dependencies: ", dependencies)
 		if len(dependencies) != 0 {
 			manifests = append(manifests, types.Manifest{
 				Manager:      managerType,
@@ -145,7 +154,7 @@ func (s *scanner) loadGitignore(path string) error {
 	}
 
 	lines := strings.Split(string(content), "\n")
-	lines = append(lines, ".git", "node_modules")
+	lines = append(lines, ".git", "node_modules", "deps", "_build", "tmp")
 	s.gitignore = ignore.CompileIgnoreLines(lines...)
 	return nil
 }
