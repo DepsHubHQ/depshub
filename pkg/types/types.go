@@ -14,6 +14,7 @@ const (
 	Go
 	Cargo
 	Pip
+	Pyproject
 	Hex
 )
 
