@@ -13,6 +13,7 @@ import (
 	"github.com/depshubhq/depshub/pkg/manager/hex"
 	"github.com/depshubhq/depshub/pkg/manager/npm"
 	"github.com/depshubhq/depshub/pkg/manager/pip"
+	"github.com/depshubhq/depshub/pkg/manager/pyproject"
 	"github.com/depshubhq/depshub/pkg/types"
 	ignore "github.com/sabhiram/go-gitignore"
 )
@@ -32,6 +33,7 @@ func New(config config.Config) scanner {
 			cargo.Cargo{},
 			pip.Pip{},
 			hex.Hex{},
+			pyproject.Pyproject{},
 		},
 	}
 }

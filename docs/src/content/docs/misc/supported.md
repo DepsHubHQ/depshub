@@ -6,7 +6,7 @@ description: This page lists the package managers supported by DepsHub
 DepsHub checks dependencies for multiple languages and package managers:
 
 - **JavaScript/TypeScript** - npm, yarn, pnpm
-- **Python** - pip
+- **Python** - pip, poetry (requirements.txt, pyproject.toml)
 - **Rust** - cargo
 - **Go** - go modules
 - **Elixir** - mix/hex

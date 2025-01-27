@@ -19,7 +19,7 @@ func NewRuleNoUnstable() *RuleNoUnstable {
 	return &RuleNoUnstable{
 		name:      "no-unstable",
 		level:     types.LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip, types.Hex},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip, types.Hex, types.Pyproject},
 	}
 }
 
