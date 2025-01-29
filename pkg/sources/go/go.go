@@ -26,16 +26,17 @@ func (GoSource) FetchPackageData(name string, version string) (types.Package, er
 
 	target.Name = name
 	target.License = v.Licenses[0]
-	target.Time = map[string]time.Time{version: v.PublishedAt}
+	target.Versions = make(map[string]types.PackageVersion)
+	target.Time = make(map[string]time.Time)
 
 	for _, v := range info.Versions {
-		if target.Versions == nil {
-			target.Versions = make(map[string]types.PackageVersion)
-		}
-
 		target.Versions[v.VersionKey.Version] = types.PackageVersion{
 			Name:    v.VersionKey.Name,
 			Version: v.VersionKey.Version,
+		}
+
+		if !v.PublishedAt.IsZero() {
+			target.Time[v.VersionKey.Version] = v.PublishedAt
 		}
 	}
 
