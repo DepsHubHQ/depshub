@@ -59,26 +59,31 @@ func TestGoDependencies(t *testing.T) {
 	expectedDeps := []struct {
 		manager types.ManagerType
 		name    string
+		line    int
 		version string
 	}{
 		{
 			manager: types.Go,
 			name:    "github.com/charmbracelet/lipgloss",
+			line:    6,
 			version: "v1.0.0",
 		},
 		{
 			manager: types.Go,
 			name:    "github.com/sabhiram/go-gitignore",
+			line:    7,
 			version: "v0.0.0-20210923224102-525f6e181f06",
 		},
 		{
 			manager: types.Go,
 			name:    "github.com/spf13/cobra",
+			line:    8,
 			version: "v1.8.1",
 		},
 		{
 			manager: types.Go,
 			name:    "github.com/stretchr/testify",
+			line:    9,
 			version: "v1.6.1",
 		},
 	}
@@ -86,6 +91,7 @@ func TestGoDependencies(t *testing.T) {
 	assert.Equal(t, len(expectedDeps), len(deps))
 
 	for i, exp := range expectedDeps {
+		assert.Equal(t, exp.line, deps[i].Line)
 		assert.Equal(t, exp.manager, deps[i].Manager)
 		assert.Equal(t, exp.name, deps[i].Name)
 		assert.Equal(t, exp.version, deps[i].Version)
