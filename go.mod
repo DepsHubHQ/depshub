@@ -12,6 +12,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
+	github.com/vifraa/gopom v1.0.0
 	golang.org/x/mod v0.22.0
 )
 

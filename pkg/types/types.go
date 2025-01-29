@@ -16,6 +16,7 @@ const (
 	Pip
 	Pyproject
 	Hex
+	Maven
 )
 
 var ErrPackageNotFound = errors.New("package not found")
