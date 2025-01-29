@@ -1,4 +1,4 @@
-package gosource
+package maven
 
 import (
 	"time"
@@ -7,18 +7,18 @@ import (
 	"github.com/edoardottt/depsdev/pkg/depsdev"
 )
 
-type GoSource struct{}
+type MavenSource struct{}
 
-func (GoSource) FetchPackageData(name string, version string) (types.Package, error) {
+func (MavenSource) FetchPackageData(name string, version string) (types.Package, error) {
 	var target types.Package
 
-	info, err := depsdev.NewAPI().GetInfo("go", name)
+	info, err := depsdev.NewAPI().GetInfo("maven", name)
 
 	if err != nil {
 		return target, err
 	}
 
-	v, err := depsdev.NewAPI().GetVersion("go", name, version)
+	v, err := depsdev.NewAPI().GetVersion("maven", name, version)
 
 	if err != nil {
 		return target, err
@@ -30,6 +30,10 @@ func (GoSource) FetchPackageData(name string, version string) (types.Package, er
 	target.Time = make(map[string]time.Time)
 
 	for _, v := range info.Versions {
+		if target.Versions == nil {
+			target.Versions = make(map[string]types.PackageVersion)
+		}
+
 		target.Versions[v.VersionKey.Version] = types.PackageVersion{
 			Name:    v.VersionKey.Name,
 			Version: v.VersionKey.Version,

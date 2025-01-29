@@ -9,6 +9,7 @@ import (
 	"github.com/depshubhq/depshub/pkg/sources/crates"
 	"github.com/depshubhq/depshub/pkg/sources/go"
 	"github.com/depshubhq/depshub/pkg/sources/hex"
+	"github.com/depshubhq/depshub/pkg/sources/maven"
 	"github.com/depshubhq/depshub/pkg/sources/npm"
 	"github.com/depshubhq/depshub/pkg/sources/pypi"
 	"github.com/depshubhq/depshub/pkg/types"
@@ -36,6 +37,7 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 	cratesSource := crates.CratesSource{}
 	pypiSource := pypi.PyPISource{}
 	hexSource := hex.HexSource{}
+	mavenSource := maven.MavenSource{}
 
 	background := context.Background()
 
@@ -82,6 +84,8 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 					packageInfo, err = pypiSource.FetchPackageData(background, dep.Name)
 				case types.Hex:
 					packageInfo, err = hexSource.FetchPackageData(background, dep.Name)
+				case types.Maven:
+					packageInfo, err = mavenSource.FetchPackageData(dep.Name, dep.Version)
 				}
 
 				if err != nil {

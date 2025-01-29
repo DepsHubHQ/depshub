@@ -74,6 +74,7 @@ func TestNpmDependencies(t *testing.T) {
 		manager     types.ManagerType
 		name        string
 		version     string
+		line        int
 		isDev       bool
 		shouldExist bool
 	}{
@@ -81,6 +82,7 @@ func TestNpmDependencies(t *testing.T) {
 			manager:     types.Npm,
 			name:        "astro",
 			version:     "4.16.10",
+			line:        16,
 			isDev:       false,
 			shouldExist: true,
 		},
@@ -88,6 +90,7 @@ func TestNpmDependencies(t *testing.T) {
 			manager:     types.Npm,
 			name:        "typescript",
 			version:     "5.7.2",
+			line:        20,
 			isDev:       true,
 			shouldExist: true,
 		},

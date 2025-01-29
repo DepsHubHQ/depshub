@@ -11,6 +11,7 @@ import (
 	"github.com/depshubhq/depshub/pkg/manager/cargo"
 	gomanager "github.com/depshubhq/depshub/pkg/manager/go"
 	"github.com/depshubhq/depshub/pkg/manager/hex"
+	"github.com/depshubhq/depshub/pkg/manager/maven"
 	"github.com/depshubhq/depshub/pkg/manager/npm"
 	"github.com/depshubhq/depshub/pkg/manager/pip"
 	"github.com/depshubhq/depshub/pkg/manager/pyproject"
@@ -34,6 +35,7 @@ func New(config config.Config) scanner {
 			pip.Pip{},
 			hex.Hex{},
 			pyproject.Pyproject{},
+			maven.Maven{},
 		},
 	}
 }

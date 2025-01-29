@@ -54,11 +54,13 @@ func TestCargo_Dependencies(t *testing.T) {
 		dep           string
 		version       string
 		isDev         bool
+		line          int
 		containsInRaw string // String that should be present in RawLine
 	}{
 		{
 			name:          "dev dependency tokio",
 			dep:           "tokio",
+			line:          9,
 			version:       "1.0.0",
 			isDev:         true,
 			containsInRaw: `tokio = { version = "1.0.0"`,
@@ -66,6 +68,7 @@ func TestCargo_Dependencies(t *testing.T) {
 		{
 			name:          "regular dependency serde",
 			dep:           "serde",
+			line:          19,
 			version:       "1.0",
 			isDev:         false,
 			containsInRaw: `serde = "1.0"`,
@@ -78,6 +81,9 @@ func TestCargo_Dependencies(t *testing.T) {
 			for _, dep := range deps {
 				if dep.Name == tt.dep {
 					found = true
+					if dep.Line != tt.line {
+						t.Errorf("Expected line %d for %s, got %d", tt.line, tt.dep, dep.Line)
+					}
 					if dep.Version != tt.version {
 						t.Errorf("Expected version %s for %s, got %s", tt.version, tt.dep, dep.Version)
 					}
@@ -112,7 +118,7 @@ serde = "1.0"
 tokio = "1.0"`,
 			key:          "serde",
 			expectedRaw:  `serde = "1.0"`,
-			expectedLine: 1,
+			expectedLine: 2,
 			shouldFind:   true,
 		},
 		{
@@ -121,7 +127,7 @@ tokio = "1.0"`,
 tokio = { version = "1.0.0", features = ["full"] }`,
 			key:          "tokio",
 			expectedRaw:  `tokio = { version = "1.0.0", features = ["full"] }`,
-			expectedLine: 1,
+			expectedLine: 2,
 			shouldFind:   true,
 		},
 	}
