@@ -16,7 +16,7 @@ func NewRuleNoDuplicates() *RuleNoDuplicates {
 	return &RuleNoDuplicates{
 		name:      "no-duplicates",
 		level:     types.LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip, types.Hex, types.Pyproject},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip, types.Hex, types.Pyproject, types.Maven},
 	}
 }
 
