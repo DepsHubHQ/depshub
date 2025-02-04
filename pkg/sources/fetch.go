@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/depshubhq/depshub/pkg/sources/crates"
+	"github.com/depshubhq/depshub/pkg/sources/gems"
 	"github.com/depshubhq/depshub/pkg/sources/go"
 	"github.com/depshubhq/depshub/pkg/sources/hex"
 	"github.com/depshubhq/depshub/pkg/sources/maven"
@@ -38,6 +39,7 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 	pypiSource := pypi.PyPISource{}
 	hexSource := hex.HexSource{}
 	mavenSource := maven.MavenSource{}
+	gemsSource := gems.GemsSource{}
 
 	background := context.Background()
 
@@ -86,6 +88,8 @@ func (f fetcher) Fetch(uniqueDependencies []types.Dependency) (types.PackagesInf
 					packageInfo, err = hexSource.FetchPackageData(background, dep.Name)
 				case types.Maven:
 					packageInfo, err = mavenSource.FetchPackageData(dep.Name, dep.Version)
+				case types.Gem:
+					packageInfo, err = gemsSource.FetchPackageData(dep.Name, dep.Version)
 				}
 
 				if err != nil {

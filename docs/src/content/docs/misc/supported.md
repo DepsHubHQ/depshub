@@ -11,6 +11,7 @@ DepsHub checks dependencies for multiple languages and package managers:
 - **Java** - Maven
 - **Go** - go modules
 - **Elixir** - mix/hex
+- **Ruby** - gem
 
 > More languages and package managers are coming soon. If you have a specific request, please [open an issue](https://github.com/DepshubHQ/depshub/issues/new)
 

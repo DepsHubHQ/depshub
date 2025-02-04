@@ -19,7 +19,7 @@ func NewRuleMaxMinorUpdates() *RuleMaxMinorUpdates {
 	return &RuleMaxMinorUpdates{
 		name:      "max-minor-updates",
 		level:     types.LevelError,
-		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip, types.Hex, types.Pyproject, types.Maven},
+		supported: []types.ManagerType{types.Npm, types.Go, types.Cargo, types.Pip, types.Hex, types.Pyproject, types.Maven, types.Gem},
 		value:     DefaultMaxMinorUpdatesPercent,
 	}
 }
