@@ -24,3 +24,14 @@ manifest_files:
     rules:
       - name: "no-unstable"
         disabled: true
+  - filter: "**/go.mod"
+    packages:
+      # We need to use older version since it gives us more information about the current parsed line
+      - "github.com/pelletier/go-toml"
+      # This package is not maintained anymore, but it's still in our usecase
+      - "github.com/sabhiram/go-gitignore"
+      # This package is not maintained anymore, but it's still in our usecase
+      - "github.com/vifraa/gopom"
+    rules:
+      - name: "max-package-age"
+        disabled: true
