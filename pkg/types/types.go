@@ -17,6 +17,7 @@ const (
 	Pyproject
 	Hex
 	Maven
+	Gem
 )
 
 var ErrPackageNotFound = errors.New("package not found")
