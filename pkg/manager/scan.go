@@ -9,6 +9,7 @@ import (
 
 	"github.com/depshubhq/depshub/internal/config"
 	"github.com/depshubhq/depshub/pkg/manager/cargo"
+	"github.com/depshubhq/depshub/pkg/manager/gem"
 	gomanager "github.com/depshubhq/depshub/pkg/manager/go"
 	"github.com/depshubhq/depshub/pkg/manager/hex"
 	"github.com/depshubhq/depshub/pkg/manager/maven"
@@ -36,6 +37,7 @@ func New(config config.Config) scanner {
 			hex.Hex{},
 			pyproject.Pyproject{},
 			maven.Maven{},
+			gem.Gem{},
 		},
 	}
 }
@@ -57,7 +59,6 @@ func (s scanner) Scan(pathToScan string) ([]types.Manifest, error) {
 		}
 
 		// Skip files matched by .gitignore
-		// log.Println(s.gitignore)
 		if s.gitignore != nil && s.gitignore.MatchesPath(path) {
 			return filepath.SkipDir
 		}
@@ -88,7 +89,6 @@ func (s scanner) Scan(pathToScan string) ([]types.Manifest, error) {
 			}
 		}
 
-		// log.Println("Dependencies: ", dependencies)
 		if len(dependencies) != 0 {
 			manifests = append(manifests, types.Manifest{
 				Manager:      managerType,
