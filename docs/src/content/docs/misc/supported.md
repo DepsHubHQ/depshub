@@ -8,6 +8,7 @@ DepsHub checks dependencies for multiple languages and package managers:
 - **JavaScript/TypeScript** - npm, yarn, pnpm
 - **Python** - pip, poetry (requirements.txt, pyproject.toml)
 - **Rust** - cargo
+- **Java** - Maven
 - **Go** - go modules
 - **Elixir** - mix/hex
 

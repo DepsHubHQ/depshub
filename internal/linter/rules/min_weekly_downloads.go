@@ -19,7 +19,7 @@ func NewRuleMinWeeklyDownloads() *RuleMinWeeklyDownloads {
 	return &RuleMinWeeklyDownloads{
 		name:      "min-weekly-downloads",
 		level:     types.LevelError,
-		supported: []types.ManagerType{types.Npm, types.Cargo, types.Hex, types.Pyproject},
+		supported: []types.ManagerType{types.Npm, types.Cargo, types.Hex},
 		value:     DefaultMinWeeklyDownloads,
 	}
 }
